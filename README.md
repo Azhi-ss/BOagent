@@ -1,153 +1,133 @@
-# BOagent Demo
+# BOagent
 
-FastAPI + Vite/React demo for the PVK-BO Agent workflow.
+钙钛矿材料优化的贝叶斯优化 Agent 系统 - PVK-BO Agent Workflow
 
-## 图中 MVP v0.2
+## 功能特性
 
-图中 MVP v0.2 展示三步 agent 流程：
+- **三步 Agent 流程**: Initialization → Screening → Optimization
+- **LLM 驱动**: 集成 DeepSeek LLM，支持自然语言交互
+- **实时 BO 曲线**: 展示贝叶斯优化轨迹和 best-so-far 进度
+- **安全边界**: 明确区分算法推荐与湿实验验证
+- **React 前端**: 现代化对话式交互界面
+- **FastAPI 后端**: 高性能 RESTful API
 
-1. **Initialization**: 加载 PVK-LLM 派生的 demo 数据源，并初始化优化任务上下文。
-2. **Screening**: 筛选 passivation strategies/combinations，并在推荐前标注高风险或低置信候选。
-3. **Optimization**: 展示 BO-style 优化轨迹和下一轮 demo 推荐候选。
+## 系统架构
 
-该 MVP 用于说明图中的工作流形态，不用于建立科学 benchmark 结果。
-
-## Current Agent Architecture
-
-The current app is an LLM-first PVK BO research-agent demo:
-
-```text
-React chat UI
-  -> POST /api/v1/chat
-  -> ChatAgent LLM planner
-  -> hidden backend gate
-  -> real PVKBO runtime
-  -> result interpreter
-  -> natural-language reply + evidence panel
+```
+┌─────────────────┐     ┌─────────────────┐     ┌─────────────────┐
+│  React Chat UI  │────▶│  FastAPI Backend│────▶│   PVKBO Runtime │
+│  (Vite)         │     │  (api.py)       │     │  (pvk_*.py)     │
+└─────────────────┘     └─────────────────┘     └─────────────────┘
+                              │                        │
+                              ▼                        ▼
+                     ┌─────────────────┐     ┌─────────────────┐
+                     │  ChatAgent      │     │  LLM_ACQ /      │
+                     │  (LLM Planner)  │     │  Surrogate Model│
+                     └─────────────────┘     └─────────────────┘
 ```
 
-User-visible replies should come from the LLM or result interpreter. The backend gate stays hidden and only enforces safety: demo/reference data boundaries, fixed chat demo task settings, and "workbook lookup is not wet-lab validation" claims.
+数据流向:
+1. 用户通过 React 界面发送自然语言请求
+2. `ChatAgent` 解析任务，调用 PVKBO 运行时
+3. PVKBO 执行贝叶斯优化计算（LLM_ACQ 获取函数 + Surrogate）
+4. 结果经 LLM 解释器转化为自然语言回复
+5. 前端展示 BO 曲线、推荐候选和证据面板
 
-Useful local URLs after startup:
+## 快速开始
 
-- Frontend: `http://127.0.0.1:5175`
-- FastAPI docs: `http://127.0.0.1:8010/docs`
-- Live backend logs: `http://127.0.0.1:8010/logs`
+### 前置要求
 
-## Real PVKBO Status
+- Python 3.10+
+- Node.js 18+
+- (可选) DeepSeek API Key 用于 LLM 增强功能
 
-This repo uses the original PVK-LLM implementation as a read-only reference and exposes real PVKBO session tasks through the FastAPI session API:
-
-- `band_alignment`: expects `bandAlignment.xlsx`
-- `defects_doping`: expects `defectsAndDoping.xlsx`
-
-By default, BOagent looks for a sibling checkout:
-
-```text
-../PVK-LLM/
-../PVK-LLM/custom_perovskite_dataset/
-```
-
-Override these paths when your local layout differs:
+### 一键启动
 
 ```bash
-PVK_LLM_ROOT=/path/to/PVK-LLM
-PVK_DATA_ROOT=/path/to/PVK-LLM/custom_perovskite_dataset
-```
-
-If the workbook, API key, or PVK-LLM dependencies are missing, real tasks fail fast with a visible API error. `demo_optimization_table.csv` remains available for `passivation_demo`, but it is not used as a substitute for real PVKBO tasks.
-
-## Scientific Boundaries
-
-- 真实 `band_alignment` / `defects_doping` 任务使用 PVKBO 的 `LLM_ACQ`、LLM surrogate 和 Excel black-box lookup。
-- MVP 中展示的 `passivation ratio` 是 strategy/combination 标签，不是真实 molar ratio。
-- PipDI 应被视为高风险候选，不应呈现为已验证推荐。
-- 真实任务的 BO 曲线只展示当前 session best-so-far；它仍不是湿实验验证或正式 benchmark。
-- `/api/v1/sessions/{session_id}/bo-curve` does not include fabricated `general_llm` or `bo_baseline` benchmark curves.
-
-## Setup
-
-```bash
+# 1. 安装 Python 依赖
 python -m venv .venv
-source .venv/bin/activate
-python -m pip install -r requirements.txt
-```
+source .venv/bin/activate  # Windows: .venv\Scripts\activate
+pip install -r requirements.txt
 
-Optional LLM notes use DeepSeek env vars. Do not put real keys in git; copy `.env.example` to `.env` locally if needed.
-
-If a real API key was ever stored in `.env`, rotate it before publishing this repository. `.env` is ignored, but local secrets can still leak through shell history, screenshots, logs, or accidental commits.
-
-For real PVKBO LLM calls, configure either OpenAI-compatible vars or the existing DeepSeek vars:
-
-```bash
-OPENAI_API_KEY=...
-OPENAI_API_BASE=https://api.deepseek.com
-OPENAI_MODEL=deepseek-v4-flash
-```
-
-or:
-
-```bash
-DEEPSEEK_API_KEY=...
-DEEPSEEK_BASE_URL=https://api.deepseek.com
-DEEPSEEK_MODEL=deepseek-v4-flash
-```
-
-## Backend Test
-
-```bash
-python -m pytest -q tests/test_api.py tests/test_pvk_demo.py tests/test_pvk_session_runtime.py tests/test_pvk_mvp.py tests/test_pvk_llm_bo_runtime.py
-```
-
-This is the fastest demo smoke test path for the API, session runtime, PVK demo modules, and MVP v0.2 endpoints. Run `python -m pytest -q` for the full suite.
-
-## Start FastAPI
-
-```bash
+# 2. 启动后端 (端口 8000)
 python -m uvicorn api:app --reload --port 8000
-```
 
-If port `8000` is already occupied, use `8010`:
-
-```bash
-python -m uvicorn api:app --reload --port 8010
-```
-
-OpenAPI docs:
-
-```text
-http://localhost:8000/docs
-```
-
-When using port `8010`, open `http://localhost:8010/docs` instead.
-
-## Start Frontend
-
-Run the Vite frontend from `frontend/` and point it at the backend with `VITE_API_BASE_URL`:
-
-```bash
+# 3. 新终端: 启动前端 (端口 5173)
 cd frontend
 VITE_API_BASE_URL=http://localhost:8000 npm run dev
 ```
 
-If the backend runs on `8010`, use:
+### 访问地址
+
+- 前端界面: http://localhost:5173
+- API 文档: http://localhost:8000/docs
+- 健康检查: http://localhost:8000/api/v1/health
+
+## 完整安装指南
+
+### 环境变量配置
+
+复制 `.env.example` 到 `.env` 并配置：
 
 ```bash
-cd frontend
-VITE_API_BASE_URL=http://localhost:8010 npm run dev
+# LLM 配置 (二选一)
+DEEPSEEK_API_KEY=your_api_key_here
+DEEPSEEK_BASE_URL=https://api.deepseek.com
+DEEPSEEK_MODEL=deepseek-v4-flash
+
+# 或使用 OpenAI 兼容格式
+OPENAI_API_KEY=your_api_key_here
+OPENAI_API_BASE=https://api.deepseek.com
+OPENAI_MODEL=deepseek-v4-flash
+
+# PVK-LLM 数据路径 (可选，默认 ../PVK-LLM)
+PVK_LLM_ROOT=/path/to/PVK-LLM
+PVK_DATA_ROOT=/path/to/PVK-LLM/custom_perovskite_dataset
 ```
 
-The legacy Streamlit demo can still be started with `python -m streamlit run app.py` if needed.
+### PVK-LLM 数据集
 
-## API Examples
+真实任务需要 PVK-LLM 数据集：
 
-Health check:
+```bash
+# 克隆 PVK-LLM 到同级目录
+git clone https://github.com/your-org/PVK-LLM ../PVK-LLM
+
+# 确保数据集文件存在
+ls ../PVK-LLM/custom_perovskite_dataset/
+# - bandAlignment.xlsx  (band_alignment 任务)
+# - defectsAndDoping.xlsx (defects_doping 任务)
+```
+
+## 测试
+
+运行完整测试套件：
+
+```bash
+# 快速冒烟测试
+python -m pytest -q tests/test_api.py tests/test_pvk_demo.py
+
+# 完整测试
+python -m pytest -q
+
+# 查看覆盖率
+python -m pytest --cov=. --cov-report=term-missing
+```
+
+## API 使用示例
+
+### 健康检查
 
 ```bash
 curl http://localhost:8000/api/v1/health
 ```
 
-Create a demo agent run:
+响应:
+```json
+{"data":{"status":"ok","service":"boagent-api","version":"0.1.0"}}
+```
+
+### 创建 Agent 运行
 
 ```bash
 curl -X POST http://localhost:8000/api/v1/agent-runs \
@@ -160,39 +140,140 @@ curl -X POST http://localhost:8000/api/v1/agent-runs \
   }'
 ```
 
-Fetch a run after replacing `RUN_ID` with the returned id:
+### 获取运行结果
 
 ```bash
-curl http://localhost:8000/api/v1/agent-runs/RUN_ID
+curl http://localhost:8000/api/v1/agent-runs/{RUN_ID}
 ```
 
-## Final Acceptance Checklist
-
-最终验收前建议执行：
+### 对话式交互
 
 ```bash
-python -m pytest -q
+curl -X POST http://localhost:8000/api/v1/chat \
+  -H "Content-Type: application/json" \
+  -d '{
+    "message": "帮我优化 band alignment，推荐 5 个候选配方",
+    "session_id": "optional-session-id"
+  }'
 ```
+
+## 任务类型
+
+| 任务类型 | 数据源 | 描述 |
+|---------|--------|------|
+| `passivation_demo` | demo_optimization_table.csv | 演示模式，使用静态数据集 |
+| `band_alignment` | bandAlignment.xlsx | 能带对齐优化，真实 Excel 黑盒查询 |
+| `defects_doping` | defectsAndDoping.xlsx | 缺陷掺杂优化，真实 Excel 黑盒查询 |
+
+## 科学边界声明
+
+> ⚠️ **重要**: 本系统输出的是算法推荐，不是湿实验验证结果
+
+1. **真实任务**: `band_alignment` / `defects_doping` 使用 PVKBO 的 LLM_ACQ 获取函数、LLM surrogate 模型和 Excel 黑盒查询
+2. **Demo 模式**: `passivation ratio` 是策略/组合标签，不是真实摩尔浓度
+3. **高风险候选**: PipDI 等应标注为高风险，不应呈现为已验证推荐
+4. **BO 曲线**: 只展示当前 session best-so-far，不是正式 benchmark 结果
+5. **算法局限性**: 所有推荐均需湿实验验证，算法结果仅作参考
+
+## 开发指南
+
+### 项目结构
+
+```
+BOagent/
+├── api.py                    # FastAPI 主入口
+├── chat_agent.py             # 对话 Agent 核心逻辑
+├── pvk_session_runtime.py    # PVKBO Session 运行时
+├── pvk_llm_bo_runtime.py    # LLM-BO 运行时
+├── pvk_demo.py              # Demo 数据加载
+├── pvk_tools.py             # 工具函数
+├── llm_client.py            # LLM API 客户端
+├── agent_runtime.py         # Agent 运行框架
+├── frontend/                # React + Vite 前端
+│   ├── src/
+│   ├── package.json
+│   └── vite.config.js
+├── tests/                   # 测试套件
+│   ├── test_api.py
+│   ├── test_chat_agent.py
+│   └── test_pvk_*.py
+├── requirements.txt         # Python 依赖
+├── .env.example             # 环境变量模板
+└── README.md
+```
+
+### 添加新任务类型
+
+1. 在 `pvk_session_runtime.py` 中注册新的任务处理器
+2. 在 `api.py` 中添加对应的 API 端点
+3. 更新前端任务选择组件
+4. 添加测试用例到 `tests/`
+
+### 前端开发
 
 ```bash
 cd frontend
-VITE_API_BASE_URL=http://localhost:8000 npm run build
-```
 
-浏览器验收时，启动后端和前端，然后在浏览器中验证 MVP 流程：
+# 安装依赖
+npm install
 
-```bash
-python -m uvicorn api:app --reload --port 8000
-```
-
-```bash
-cd frontend
+# 开发模式 (热重载)
 VITE_API_BASE_URL=http://localhost:8000 npm run dev
+
+# 构建生产版本
+npm run build
+
+# 预览构建结果
+npm run preview
 ```
 
-浏览器流程：
+## 验收清单
 
-1. 打开 Vite dev URL，通常是 `http://localhost:5173`。
-2. 确认 UI 清楚表达三阶段：Initialization、Screening、Optimization。
-3. 跑通 demo 路径，确认 recommendations、BO curve display 和 scientific-boundary copy 与本 README 一致。
-4. 如果后端端口 `8000` 被占用，改用 `8010` 并设置 `VITE_API_BASE_URL=http://localhost:8010` 后重复浏览器流程。
+发布前请验证：
+
+- [ ] 所有测试通过: `python -m pytest -q`
+- [ ] 前端构建成功: `cd frontend && npm run build`
+- [ ] 三阶段流程在浏览器中可完整走通
+- [ ] BO 曲线正常显示，科学边界文案正确
+- [ ] LLM 功能正常（配置 API Key 后）
+- [ ] 真实任务可用（数据集路径正确）
+- [ ] 端口 8000 被占用时可切换到 8010
+
+## 常见问题
+
+### 端口被占用
+
+```bash
+# 后端改用 8010
+python -m uvicorn api:app --reload --port 8010
+
+# 前端同步修改
+cd frontend
+VITE_API_BASE_URL=http://localhost:8010 npm run dev
+```
+
+### 真实任务失败
+
+检查：
+1. PVK-LLM 数据集路径是否正确
+2. Excel 文件是否存在
+3. Python 依赖是否完整（openpyxl, pandas 等）
+
+### LLM 调用失败
+
+检查：
+1. API Key 是否正确配置
+2. 网络连接是否正常
+3. 模型名称是否有效
+
+## 许可证
+
+MIT License
+
+## 贡献
+
+欢迎提交 Issue 和 Pull Request！
+
+## 致谢
+
+基于 PVK-LLM 研究项目构建，感谢原作者提供的贝叶斯优化算法实现。
