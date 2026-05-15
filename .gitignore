@@ -1,0 +1,23 @@
+.env
+.env.local
+.env.*.local
+
+__pycache__/
+*.py[cod]
+.pytest_cache/
+
+.venv/
+venv/
+
+frontend/node_modules/
+frontend/dist/
+frontend/.env
+frontend/.env.local
+frontend/.env.*.local
+
+.cursor/
+.DS_Store
+
+# Local/generated artifacts that should not be part of the public source tree.
+boagent_architecture_design.html
+perovskite_agent_demo_extracted_data.xlsx

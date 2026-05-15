@@ -1,0 +1,15 @@
+fastapi
+httpx
+pandas
+pytest
+requests
+streamlit
+uvicorn
+numpy
+scipy
+openai
+langchain
+openpyxl
+aiohttp
+tiktoken
+socksio
