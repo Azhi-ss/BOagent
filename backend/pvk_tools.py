@@ -8,8 +8,8 @@ from typing import Any
 
 
 BOAGENT_ROOT = Path(__file__).resolve().parent
-DEFAULT_DEMO_CSV_PATH = BOAGENT_ROOT / "demo_optimization_table.csv"
-DEFAULT_PVK_PROJECT_ROOT = BOAGENT_ROOT.parent / "PVK-LLM"
+DEFAULT_DEMO_CSV_PATH = BOAGENT_ROOT / "data" / "demo_optimization_table.csv"
+DEFAULT_PVK_PROJECT_ROOT = BOAGENT_ROOT.parent.parent / "PVK-LLM"
 PASSIVATORS = ("3MTPAI", "PDAI2", "EDAI2", "PipDI")
 
 
@@ -76,7 +76,7 @@ def load_pvk_dataset_or_demo(
         "task_id": "passivation_demo",
         "records": records,
         "data_source": demo_path.name,
-        "data_boundary": "PVK-LLM custom_perovskite_dataset/*.xlsx not found; fallback to BOagent demo_optimization_table.csv. Demo data is literature-extracted/mixed-system evidence and not validated BO performance.",
+        "data_boundary": "PVK-LLM custom_perovskite_dataset/*.xlsx not found; fallback to BOagent demo data. Demo data is literature-extracted/mixed-system evidence and not validated BO performance.",
         "source_path": str(demo_path),
     }
 

@@ -5,7 +5,7 @@ from pvk_session_runtime import OptimizationSessionRequest, OptimizationSessionR
 from pvk_tools import list_tasks, load_pvk_dataset_or_demo
 
 
-DATA_PATH = Path(__file__).resolve().parents[1] / "demo_optimization_table.csv"
+DATA_PATH = Path(__file__).resolve().parents[1] / "data" / "demo_optimization_table.csv"
 
 
 def test_list_tasks_exposes_passivation_demo_with_data_boundary():

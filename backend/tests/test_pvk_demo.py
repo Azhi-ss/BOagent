@@ -13,7 +13,7 @@ from pvk_demo import (
 )
 
 
-DATA_PATH = Path(__file__).resolve().parents[1] / "demo_optimization_table.csv"
+DATA_PATH = Path(__file__).resolve().parents[1] / "data" / "demo_optimization_table.csv"
 
 
 def test_load_experiment_data_normalizes_current_csv_schema():

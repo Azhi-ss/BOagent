@@ -8,7 +8,7 @@ import pandas as pd
 
 
 PASSIVATORS = ("3MTPAI", "PDAI2", "EDAI2", "PipDI")
-DEFAULT_DATA_PATH = Path(__file__).resolve().parent / "demo_optimization_table.csv"
+DEFAULT_DATA_PATH = Path(__file__).resolve().parent / "data" / "demo_optimization_table.csv"
 SUPPORTED_LANGUAGES = ("en", "zh")
 
 UI_TEXT = {

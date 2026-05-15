@@ -45,6 +45,7 @@
 
 ```bash
 # 1. 安装 Python 依赖
+cd backend
 python -m venv .venv
 source .venv/bin/activate  # Windows: .venv\Scripts\activate
 pip install -r requirements.txt
@@ -67,7 +68,13 @@ VITE_API_BASE_URL=http://localhost:8000 npm run dev
 
 ### 环境变量配置
 
-复制 `.env.example` 到 `.env` 并配置：
+复制 `backend/.env.example` 到 `backend/.env` 并配置：
+
+```bash
+cd backend
+cp .env.example .env
+# 编辑 .env 文件配置 API Key
+```
 
 ```bash
 # LLM 配置 (二选一)
@@ -80,18 +87,18 @@ OPENAI_API_KEY=your_api_key_here
 OPENAI_API_BASE=https://api.deepseek.com
 OPENAI_MODEL=deepseek-v4-flash
 
-# PVK-LLM 数据路径 (可选，默认 ../PVK-LLM)
+# PVK-LLM 数据路径 (可选，默认 ../../PVK-LLM)
 PVK_LLM_ROOT=/path/to/PVK-LLM
 PVK_DATA_ROOT=/path/to/PVK-LLM/custom_perovskite_dataset
 ```
 
 ### PVK-LLM 数据集
 
-真实任务需要 PVK-LLM 数据集：
+真实任务需要 PVK-LLM 数据集（克隆到项目同级目录）：
 
 ```bash
-# 克隆 PVK-LLM 到同级目录
-git clone https://github.com/your-org/PVK-LLM ../PVK-LLM
+# 克隆 PVK-LLM 到项目同级目录（与 BOagent 同一父目录）
+git clone https://github.com/your-org/PVK-LLM ../../PVK-LLM
 
 # 确保数据集文件存在
 ls ../PVK-LLM/custom_perovskite_dataset/
@@ -104,6 +111,8 @@ ls ../PVK-LLM/custom_perovskite_dataset/
 运行完整测试套件：
 
 ```bash
+cd backend
+
 # 快速冒烟测试
 python -m pytest -q tests/test_api.py tests/test_pvk_demo.py
 
@@ -181,33 +190,36 @@ curl -X POST http://localhost:8000/api/v1/chat \
 
 ```
 BOagent/
-├── api.py                    # FastAPI 主入口
-├── chat_agent.py             # 对话 Agent 核心逻辑
-├── pvk_session_runtime.py    # PVKBO Session 运行时
-├── pvk_llm_bo_runtime.py    # LLM-BO 运行时
-├── pvk_demo.py              # Demo 数据加载
-├── pvk_tools.py             # 工具函数
-├── llm_client.py            # LLM API 客户端
-├── agent_runtime.py         # Agent 运行框架
-├── frontend/                # React + Vite 前端
+├── backend/                 # Python 后端
+│   ├── api.py              # FastAPI 主入口
+│   ├── chat_agent.py       # 对话 Agent 核心逻辑
+│   ├── pvk_session_runtime.py  # PVKBO Session 运行时
+│   ├── pvk_llm_bo_runtime.py  # LLM-BO 运行时
+│   ├── pvk_demo.py         # Demo 数据加载
+│   ├── pvk_mvp.py          # MVP 工具函数
+│   ├── pvk_tools.py        # 通用工具函数
+│   ├── llm_client.py       # LLM API 客户端
+│   ├── agent_runtime.py    # Agent 运行框架
+│   ├── data/               # 数据文件
+│   │   └── demo_optimization_table.csv
+│   ├── tests/              # 测试套件
+│   │   ├── test_api.py
+│   │   └── test_pvk_*.py
+│   ├── requirements.txt    # Python 依赖
+│   └── .env.example        # 环境变量模板
+├── frontend/               # React + Vite 前端
 │   ├── src/
 │   ├── package.json
-│   └── vite.config.js
-├── tests/                   # 测试套件
-│   ├── test_api.py
-│   ├── test_chat_agent.py
-│   └── test_pvk_*.py
-├── requirements.txt         # Python 依赖
-├── .env.example             # 环境变量模板
+│   └── vite.config.ts
 └── README.md
 ```
 
 ### 添加新任务类型
 
-1. 在 `pvk_session_runtime.py` 中注册新的任务处理器
-2. 在 `api.py` 中添加对应的 API 端点
+1. 在 `backend/pvk_session_runtime.py` 中注册新的任务处理器
+2. 在 `backend/api.py` 中添加对应的 API 端点
 3. 更新前端任务选择组件
-4. 添加测试用例到 `tests/`
+4. 添加测试用例到 `backend/tests/`
 
 ### 前端开发
 
@@ -231,7 +243,7 @@ npm run preview
 
 发布前请验证：
 
-- [ ] 所有测试通过: `python -m pytest -q`
+- [ ] 所有测试通过: `cd backend && python -m pytest -q`
 - [ ] 前端构建成功: `cd frontend && npm run build`
 - [ ] 三阶段流程在浏览器中可完整走通
 - [ ] BO 曲线正常显示，科学边界文案正确
@@ -245,6 +257,7 @@ npm run preview
 
 ```bash
 # 后端改用 8010
+cd backend
 python -m uvicorn api:app --reload --port 8010
 
 # 前端同步修改
