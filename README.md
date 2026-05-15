@@ -229,6 +229,47 @@ cd frontend
 # 安装依赖
 npm install
 
+# 开发模式
+npm run dev
+
+# 构建生产版本
+npm run build
+```
+
+### E2E 端到端测试
+
+使用 Playwright 进行 E2E 测试：
+
+```bash
+cd frontend
+
+# 运行所有 E2E 测试 (Chromium)
+npm run test:e2e:chromium
+
+# 运行测试并打开 UI 界面
+npm run test:e2e:ui
+
+# 调试模式运行测试
+npm run test:e2e:debug
+
+# 查看测试报告
+npm run test:e2e:report
+```
+
+**测试文件结构**：
+- `tests/e2e/app.spec.ts` - 应用基础功能和 API 测试
+- `tests/e2e/chat-flow.spec.ts` - 聊天流程测试
+- `tests/pages/AppPage.ts` - Page Object Model
+
+**测试覆盖范围**：
+- 应用加载和 UI 元素显示
+- 聊天消息发送和响应
+- 快捷操作按钮
+- 后端 API 健康检查
+- 任务列表 API
+- 视频录制和截图（失败时自动保存）
+npm install
+
 # 开发模式 (热重载)
 VITE_API_BASE_URL=http://localhost:8000 npm run dev
 
