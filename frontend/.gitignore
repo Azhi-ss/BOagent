@@ -3,3 +3,8 @@ dist/
 .env
 .env.local
 .env.*.local
+
+# Playwright
+playwright-report/
+test-results/
+playwright/.cache/
