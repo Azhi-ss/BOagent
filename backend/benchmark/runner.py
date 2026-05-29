@@ -71,7 +71,14 @@ class BenchmarkRunner:
         if pvk_root and str(pvk_root) not in sys.path:
             sys.path.insert(0, str(pvk_root))
 
-        from pvk_bo.pvk_bo import PVKBO
+        try:
+            from pvk_bo.pvk_bo import PVKBO
+        except ImportError as exc:
+            raise RuntimeError(
+                "Cannot import PVKBO from PVK-LLM. Ensure PVK-LLM is installed "
+                f"and accessible at {pvk_root or 'the configured path'}. "
+                f"Import error: {exc}"
+            ) from exc
 
         top_pct = 0.25 if self.sm_mode == "generative" else None
 

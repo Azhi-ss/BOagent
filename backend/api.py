@@ -1223,6 +1223,15 @@ def get_agent_run_artifact(run_id: str, artifact_name: str) -> dict[str, Any]:
 def create_benchmark_run(body: CreateBenchmarkBody) -> dict[str, Any]:
     """Submit a benchmark run. Returns immediately with run metadata;
     execution happens synchronously (for now)."""
+
+    # Validate output_dir: reject path traversal attempts
+    output_path = Path(body.output_dir)
+    if output_path.is_absolute() or ".." in str(output_path):
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail="output_dir must be a relative path without '..' traversal.",
+        )
+
     emit_backend_log(
         "benchmark.request",
         f"收到 benchmark 请求: {body.task_id}",
@@ -1235,7 +1244,7 @@ def create_benchmark_run(body: CreateBenchmarkBody) -> dict[str, Any]:
             "n_initial": body.n_initial,
             "n_trials": body.n_trials,
             "sm_mode": body.sm_mode,
-            "chat_engine": os.environ.get("DEEPSEEK_MODEL", "deepseek-v4-flash"),
+            "chat_engine": os.environ.get("DEEPSEEK_FLASH_MODEL") or os.environ.get("DEEPSEEK_MODEL") or "deepseek-v4-flash",
             "n_candidates": body.n_candidates,
             "n_templates": body.n_templates,
             "n_gens": body.n_gens,
@@ -1292,12 +1301,12 @@ def create_benchmark_run(body: CreateBenchmarkBody) -> dict[str, Any]:
             status_code=status.HTTP_400_BAD_REQUEST,
             detail=str(exc),
         ) from None
-    except Exception as exc:
+    except Exception:
         emit_backend_log(
             "benchmark.error",
-            f"Benchmark 失败: {exc}",
+            "Benchmark 失败: 内部错误",
         )
         raise HTTPException(
             status_code=status.HTTP_503_SERVICE_UNAVAILABLE,
-            detail=f"Benchmark run failed: {exc}",
+            detail="Benchmark run failed due to an internal error. Check backend logs for details.",
         ) from None
