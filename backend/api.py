@@ -25,6 +25,9 @@ from chat_agent import (
     route_explicit_user_action,
 )
 from pvk_llm_bo_runtime import RealPvkBoUnavailableError
+from pathlib import Path
+import os
+from benchmark.runner import BenchmarkRunner, run_multi_seed
 
 try:
     from pvk_mvp import (
@@ -346,6 +349,21 @@ class AgentChatBody(BaseModel):
     message: str = Field(..., min_length=1)
     language: str = Field(default="zh", pattern="^(zh|en)$")
     history: list[dict[str, Any]] = Field(default_factory=list)
+
+
+class CreateBenchmarkBody(BaseModel):
+    task_id: str = Field(default="band_alignment", pattern="^(band_alignment|defects_doping)$")
+    n_initial: int = Field(default=5, ge=1, le=50)
+    n_trials: int = Field(default=20, ge=1, le=200)
+    seed: int = Field(default=42, ge=0)
+    seeds: list[int] | None = None
+    sm_mode: str = Field(default="discriminative", pattern="^(discriminative|generative)$")
+    n_candidates: int = Field(default=10, ge=1, le=50)
+    n_templates: int = Field(default=2, ge=1, le=10)
+    n_gens: int = Field(default=5, ge=1, le=20)
+    alpha: float = Field(default=0.1, ge=-1.0, le=1.0)
+    top_k: int = Field(default=20, ge=1, le=100)
+    output_dir: str = Field(default="results")
 
 
 def success(data: Any) -> dict[str, Any]:
@@ -1196,3 +1214,90 @@ def get_agent_run_artifact(run_id: str, artifact_name: str) -> dict[str, Any]:
             detail=f"Artifact '{artifact_name}' for run '{run_id}' was not found.",
         )
     return success(artifact)
+
+
+@app.post(
+    "/api/v1/benchmark",
+    status_code=status.HTTP_202_ACCEPTED,
+)
+def create_benchmark_run(body: CreateBenchmarkBody) -> dict[str, Any]:
+    """Submit a benchmark run. Returns immediately with run metadata;
+    execution happens synchronously (for now)."""
+    emit_backend_log(
+        "benchmark.request",
+        f"收到 benchmark 请求: {body.task_id}",
+        detail={"task_id": body.task_id, "seed": body.seed, "seeds": body.seeds},
+    )
+
+    try:
+        common_kwargs = {
+            "task_id": body.task_id,
+            "n_initial": body.n_initial,
+            "n_trials": body.n_trials,
+            "sm_mode": body.sm_mode,
+            "chat_engine": os.environ.get("DEEPSEEK_MODEL", "deepseek-v4-flash"),
+            "n_candidates": body.n_candidates,
+            "n_templates": body.n_templates,
+            "n_gens": body.n_gens,
+            "alpha": body.alpha,
+            "top_k": body.top_k,
+            "output_dir": body.output_dir,
+        }
+
+        if body.seeds:
+            results = run_multi_seed(seeds=body.seeds, **common_kwargs)
+        else:
+            runner = BenchmarkRunner(seed=body.seed, **common_kwargs)
+            result = runner.run()
+            runner.save_results(result)
+            results = [result]
+
+        emit_backend_log(
+            "benchmark.complete",
+            f"Benchmark 完成: {body.task_id}",
+            detail={
+                "task_id": body.task_id,
+                "runs": len(results),
+                "best_scores": [r["best_score"] for r in results],
+            },
+        )
+
+        return success(
+            {
+                "task_id": body.task_id,
+                "runs": len(results),
+                "results": [
+                    {
+                        "seed": r["seed"],
+                        "best_score": r["best_score"],
+                        "best_generalization_score": r["best_generalization_score"],
+                    }
+                    for r in results
+                ],
+                "output_dir": str(
+                    Path(body.output_dir)
+                    / f"results_{body.sm_mode}"
+                    / body.task_id
+                ),
+            }
+        )
+
+    except FileNotFoundError as exc:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail=f"Data file not found: {exc}",
+        ) from None
+    except ValueError as exc:
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail=str(exc),
+        ) from None
+    except Exception as exc:
+        emit_backend_log(
+            "benchmark.error",
+            f"Benchmark 失败: {exc}",
+        )
+        raise HTTPException(
+            status_code=status.HTTP_503_SERVICE_UNAVAILABLE,
+            detail=f"Benchmark run failed: {exc}",
+        ) from None
