@@ -13,3 +13,4 @@ openpyxl
 aiohttp
 tiktoken
 socksio
+scikit-learn
