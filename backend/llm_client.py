@@ -7,8 +7,6 @@ from typing import Any
 
 import requests
 
-from pvk_demo import DataSummary, Recommendation
-
 
 DEFAULT_ENV_PATH = Path(__file__).resolve().parent / ".env"
 PROTECTED_CHAT_PAYLOAD_KEYS = {"model", "messages", "max_tokens", "stream"}
@@ -121,50 +119,6 @@ class DeepSeekClient:
             content=content.strip(),
             usage=payload.get("usage", {}),
         )
-
-
-def generate_llm_notes(
-    task_text: str,
-    summary: DataSummary,
-    recommendations: list[Recommendation],
-    language: str = "en",
-    client: DeepSeekClient | None = None,
-) -> LlmCallResult:
-    client = client or DeepSeekClient.from_env()
-    top_recommendations = [
-        {
-            "experiment_id": item.experiment_id,
-            "type": item.recommendation_type,
-            "combination": item.passivator_combination,
-            "risk": item.risk_level,
-            "boundary": item.data_boundary,
-        }
-        for item in recommendations[:3]
-    ]
-    language_instruction = "Use Simplified Chinese." if language == "zh" else "Use English."
-    messages = [
-        {
-            "role": "system",
-            "content": (
-                "You are the Domain/Planner/Reporter note generator for a demo-only "
-                "perovskite optimization agent. Never claim experimental validation. "
-                "Distinguish literature evidence, mock/demo assumptions, and hypotheses."
-            ),
-        },
-        {
-            "role": "user",
-            "content": (
-                f"{language_instruction}\n"
-                f"Task: {task_text}\n"
-                f"Best PCE: {summary.best_pce}\n"
-                f"Total records: {summary.total_records}\n"
-                f"Data health notes: {summary.data_health_notes}\n"
-                f"Recommendations: {top_recommendations}\n"
-                "Return 3 concise bullets: domain interpretation, planning note, guardrail note."
-            ),
-        },
-    ]
-    return client.chat(messages, max_tokens=320)
 
 
 def load_env_file(path: Path = DEFAULT_ENV_PATH) -> None:

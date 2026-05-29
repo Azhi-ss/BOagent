@@ -71,6 +71,9 @@ class BenchmarkRunner:
         if pvk_root and str(pvk_root) not in sys.path:
             sys.path.insert(0, str(pvk_root))
 
+        from pvk_llm_compat import install_all_compat_patches
+        install_all_compat_patches()
+
         try:
             from pvk_bo.pvk_bo import PVKBO
         except ImportError as exc:
