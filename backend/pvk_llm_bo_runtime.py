@@ -127,11 +127,13 @@ class RealPvkBoRuntime:
         data_root: str | Path = DEFAULT_REAL_DATA_ROOT,
         env_path: str | Path = DEFAULT_ENV_PATH,
         pvk_bo_class: type | None = None,
+        acq_class: type | None = None,
     ) -> None:
         self.pvk_reference_root = Path(pvk_reference_root)
         self.data_root = _normalize_data_root(Path(data_root))
         self.env_path = Path(env_path)
         self._pvk_bo_class = pvk_bo_class
+        self._acq_class = acq_class
         self._sessions: dict[str, dict[str, Any]] = {}
 
     def list_tasks(self) -> list[dict[str, Any]]:
@@ -208,6 +210,14 @@ class RealPvkBoRuntime:
             chat_engine=chat_engine,
             top_pct=request.top_pct,
         )
+        if self._acq_class is not None:
+            pvkbo.acq_func = self._acq_class(
+                task_context=task_context,
+                n_candidates=request.n_candidates,
+                n_templates=request.n_templates,
+                lower_is_better=task_context["lower_is_better"],
+                chat_engine=chat_engine,
+            )
 
         init_cost, init_time = pvkbo._initialize()
         session_id = f"pvk_real_{uuid4().hex[:12]}"
