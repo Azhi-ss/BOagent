@@ -6,6 +6,12 @@ import os
 from datetime import UTC, datetime
 from pathlib import Path
 from typing import Any
+import sys
+
+# Ensure backend directory is in sys.path for local module imports
+backend_path = Path(__file__).parent.absolute()
+if str(backend_path) not in sys.path:
+    sys.path.insert(0, str(backend_path))
 
 from dotenv import load_dotenv
 from fastapi import FastAPI, HTTPException, status
@@ -483,10 +489,13 @@ async def operational_suggest(body: OperationalSuggestBody) -> dict[str, Any]:
         for obs in body.history:
             optimizer.observe(obs.config, obs.score)
             
-        # 3. Get suggestion (hiding all complexity)
+        # 3. Get suggestion
         result = optimizer.suggest(
             top_k=body.llm_config.top_k,
+            n_candidates=body.llm_config.n_candidates,
+            acquisition=body.llm_config.acquisition,
             kappa=body.llm_config.kappa,
+            xi=body.llm_config.xi,
             use_llm=True
         )
 

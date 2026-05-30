@@ -20,6 +20,7 @@ class LlmCallResult:
     content: str
     usage: dict[str, Any]
     error: str | None = None
+    logprobs: dict[str, Any] | None = None
 
 
 class DeepSeekClient:
@@ -75,6 +76,7 @@ class DeepSeekClient:
             "model": self.model,
             "messages": messages,
             "max_tokens": max_tokens,
+            "temperature": 0.0,
             "stream": False,
         }
         if extra_body:
@@ -111,13 +113,16 @@ class DeepSeekClient:
             )
 
         payload = response.json()
-        content = payload.get("choices", [{}])[0].get("message", {}).get("content", "")
+        choice = payload.get("choices", [{}])[0]
+        content = choice.get("message", {}).get("content", "")
+        logprobs = choice.get("logprobs", None)
         return LlmCallResult(
             status="success",
             provider="deepseek",
             model=self.model,
             content=content.strip(),
             usage=payload.get("usage", {}),
+            logprobs=logprobs,
         )
 
 
