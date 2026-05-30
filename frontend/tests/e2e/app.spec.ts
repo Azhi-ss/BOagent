@@ -9,19 +9,20 @@ test.describe("PVK BO Agent Application", () => {
     await appPage.goto()
   })
 
-  test("should load application with chat interface", async () => {
+  test("should load application with main title", async () => {
     await appPage.assertPageLoaded()
     await appPage.takeScreenshot("app-loaded")
   })
 
-  test("should display quick action button", async () => {
-    await expect(appPage.quickActionButton).toBeVisible()
-    await appPage.takeScreenshot("quick-action-visible")
+  test("should display mode switcher buttons", async () => {
+    await expect(appPage.modeEvaluationButton).toBeVisible()
+    await expect(appPage.modeOperationalButton).toBeVisible()
+    await appPage.takeScreenshot("mode-switcher-visible")
   })
 
-  test("should have chat input and send button", async () => {
-    await expect(appPage.chatInput).toBeVisible()
-    await expect(appPage.sendButton).toBeVisible()
+  test("should have dataset selector and run button", async () => {
+    await expect(appPage.taskSelector).toBeVisible()
+    await expect(appPage.runButton).toBeVisible()
   })
 })
 

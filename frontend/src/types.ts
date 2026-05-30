@@ -70,6 +70,7 @@ export interface LLMBOConfig {
   n_templates: number;
   top_k: number;
   alpha: number;
+  chat_engine: string;
 }
 
 export interface CompareRequest {
