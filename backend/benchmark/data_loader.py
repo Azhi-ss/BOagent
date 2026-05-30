@@ -63,8 +63,8 @@ def _split_data(
         if col not in df.columns:
             raise ValueError(f"Column '{col}' not found in dataset. Available: {df.columns.tolist()}")
 
-    np.random.seed(seed)
-    idx = np.random.permutation(len(df))
+    rng = np.random.RandomState(seed)
+    idx = rng.permutation(len(df))
     train_idx = idx[:n_train]
     test_idx = idx[n_train:]
 
@@ -82,44 +82,6 @@ def _split_data(
     }
 
 
-def build_task_context(
-    task_id: str,
-    data: dict[str, Any],
-) -> dict[str, Any]:
-    """Build task_context dict from loaded data, matching PVK-LLM format.
-
-    Args:
-        task_id: "band_alignment" or "defects_doping"
-        data: dict from load_*_data()
-    """
-    feature_cols = data["feature_cols"]
-    df = data["df"]
-
-    hyperparameter_constraints: dict[str, list[Any]] = {}
-    for col in feature_cols:
-        col_data = pd.to_numeric(df[col], errors="coerce").dropna()
-        hyperparameter_constraints[col] = [
-            "float",
-            "linear",
-            [float(col_data.min()), float(col_data.max())],
-        ]
-
-    return {
-        "model": task_id,
-        "task": "regression",
-        "metric": "neg_mean_squared_error",
-        "num_classes": 1,
-        "n_classes": 1,
-        "lower_is_better": False,
-        "num_samples": int(len(df)),
-        "tot_feats": len(feature_cols),
-        "cat_feats": 0,
-        "num_feats": len(feature_cols),
-        "feature_cols": feature_cols,
-        "target_col": data["target_col"],
-        "hyperparameter_constraints": hyperparameter_constraints,
-        "df": df,
-    }
 
 
 DATA_LOADERS = {

@@ -2,6 +2,8 @@ from __future__ import annotations
 
 import os
 import sys
+import concurrent.futures
+import queue
 from pathlib import Path
 from typing import Any, Iterator
 
@@ -49,24 +51,30 @@ class ComparisonRunner:
         """Construct the GP+LLM acquisition for the LLMBO engine."""
         try:
             from benchmark.data_loader import build_task_context
-            from gp_llm_acq import GPLLM_ACQ
+            from optimization.optimizer import BayesianOptimizer
+            from optimization.space import DiscreteSearchSpace
+            from optimization.knowledge import KnowledgeEngine
 
-            task_context = build_task_context(self.task_id, data)
             chat_engine = (
                 self.llmbo_cfg.get("chat_engine")
                 or os.environ.get("DEEPSEEK_FLASH_MODEL")
                 or os.environ.get("DEEPSEEK_MODEL")
                 or "deepseek-v4-flash"
             )
-            return GPLLM_ACQ(
-                task_context=task_context,
-                n_candidates=int(self.llmbo_cfg.get("n_candidates", 5)),
-                n_templates=int(self.llmbo_cfg.get("n_templates", 2)),
-                lower_is_better=False,
-                chat_engine=chat_engine,
-                top_k=int(self.llmbo_cfg.get("top_k", 20)),
-                alpha=float(self.llmbo_cfg.get("alpha", 0.1)),
+            knowledge = KnowledgeEngine(chat_engine=chat_engine)
+            space = DiscreteSearchSpace(data["df"], data["feature_cols"])
+            optimizer = BayesianOptimizer(
+                space=space,
+                target_name=data["target_col"],
+                knowledge_engine=knowledge,
+                n_restarts_optimizer=10
             )
+            # Tag the optimizer with properties expected by BOStepEngine's bridging logic
+            optimizer.chat_engine = chat_engine
+            optimizer.n_candidates = int(self.llmbo_cfg.get("n_candidates", 5))
+            optimizer.alpha = float(self.llmbo_cfg.get("alpha", 0.1))
+            
+            return optimizer
         except Exception:
             # LLM acquisition is best-effort; LLMBO falls back to GP argmax.
             return None
@@ -77,6 +85,13 @@ class ComparisonRunner:
         """Run both engines for one seed, yielding progress events and finally
         a ``_seed_done`` event carrying the per-iteration best/gen trajectories.
         """
+        yield {
+            "type": "seed_start",
+            "seed": seed,
+            "seed_index": seed_index,
+            "total_seeds": total_seeds,
+        }
+        
         loader = DATA_LOADERS[self.task_id]
         data = loader(
             file_path=self.data_path, n_train=self.n_initial, seed=seed
@@ -92,16 +107,18 @@ class ComparisonRunner:
             xi=float(self.traditional_cfg.get("xi", 0.01)),
             kappa=float(self.traditional_cfg.get("kappa", 2.576)),
         )
+        
         llmbo = BOStepEngine(
             method="llmbo",
             data=data,
             n_initial=self.n_initial,
             n_trials=self.n_trials,
             seed=seed,
-            acquisition=self.llmbo_cfg.get("acquisition", "ei"),
+            acquisition=self.llmbo_cfg.get("acquisition", "ucb"),
             xi=float(self.llmbo_cfg.get("xi", 0.01)),
             kappa=float(self.llmbo_cfg.get("kappa", 2.576)),
-            llm_acq=self._build_llm_acq(data),
+            chat_engine=self.llmbo_cfg.get("chat_engine") or os.environ.get("DEEPSEEK_FLASH_MODEL") or "deepseek-v4-flash",
+            n_candidates=int(self.llmbo_cfg.get("n_candidates", 5)),
         )
 
         # Trajectories indexed by iteration (0 = post-init baseline).
@@ -140,11 +157,22 @@ class ComparisonRunner:
                 s = llmbo.step()
                 llm_best.append(s["best_score"])
                 llm_gen.append(s["generalization_score"])
+            # Emit a per-iteration snapshot so events() can push incremental aggregates.
+            # This makes the chart update every ~6s instead of waiting ~60s for a full seed.
+            yield {
+                "type": "_iter_snapshot",
+                "seed_index": seed_index,
+                "trad_best": list(trad_best),
+                "trad_gen": list(trad_gen),
+                "llm_best": list(llm_best),
+                "llm_gen": list(llm_gen),
+            }
             if traditional.completed and llmbo.completed:
                 break
 
         yield {
             "type": "_seed_done",
+            "seed_index": seed_index,
             "trad_best": trad_best,
             "trad_gen": trad_gen,
             "llm_best": llm_best,
@@ -182,8 +210,6 @@ class ComparisonRunner:
 
     def events(self) -> Iterator[dict[str, Any]]:
         """Yield comparison events: meta, per-seed progress + aggregate, done."""
-        _ensure_pvk_path()
-
         total = len(self.seeds)
         yield {
             "type": "meta",
@@ -194,16 +220,31 @@ class ComparisonRunner:
             "total_seeds": total,
         }
 
+        # completed_trajectories: full seed results; partial_trajectories: per-seed
+        # latest snapshot used for incremental aggregation between seed completions.
         trajectories: list[dict[str, list[float]]] = []
+        partial_trajectories: dict[int, dict[str, list[float]]] = {}
+        event_queue = queue.Queue()
+
+        def run_seed_task(seed: int, idx: int):
+            try:
+                for ev in self._run_one_seed(seed, idx, total):
+                    event_queue.put(ev)
+            finally:
+                event_queue.put({"type": "_done_signal"})
+
+        # Start all seeds in parallel
+        executor = concurrent.futures.ThreadPoolExecutor(max_workers=total)
         for idx, seed in enumerate(self.seeds, start=1):
-            yield {
-                "type": "seed_start",
-                "seed": seed,
-                "seed_index": idx,
-                "total_seeds": total,
-            }
-            for ev in self._run_one_seed(seed, idx, total):
-                if ev["type"] == "_seed_done":
+            executor.submit(run_seed_task, seed, idx)
+
+        completed_seeds_count = 0
+        while completed_seeds_count < total:
+            try:
+                ev = event_queue.get(timeout=1.0)
+                if ev["type"] == "_done_signal":
+                    completed_seeds_count += 1
+                elif ev["type"] == "_seed_done":
                     trajectories.append(
                         {
                             "trad_best": ev["trad_best"],
@@ -212,15 +253,37 @@ class ComparisonRunner:
                             "llm_gen": ev["llm_gen"],
                         }
                     )
+                    # Remove this seed's partial entry now that it's finalised.
+                    partial_trajectories.pop(ev.get("seed_index"), None)
+                    yield {
+                        "type": "aggregate",
+                        "completed_seeds": len(trajectories),
+                        "total_seeds": total,
+                        "points": self._aggregate(trajectories),
+                    }
+                elif ev["type"] == "_iter_snapshot":
+                    # Update this seed's live partial trajectory and re-aggregate
+                    # so the frontend chart updates after every iteration.
+                    partial_trajectories[ev["seed_index"]] = {
+                        "trad_best": ev["trad_best"],
+                        "trad_gen": ev["trad_gen"],
+                        "llm_best": ev["llm_best"],
+                        "llm_gen": ev["llm_gen"],
+                    }
+                    all_traj = list(trajectories) + list(partial_trajectories.values())
+                    if all_traj:
+                        yield {
+                            "type": "aggregate",
+                            "completed_seeds": len(trajectories),
+                            "total_seeds": total,
+                            "points": self._aggregate(all_traj),
+                        }
                 else:
                     yield ev
+            except queue.Empty:
+                continue
 
-            yield {
-                "type": "aggregate",
-                "completed_seeds": idx,
-                "total_seeds": total,
-                "points": self._aggregate(trajectories),
-            }
+        executor.shutdown()
 
         # Final summary: mean ± std of final best_score across seeds.
         length = self.n_trials + 1
@@ -242,15 +305,3 @@ class ComparisonRunner:
         }
 
 
-def _ensure_pvk_path() -> None:
-    env_root = os.environ.get("PVK_LLM_ROOT")
-    candidates = []
-    if env_root:
-        candidates.append(Path(env_root))
-    candidates.append(
-        Path(__file__).resolve().parent.parent.parent.parent / "PVK-LLM"
-    )
-    for root in candidates:
-        if root.exists() and str(root) not in sys.path:
-            sys.path.insert(0, str(root))
-            break

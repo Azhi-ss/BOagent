@@ -10,8 +10,10 @@ from typing import Any
 import numpy as np
 import pandas as pd
 
-from benchmark.data_loader import DATA_LOADERS, build_task_context
-from gp_llm_acq import GPLLM_ACQ
+from benchmark.data_loader import DATA_LOADERS
+from optimization.optimizer import BayesianOptimizer
+from optimization.space import DiscreteSearchSpace
+from optimization.knowledge import KnowledgeEngine
 
 
 class BenchmarkRunner:
@@ -63,7 +65,6 @@ class BenchmarkRunner:
         data = loader(
             file_path=self.data_path, n_train=self.n_initial, seed=self.seed
         )
-        task_context = build_task_context(self.task_id, data)
 
         # 2. Initialize PVKBO components
         # Add PVK-LLM to path if needed
@@ -130,7 +131,47 @@ class BenchmarkRunner:
                 "generalization_score": gen_score,
             }
 
-        # Instantiate PVKBO with GPLLM_ACQ
+        # Instantiate unified BayesianOptimizer
+        # This replaces the legacy GPLLM_ACQ
+        knowledge = KnowledgeEngine(chat_engine=self.chat_engine)
+        space = DiscreteSearchSpace(data["df"], data["feature_cols"])
+        optimizer = BayesianOptimizer(
+            space=space,
+            target_name=data["target_col"],
+            knowledge_engine=knowledge,
+            n_restarts_optimizer=10
+        )
+        
+        # Configure optimizer parameters for this run
+        optimizer.n_candidates = self.n_candidates
+        optimizer.alpha = self.alpha # For compatibility if needed
+        optimizer.acquisition = "ucb"
+        optimizer.xi = 0.01
+        optimizer.kappa = self.alpha
+
+        # Legacy PVKBO orchestration (PVK-LLM core)
+        hyperparameter_constraints = {}
+        for col in data["feature_cols"]:
+            min_val = float(np.min(data["df"][col]))
+            max_val = float(np.max(data["df"][col]))
+            hyperparameter_constraints[col] = ["float", "linear", [min_val, max_val]]
+
+        task_context = {
+            "model": self.task_id,
+            "lower_is_better": False,
+            "task": "regression",
+            "metric": "neg_mean_squared_error",
+            "tot_feats": len(data["feature_cols"]),
+            "cat_feats": 0,
+            "num_feats": len(data["feature_cols"]),
+            "n_classes": 1,
+            "num_samples": len(data["train_x"]),
+            "feature_cols": data["feature_cols"],
+            "hyperparameter_constraints": hyperparameter_constraints,
+            "df": data["df"],
+            "target_col": data["target_col"]
+        }
+
         pvkbo = PVKBO(
             task_context=task_context,
             sm_mode=self.sm_mode,
@@ -146,16 +187,8 @@ class BenchmarkRunner:
             top_pct=top_pct,
         )
 
-        # Replace acq_func with GPLLM_ACQ
-        pvkbo.acq_func = GPLLM_ACQ(
-            task_context=task_context,
-            n_candidates=self.n_candidates,
-            n_templates=self.n_templates,
-            lower_is_better=task_context["lower_is_better"],
-            chat_engine=self.chat_engine,
-            top_k=self.top_k,
-            alpha=self.alpha,
-        )
+        # Replace internal acquisition function with our unified optimizer
+        pvkbo.acq_func = optimizer
 
         # 3. Run optimization
         configs, fvals = pvkbo.optimize(test_metric="generalization_score")

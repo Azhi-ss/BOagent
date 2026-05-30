@@ -71,6 +71,7 @@ class TestBenchmarkRunner:
         path = _create_test_excel()
         tmp_dir = Path(tempfile.mkdtemp())
 
+        import sys
         try:
             # Mock the PVKBO import
             monkeypatch.setattr(
@@ -79,19 +80,20 @@ class TestBenchmarkRunner:
             )
 
             with patch(
-                "benchmark.runner.GPLLM_ACQ",
+                "benchmark.runner.BayesianOptimizer",
                 autospec=True,
-            ) as mock_acq_class:
-                mock_acq = MagicMock()
-                mock_acq.get_candidate_points.return_value = (
-                    pd.DataFrame([{col: 4.0 for col in BAND_ALIGNMENT_FEATURES}]),
-                    0.0,
-                    0.1,
+            ) as mock_opt_class:
+                mock_opt = MagicMock()
+                # Mock suggest result
+                from optimization.knowledge import SuggestionResult
+                mock_opt.suggest.return_value = SuggestionResult(
+                    suggestions=[{col: 4.0 for col in BAND_ALIGNMENT_FEATURES}],
+                    analysis="mock",
+                    prompt="mock"
                 )
-                mock_acq_class.return_value = mock_acq
+                mock_opt_class.return_value = mock_opt
 
                 # Inject mock PVKBO module
-                import sys
                 sys.modules["pvk_bo"] = MagicMock()
                 sys.modules["pvk_bo.pvk_bo"] = MagicMock()
                 sys.modules["pvk_bo.pvk_bo"].PVKBO = MockPVKBO
@@ -120,7 +122,6 @@ class TestBenchmarkRunner:
             # Clean up mock modules
             for mod in ["pvk_bo.pvk_bo", "pvk_bo"]:
                 sys.modules.pop(mod, None)
-
     def test_save_results_creates_output_files(self):
         path = _create_test_excel()
         tmp_dir = Path(tempfile.mkdtemp())

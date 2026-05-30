@@ -12,7 +12,6 @@ from benchmark.data_loader import (
     DEFECTS_DOPING_FEATURES,
     DATA_LOADERS,
     TARGET_COL,
-    build_task_context,
 )
 
 
@@ -59,24 +58,6 @@ class TestBandAlignmentDataLoader:
         finally:
             path.unlink(missing_ok=True)
 
-    def test_build_task_context_for_band_alignment(self):
-        path = _create_test_excel(BAND_ALIGNMENT_FEATURES)
-        try:
-            data = DATA_LOADERS["band_alignment"](file_path=path, n_train=10, seed=42)
-            ctx = build_task_context("band_alignment", data)
-            assert ctx["model"] == "band_alignment"
-            assert ctx["lower_is_better"] is False
-            assert ctx["feature_cols"] == BAND_ALIGNMENT_FEATURES
-            assert ctx["target_col"] == "eta"
-            assert "hyperparameter_constraints" in ctx
-            for col in BAND_ALIGNMENT_FEATURES:
-                assert col in ctx["hyperparameter_constraints"]
-                constraint = ctx["hyperparameter_constraints"][col]
-                assert constraint[0] == "float"
-                assert constraint[1] == "linear"
-                assert len(constraint[2]) == 2
-        finally:
-            path.unlink(missing_ok=True)
 
 
 class TestDefectsDopingDataLoader:

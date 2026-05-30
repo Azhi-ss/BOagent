@@ -24,7 +24,8 @@ class BOStepEngine:
         acquisition: AcquisitionType = "ei",
         xi: float = 0.01,
         kappa: float = 2.576,
-        llm_acq: Any | None = None,
+        chat_engine: str | None = None,
+        n_candidates: int = 1,
     ) -> None:
         self.method = method
         self.data = data
@@ -34,6 +35,7 @@ class BOStepEngine:
         self.acquisition = acquisition
         self.xi = xi
         self.kappa = kappa
+        self.n_candidates_per_step = n_candidates
         
         self.feature_cols = list(data["feature_cols"])
         self.target_col = str(data["target_col"])
@@ -45,13 +47,13 @@ class BOStepEngine:
 
         # Initialize deep modules
         space = DiscreteSearchSpace(self.df, self.feature_cols)
-        # Reuse prompt building from injected llm_acq if provided (transitional)
+        
         knowledge = None
-        if llm_acq and hasattr(llm_acq, "chat_engine"):
-            knowledge = KnowledgeEngine(chat_engine=llm_acq.chat_engine)
+        if self.method == "llmbo" and chat_engine:
+            knowledge = KnowledgeEngine(chat_engine=chat_engine)
 
-        # LLM warm-start initializer (LLMBO only); reuse the same knowledge engine.
-        self._llm_initializer = knowledge if self.method == "llmbo" else None
+        # LLM warm-start initializer (LLMBO only)
+        self._llm_initializer = knowledge
 
         self.optimizer = BayesianOptimizer(
             space=space,
@@ -91,12 +93,17 @@ class BOStepEngine:
         ]
 
     def _llm_select_initial_configs(self) -> list[dict[str, float]]:
-        """Sample a 50-point pool from the full dataset, let the LLM choose."""
+        """Sample a pool from train_x (same split as Traditional BO), let the LLM choose.
+
+        Using train_x (not the full df) ensures the pool contains feasible, non-zero-eta
+        candidates, preventing the GP from fitting on constant y=0 which breaks EI/UCB.
+        """
         rng = np.random.RandomState(self.seed)
-        n_pool = min(50, len(self.df))
-        pool_idx = rng.choice(len(self.df), n_pool, replace=False)
+        train_x = self.data["train_x"]
+        n_pool = min(50, len(train_x))
+        pool_idx = rng.choice(len(train_x), n_pool, replace=False)
         candidate_points = [
-            {col: float(self.df.iloc[idx][col]) for col in self.feature_cols}
+            {col: float(train_x[idx, j]) for j, col in enumerate(self.feature_cols)}
             for idx in pool_idx
         ]
         n = min(self.n_initial, len(candidate_points))
@@ -124,7 +131,14 @@ class BOStepEngine:
         # Leverage the deep optimizer
         use_llm = (self.method == "llmbo")
         # For benchmark consistency with old code, top_k might be different
-        res = self.optimizer.suggest(top_k=20, kappa=self.kappa, use_llm=use_llm)
+        res = self.optimizer.suggest(
+            top_k=20,
+            n_candidates=self.n_candidates_per_step,
+            acquisition=self.acquisition,
+            kappa=self.kappa,
+            xi=self.xi,
+            use_llm=use_llm,
+        )
 
         if not res.suggestions:
             # Pool exhausted — nothing left to evaluate.
