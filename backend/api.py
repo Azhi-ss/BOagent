@@ -12,6 +12,7 @@ from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import HTMLResponse, JSONResponse, StreamingResponse
 from pydantic import BaseModel, Field
 
+from benchmark.comparison import ComparisonRunner
 from benchmark.data_loader import DATA_LOADERS, DEFAULT_DATA_ROOT
 from benchmark.runner import BenchmarkRunner, run_multi_seed
 
@@ -106,6 +107,32 @@ class CreateBenchmarkBody(BaseModel):
     alpha: float = Field(default=0.1, ge=-1.0, le=1.0)
     top_k: int = Field(default=20, ge=1, le=100)
     output_dir: str = Field(default="results")
+
+
+class TraditionalConfig(BaseModel):
+    acquisition: str = Field(default="ei", pattern="^(ei|ucb|pi)$")
+    xi: float = Field(default=0.01, ge=0.0, le=1.0)
+    kappa: float = Field(default=2.576, ge=0.0, le=10.0)
+
+
+class LLMBOConfig(BaseModel):
+    acquisition: str = Field(default="ei", pattern="^(ei|ucb|pi)$")
+    xi: float = Field(default=0.01, ge=0.0, le=1.0)
+    kappa: float = Field(default=2.576, ge=0.0, le=10.0)
+    n_candidates: int = Field(default=5, ge=1, le=50)
+    n_templates: int = Field(default=2, ge=1, le=10)
+    top_k: int = Field(default=20, ge=1, le=100)
+    alpha: float = Field(default=0.1, ge=-1.0, le=1.0)
+    chat_engine: str | None = None
+
+
+class CompareBenchmarkBody(BaseModel):
+    task_id: str = Field(default="band_alignment", pattern="^(band_alignment|defects_doping)$")
+    n_initial: int = Field(default=5, ge=1, le=50)
+    n_trials: int = Field(default=20, ge=1, le=200)
+    seed: int = Field(default=42, ge=0)
+    traditional: TraditionalConfig = Field(default_factory=TraditionalConfig)
+    llmbo: LLMBOConfig = Field(default_factory=LLMBOConfig)
 
 
 # ---------------------------------------------------------------------------
@@ -336,3 +363,60 @@ def create_benchmark_run(body: CreateBenchmarkBody) -> dict[str, Any]:
             status_code=status.HTTP_503_SERVICE_UNAVAILABLE,
             detail="Benchmark run failed due to an internal error. Check backend logs for details.",
         ) from None
+
+
+@app.post("/api/v1/benchmark/compare/stream")
+async def compare_benchmark_stream(body: CompareBenchmarkBody) -> StreamingResponse:
+    """Run traditional BO and LLMBO over a shared train/test split, streaming
+    per-iteration convergence events as Server-Sent Events.
+
+    Each SSE ``data:`` line is one JSON event:
+      - {"type": "meta", ...}        once at start
+      - {"type": "iteration", ...}   per engine per step
+      - {"type": "done", ...}        once at end
+      - {"type": "error", ...}       on failure
+    """
+    emit_backend_log(
+        "compare.request",
+        f"Comparison request: {body.task_id}",
+        detail={"task_id": body.task_id, "seed": body.seed, "n_trials": body.n_trials},
+    )
+
+    runner = ComparisonRunner(
+        task_id=body.task_id,
+        n_initial=body.n_initial,
+        n_trials=body.n_trials,
+        seed=body.seed,
+        traditional=body.traditional.model_dump(),
+        llmbo=body.llmbo.model_dump(),
+    )
+
+    async def event_stream():
+        loop = asyncio.get_event_loop()
+        queue: asyncio.Queue = asyncio.Queue()
+        sentinel = object()
+
+        def produce():
+            try:
+                for event in runner.events():
+                    loop.call_soon_threadsafe(queue.put_nowait, event)
+            except Exception as exc:  # surface engine errors to the client
+                loop.call_soon_threadsafe(
+                    queue.put_nowait, {"type": "error", "message": str(exc)}
+                )
+            finally:
+                loop.call_soon_threadsafe(queue.put_nowait, sentinel)
+
+        task = loop.run_in_executor(None, produce)
+        try:
+            while True:
+                event = await queue.get()
+                if event is sentinel:
+                    break
+                yield f"data: {json.dumps(event, ensure_ascii=False)}\n\n"
+        finally:
+            await task
+
+        emit_backend_log("compare.complete", f"Comparison complete: {body.task_id}")
+
+    return StreamingResponse(event_stream(), media_type="text/event-stream")

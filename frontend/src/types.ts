@@ -50,3 +50,78 @@ export interface BenchmarkResponse {
   results: BenchmarkRunResult[];
   output_dir: string;
 }
+
+// --- Comparison (dual-panel real-time) ---
+
+export type AcquisitionType = "ei" | "ucb" | "pi";
+export type Method = "traditional" | "llmbo";
+
+export interface TraditionalConfig {
+  acquisition: AcquisitionType;
+  xi: number;
+  kappa: number;
+}
+
+export interface LLMBOConfig {
+  acquisition: AcquisitionType;
+  xi: number;
+  kappa: number;
+  n_candidates: number;
+  n_templates: number;
+  top_k: number;
+  alpha: number;
+}
+
+export interface CompareRequest {
+  task_id: string;
+  n_initial: number;
+  n_trials: number;
+  seed: number;
+  traditional: TraditionalConfig;
+  llmbo: LLMBOConfig;
+}
+
+export interface MetaEvent {
+  type: "meta";
+  task_id: string;
+  n_trials: number;
+  n_initial: number;
+  seed: number;
+  feature_cols: string[];
+  target_col: string;
+}
+
+export interface IterationEvent {
+  type: "iteration";
+  method: Method;
+  iteration: number;
+  best_score: number;
+  generalization_score: number;
+  candidate_score: number | null;
+  best_config: Record<string, number>;
+  completed: boolean;
+}
+
+export interface DoneEvent {
+  type: "done";
+  traditional: Omit<IterationEvent, "type" | "method">;
+  llmbo: Omit<IterationEvent, "type" | "method">;
+}
+
+export interface ErrorEvent {
+  type: "error";
+  message: string;
+}
+
+export type CompareEvent = MetaEvent | IterationEvent | DoneEvent | ErrorEvent;
+
+/** One row of the merged chart series, keyed by iteration. */
+export interface ChartPoint {
+  iteration: number;
+  trad_best?: number;
+  trad_gen?: number;
+  trad_cand?: number | null;
+  llm_best?: number;
+  llm_gen?: number;
+  llm_cand?: number | null;
+}

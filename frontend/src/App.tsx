@@ -1,22 +1,69 @@
-import { useCallback, useEffect, useState } from "react";
-import { createBenchmarkRun, getTasks } from "./lib/api";
-import type { BenchmarkResponse, Task } from "./types";
+import { useCallback, useEffect, useRef, useState } from "react";
+import { getTasks, streamComparison } from "./lib/api";
+import { AcqSelect, Field, NumberField } from "./components/Field";
+import { MetricReadout } from "./components/MetricReadout";
+import { ChartLegend, ConvergenceChart } from "./components/ConvergenceChart";
+import type {
+  ChartPoint,
+  CompareEvent,
+  IterationEvent,
+  LLMBOConfig,
+  Method,
+  Task,
+  TraditionalConfig,
+} from "./types";
+
+const TRAD = "#f2a516";
+const LLM = "#16d69b";
 
 type RunState = "idle" | "running" | "done" | "error";
+
+interface MethodSnapshot {
+  best: number | null;
+  gen: number | null;
+  candidate: number | null;
+  iteration: number;
+  bestConfig: Record<string, number> | null;
+}
+
+const EMPTY_SNAPSHOT: MethodSnapshot = {
+  best: null,
+  gen: null,
+  candidate: null,
+  iteration: 0,
+  bestConfig: null,
+};
 
 function App() {
   const [tasks, setTasks] = useState<Task[]>([]);
   const [taskId, setTaskId] = useState("band_alignment");
-  const [nTrials, setNTrials] = useState(20);
   const [nInitial, setNInitial] = useState(5);
+  const [nTrials, setNTrials] = useState(20);
   const [seed, setSeed] = useState(42);
-  const [seedsText, setSeedsText] = useState("");
-  const [smMode, setSmMode] = useState<"discriminative" | "generative">("discriminative");
-  const [nCandidates, setNCandidates] = useState(10);
-  const [topK, setTopK] = useState(20);
+
+  const [trad, setTrad] = useState<TraditionalConfig>({
+    acquisition: "ei",
+    xi: 0.01,
+    kappa: 2.576,
+  });
+  const [llm, setLlm] = useState<LLMBOConfig>({
+    acquisition: "ucb",
+    xi: 0.01,
+    kappa: 2.576,
+    n_candidates: 5,
+    n_templates: 2,
+    top_k: 20,
+    alpha: 0.1,
+  });
+
   const [runState, setRunState] = useState<RunState>("idle");
-  const [result, setResult] = useState<BenchmarkResponse | null>(null);
   const [error, setError] = useState("");
+  const [targetCol, setTargetCol] = useState("eta");
+  const [chartData, setChartData] = useState<ChartPoint[]>([]);
+  const [tradSnap, setTradSnap] = useState<MethodSnapshot>(EMPTY_SNAPSHOT);
+  const [llmSnap, setLlmSnap] = useState<MethodSnapshot>(EMPTY_SNAPSHOT);
+  const abortRef = useRef<(() => void) | null>(null);
+  const chartRef = useRef<Map<number, ChartPoint>>(new Map());
 
   useEffect(() => {
     getTasks()
@@ -25,150 +72,364 @@ function App() {
         if (list.length > 0) setTaskId(list[0].task_id);
       })
       .catch(() => {});
+    return () => abortRef.current?.();
   }, []);
 
-  const handleRun = useCallback(async () => {
-    setRunState("running");
-    setError("");
-    setResult(null);
-    try {
-      const seeds = seedsText
-        .split(",")
-        .map((s) => parseInt(s.trim(), 10))
-        .filter((n) => !isNaN(n));
-      const res = await createBenchmarkRun({
-        task_id: taskId,
-        n_trials: nTrials,
-        n_initial: nInitial,
-        seed,
-        seeds: seeds.length > 0 ? seeds : undefined,
-        sm_mode: smMode,
-        n_candidates: nCandidates,
-        top_k: topK,
-      });
-      setResult(res);
-      setRunState("done");
-    } catch (e) {
-      setError(e instanceof Error ? e.message : String(e));
-      setRunState("error");
+  const applyIteration = useCallback((ev: IterationEvent) => {
+    const map = chartRef.current;
+    const row = map.get(ev.iteration) ?? { iteration: ev.iteration };
+    if (ev.method === "traditional") {
+      row.trad_best = ev.best_score;
+      row.trad_gen = ev.generalization_score;
+      row.trad_cand = ev.candidate_score;
+    } else {
+      row.llm_best = ev.best_score;
+      row.llm_gen = ev.generalization_score;
+      row.llm_cand = ev.candidate_score;
     }
-  }, [taskId, nTrials, nInitial, seed, seedsText, smMode, nCandidates, topK]);
+    map.set(ev.iteration, row);
+    setChartData(Array.from(map.values()).sort((a, b) => a.iteration - b.iteration));
+
+    const snap: MethodSnapshot = {
+      best: ev.best_score,
+      gen: ev.generalization_score,
+      candidate: ev.candidate_score,
+      iteration: ev.iteration,
+      bestConfig: ev.best_config,
+    };
+    if (ev.method === "traditional") setTradSnap(snap);
+    else setLlmSnap(snap);
+  }, []);
+
+  const handleEvent = useCallback(
+    (ev: CompareEvent) => {
+      if (ev.type === "meta") {
+        setTargetCol(ev.target_col);
+      } else if (ev.type === "iteration") {
+        applyIteration(ev);
+      } else if (ev.type === "done") {
+        setRunState("done");
+      } else if (ev.type === "error") {
+        setError(ev.message);
+        setRunState("error");
+      }
+    },
+    [applyIteration],
+  );
+
+  const handleRun = useCallback(() => {
+    abortRef.current?.();
+    chartRef.current = new Map();
+    setChartData([]);
+    setTradSnap(EMPTY_SNAPSHOT);
+    setLlmSnap(EMPTY_SNAPSHOT);
+    setError("");
+    setRunState("running");
+
+    abortRef.current = streamComparison(
+      { task_id: taskId, n_initial: nInitial, n_trials: nTrials, seed, traditional: trad, llmbo: llm },
+      handleEvent,
+      (msg) => {
+        setError(msg);
+        setRunState("error");
+      },
+    );
+  }, [taskId, nInitial, nTrials, seed, trad, llm, handleEvent]);
+
+  const handleStop = useCallback(() => {
+    abortRef.current?.();
+    setRunState("idle");
+  }, []);
+
+  const running = runState === "running";
 
   return (
-    <div style={{ maxWidth: 960, margin: "0 auto", padding: "40px 24px", fontFamily: "system-ui" }}>
-      <h1 style={{ margin: "0 0 8px", fontSize: 28 }}>BOagent Benchmark</h1>
-      <p style={{ margin: "0 0 32px", color: "#6b7280", fontSize: 14 }}>
-        GP+LLM acquisition function evaluation over PVK-LLM datasets
-      </p>
+    <div className="instrument-grid" style={{ minHeight: "100vh" }}>
+      <div style={{ maxWidth: 1320, margin: "0 auto", padding: "32px 28px 64px" }}>
+        {/* Header */}
+        <header style={{ marginBottom: 28 }}>
+          <div style={{ display: "flex", alignItems: "baseline", gap: 16, flexWrap: "wrap" }}>
+            <h1
+              style={{
+                margin: 0,
+                fontSize: 26,
+                fontWeight: 800,
+                letterSpacing: "-0.02em",
+                background: `linear-gradient(90deg, ${TRAD}, ${LLM})`,
+                WebkitBackgroundClip: "text",
+                WebkitTextFillColor: "transparent",
+              }}
+            >
+              BO·BENCH
+            </h1>
+            <span style={{ fontSize: 13, color: "var(--color-ink-300)" }}>
+              Traditional BO vs LLMBO · real-time convergence over PVK Excel datasets
+            </span>
+          </div>
+        </header>
 
-      <div
-        style={{
-          display: "grid",
-          gridTemplateColumns: "repeat(auto-fill, minmax(200px, 1fr))",
-          gap: 16,
-          marginBottom: 24,
-        }}
-      >
-        <label>
-          Task
-          <select value={taskId} onChange={(e) => setTaskId(e.target.value)}>
-            {tasks.map((t) => (
-              <option key={t.task_id} value={t.task_id}>
-                {t.task_id}
-              </option>
-            ))}
-          </select>
-        </label>
-        <label>
-          n_trials
-          <input type="number" value={nTrials} onChange={(e) => setNTrials(Number(e.target.value))} />
-        </label>
-        <label>
-          n_initial
-          <input type="number" value={nInitial} onChange={(e) => setNInitial(Number(e.target.value))} />
-        </label>
-        <label>
-          seed
-          <input type="number" value={seed} onChange={(e) => setSeed(Number(e.target.value))} />
-        </label>
-        <label>
-          seeds (multi, comma)
-          <input
-            type="text"
-            value={seedsText}
-            onChange={(e) => setSeedsText(e.target.value)}
-            placeholder="42,123,456"
-          />
-        </label>
-        <label>
-          sm_mode
-          <select value={smMode} onChange={(e) => setSmMode(e.target.value as "discriminative" | "generative")}>
-            <option value="discriminative">discriminative</option>
-            <option value="generative">generative</option>
-          </select>
-        </label>
-        <label>
-          n_candidates
-          <input type="number" value={nCandidates} onChange={(e) => setNCandidates(Number(e.target.value))} />
-        </label>
-        <label>
-          top_k
-          <input type="number" value={topK} onChange={(e) => setTopK(Number(e.target.value))} />
-        </label>
-      </div>
-
-      <button
-        onClick={handleRun}
-        disabled={runState === "running"}
-        style={{
-          padding: "12px 32px",
-          fontSize: 16,
-          fontWeight: 600,
-          cursor: runState === "running" ? "not-allowed" : "pointer",
-          opacity: runState === "running" ? 0.6 : 1,
-          marginBottom: 24,
-        }}
-      >
-        {runState === "running" ? "Running..." : "Run Benchmark"}
-      </button>
-
-      {runState === "running" && (
-        <p style={{ color: "#6b7280" }}>Benchmark running — this may take several minutes...</p>
-      )}
-
-      {error && (
-        <div style={{ padding: 16, background: "#fee2e2", borderRadius: 8, marginBottom: 16 }}>
-          <strong>Error:</strong> {error}
-        </div>
-      )}
-
-      {result && (
-        <div>
-          <h2 style={{ fontSize: 18, margin: "24px 0 12px" }}>
-            Results — {result.task_id} ({result.runs} run{result.runs !== 1 ? "s" : ""})
-          </h2>
-          <table style={{ width: "100%", borderCollapse: "collapse" }}>
-            <thead>
-              <tr style={{ textAlign: "left", borderBottom: "2px solid #e5e7eb" }}>
-                <th style={{ padding: "8px 12px" }}>Seed</th>
-                <th style={{ padding: "8px 12px" }}>Best Score</th>
-                <th style={{ padding: "8px 12px" }}>Generalization Score</th>
-              </tr>
-            </thead>
-            <tbody>
-              {result.results.map((r) => (
-                <tr key={r.seed} style={{ borderBottom: "1px solid #f3f4f6" }}>
-                  <td style={{ padding: "8px 12px" }}>{r.seed}</td>
-                  <td style={{ padding: "8px 12px", fontFamily: "monospace" }}>{r.best_score.toFixed(4)}</td>
-                  <td style={{ padding: "8px 12px", fontFamily: "monospace" }}>
-                    {r.best_generalization_score.toFixed(4)}
-                  </td>
-                </tr>
+        {/* Shared controls */}
+        <div
+          className="panel"
+          style={{
+            padding: "16px 20px",
+            marginBottom: 20,
+            display: "grid",
+            gridTemplateColumns: "2fr 1fr 1fr 1fr auto",
+            gap: 16,
+            alignItems: "end",
+          }}
+        >
+          <Field label="Dataset (shared train/test split)">
+            <select className="field-input" value={taskId} onChange={(e) => setTaskId(e.target.value)}>
+              {tasks.map((t) => (
+                <option key={t.task_id} value={t.task_id}>
+                  {t.name || t.task_id}
+                </option>
               ))}
-            </tbody>
-          </table>
-          <p style={{ marginTop: 12, color: "#6b7280", fontSize: 13 }}>Output: {result.output_dir}</p>
+            </select>
+          </Field>
+          <Field label="Initial Points">
+            <NumberField value={nInitial} onChange={setNInitial} min={1} max={50} />
+          </Field>
+          <Field label="Trials">
+            <NumberField value={nTrials} onChange={setNTrials} min={1} max={200} />
+          </Field>
+          <Field label="Seed">
+            <NumberField value={seed} onChange={setSeed} min={0} />
+          </Field>
+          <div style={{ display: "flex", gap: 10 }}>
+            <button
+              className="run-btn"
+              onClick={handleRun}
+              disabled={running}
+              style={{
+                background: `linear-gradient(90deg, ${TRAD}, ${LLM})`,
+                color: "#07090d",
+                opacity: running ? 0.5 : 1,
+              }}
+            >
+              {running ? "RUNNING…" : "▶ RUN COMPARISON"}
+            </button>
+            {running && (
+              <button
+                className="run-btn"
+                onClick={handleStop}
+                style={{ background: "var(--color-graphite-700)", color: "var(--color-ink-100)" }}
+              >
+                STOP
+              </button>
+            )}
+          </div>
         </div>
+
+        {/* Dual config panels */}
+        <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 20, marginBottom: 20 }}>
+          {/* Traditional */}
+          <div className="panel panel-trad" style={{ padding: 20 }}>
+            <PanelHeader accent={TRAD} title="A · TRADITIONAL BO" subtitle="GP surrogate + analytic acquisition" />
+            <div style={{ display: "grid", gap: 14, marginTop: 16 }}>
+              <Field label="Acquisition Function">
+                <AcqSelect
+                  value={trad.acquisition}
+                  onChange={(v) => setTrad({ ...trad, acquisition: v })}
+                  accent="var(--color-graphite-700)"
+                />
+              </Field>
+              <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 12 }}>
+                <Field label="ξ (EI/PI explore)" hint="exploration margin">
+                  <NumberField value={trad.xi} onChange={(v) => setTrad({ ...trad, xi: v })} step={0.01} min={0} />
+                </Field>
+                <Field label="κ (UCB explore)" hint="confidence width">
+                  <NumberField value={trad.kappa} onChange={(v) => setTrad({ ...trad, kappa: v })} step={0.1} min={0} />
+                </Field>
+              </div>
+            </div>
+            <div style={{ marginTop: 16 }}>
+              <MetricReadout
+                accent={TRAD}
+                best={tradSnap.best}
+                gen={tradSnap.gen}
+                candidate={tradSnap.candidate}
+                iteration={tradSnap.iteration}
+                totalTrials={nTrials}
+              />
+            </div>
+          </div>
+
+          {/* LLMBO */}
+          <div className="panel panel-llm" style={{ padding: 20 }}>
+            <PanelHeader accent={LLM} title="B · LLMBO" subtitle="GP pre-filter + LLM acquisition" />
+            <div style={{ display: "grid", gap: 14, marginTop: 16 }}>
+              <Field label="GP Pre-filter Acquisition">
+                <AcqSelect
+                  value={llm.acquisition}
+                  onChange={(v) => setLlm({ ...llm, acquisition: v })}
+                  accent="var(--color-graphite-700)"
+                />
+              </Field>
+              <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr 1fr", gap: 12 }}>
+                <Field label="Top-K">
+                  <NumberField value={llm.top_k} onChange={(v) => setLlm({ ...llm, top_k: v })} min={1} max={100} />
+                </Field>
+                <Field label="Candidates">
+                  <NumberField value={llm.n_candidates} onChange={(v) => setLlm({ ...llm, n_candidates: v })} min={1} max={50} />
+                </Field>
+                <Field label="α">
+                  <NumberField value={llm.alpha} onChange={(v) => setLlm({ ...llm, alpha: v })} step={0.1} />
+                </Field>
+              </div>
+            </div>
+            <div style={{ marginTop: 16 }}>
+              <MetricReadout
+                accent={LLM}
+                best={llmSnap.best}
+                gen={llmSnap.gen}
+                candidate={llmSnap.candidate}
+                iteration={llmSnap.iteration}
+                totalTrials={nTrials}
+              />
+            </div>
+          </div>
+        </div>
+
+        {/* Chart */}
+        <div className="panel" style={{ padding: 20 }}>
+          <div
+            style={{
+              display: "flex",
+              justifyContent: "space-between",
+              alignItems: "center",
+              marginBottom: 16,
+              flexWrap: "wrap",
+              gap: 12,
+            }}
+          >
+            <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
+              <h2 style={{ margin: 0, fontSize: 15, fontWeight: 700 }}>Convergence</h2>
+              {running && (
+                <span
+                  className="live-dot"
+                  style={{
+                    width: 8,
+                    height: 8,
+                    borderRadius: "50%",
+                    background: LLM,
+                    display: "inline-block",
+                  }}
+                />
+              )}
+              {running && (
+                <span style={{ fontSize: 11, color: LLM, fontFamily: "var(--font-mono)" }}>LIVE</span>
+              )}
+            </div>
+            <ChartLegend />
+          </div>
+
+          {chartData.length === 0 ? (
+            <div
+              style={{
+                height: 420,
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "center",
+                color: "var(--color-ink-500)",
+                fontFamily: "var(--font-mono)",
+                fontSize: 13,
+              }}
+            >
+              {runState === "idle"
+                ? "Configure both methods and press RUN COMPARISON"
+                : "Awaiting first iteration…"}
+            </div>
+          ) : (
+            <ConvergenceChart data={chartData} targetCol={targetCol} />
+          )}
+        </div>
+
+        {/* Best config comparison */}
+        {(tradSnap.bestConfig || llmSnap.bestConfig) && (
+          <div className="fade-rise" style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 20, marginTop: 20 }}>
+            <BestConfigCard accent={TRAD} title="Traditional · Best Recipe" config={tradSnap.bestConfig} score={tradSnap.best} />
+            <BestConfigCard accent={LLM} title="LLMBO · Best Recipe" config={llmSnap.bestConfig} score={llmSnap.best} />
+          </div>
+        )}
+
+        {error && (
+          <div
+            style={{
+              marginTop: 20,
+              padding: 16,
+              border: "1px solid var(--color-fault-400)",
+              borderRadius: 10,
+              background: "rgb(255 93 108 / 0.08)",
+              color: "var(--color-fault-400)",
+              fontFamily: "var(--font-mono)",
+              fontSize: 13,
+            }}
+          >
+            ⚠ {error}
+          </div>
+        )}
+      </div>
+    </div>
+  );
+}
+
+function PanelHeader({ accent, title, subtitle }: { accent: string; title: string; subtitle: string }) {
+  return (
+    <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
+      <span style={{ width: 10, height: 10, borderRadius: 3, background: accent, boxShadow: `0 0 12px ${accent}` }} />
+      <div>
+        <div style={{ fontSize: 13, fontWeight: 800, letterSpacing: "0.04em", color: accent }}>{title}</div>
+        <div style={{ fontSize: 11, color: "var(--color-ink-500)" }}>{subtitle}</div>
+      </div>
+    </div>
+  );
+}
+
+function BestConfigCard({
+  accent,
+  title,
+  config,
+  score,
+}: {
+  accent: string;
+  title: string;
+  config: Record<string, number> | null;
+  score: number | null;
+}) {
+  return (
+    <div className="panel" style={{ padding: 18 }}>
+      <div style={{ display: "flex", justifyContent: "space-between", alignItems: "baseline", marginBottom: 12 }}>
+        <span style={{ fontSize: 12, fontWeight: 700, color: accent, letterSpacing: "0.04em" }}>{title}</span>
+        <span style={{ fontFamily: "var(--font-mono)", fontSize: 18, fontWeight: 700, color: accent }}>
+          {score === null ? "—" : score.toFixed(4)}
+        </span>
+      </div>
+      {config ? (
+        <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 8 }}>
+          {Object.entries(config).map(([k, v]) => (
+            <div
+              key={k}
+              style={{
+                display: "flex",
+                justifyContent: "space-between",
+                fontFamily: "var(--font-mono)",
+                fontSize: 12,
+                padding: "6px 10px",
+                background: "var(--color-graphite-880)",
+                borderRadius: 6,
+                border: "1px solid var(--color-graphite-700)",
+              }}
+            >
+              <span style={{ color: "var(--color-ink-500)" }}>{k}</span>
+              <span style={{ color: "var(--color-ink-100)" }}>{v.toFixed(3)}</span>
+            </div>
+          ))}
+        </div>
+      ) : (
+        <div style={{ color: "var(--color-ink-500)", fontSize: 12 }}>No data yet</div>
       )}
     </div>
   );
