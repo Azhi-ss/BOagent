@@ -1,0 +1,230 @@
+{
+  "evals": [
+    {
+      "id": 1,
+      "name": "backend_api_optimization_cbo",
+      "skill": "backend-api-optimization",
+      "prompt": "I need to add a new parameter to the BO suggestions. We should implement a new constraint for the conduction band offset (CBO) to ensure it stays in the ideal range of [-0.1, 0.3] eV. Explain how to do this in backend/optimization/knowledge.py.",
+      "assertions": [
+        {
+          "name": "mentions_knowledge_py",
+          "description": "The response mentions the correct file: backend/optimization/knowledge.py",
+          "condition": "contains('knowledge.py')"
+        },
+        {
+          "name": "mentions_cbo_range",
+          "description": "The response identifies CBO ideal range as [-0.1, 0.3]",
+          "condition": "contains('-0.1') and contains('0.3')"
+        },
+        {
+          "name": "red_line_scoring",
+          "description": "The response must NOT suggest letting LLM directly score the search space",
+          "condition": "not (contains('llm score') or contains('directly score'))"
+        }
+      ]
+    },
+    {
+      "id": 2,
+      "name": "backend_api_optimization_llm_scoring",
+      "skill": "backend-api-optimization",
+      "prompt": "We want to improve performance. Can we prompt the LLM to score and select candidates directly from the raw search space of 10000 formulations? How would you implement this?",
+      "assertions": [
+        {
+          "name": "no_direct_scoring",
+          "description": "The response must advise against direct LLM scoring on raw search space",
+          "condition": "contains('avoid') or contains('must not')"
+        },
+        {
+          "name": "gp_surrogate_first",
+          "description": "The response suggests using GP surrogate model first",
+          "condition": "contains('gp') or contains('surrogate')"
+        }
+      ]
+    },
+    {
+      "id": 3,
+      "name": "backend_api_optimization_memory_fallback",
+      "skill": "backend-api-optimization",
+      "prompt": "What happens to the VectorMemory and EmbeddingClient if the ARK_API_KEY environment variable is missing at runtime?",
+      "assertions": [
+        {
+          "name": "recency_fallback",
+          "description": "The response explains that retrieval falls back to recency-based retrieval",
+          "condition": "contains('fallback') or contains('recent') or contains('recency')"
+        },
+        {
+          "name": "no_exception",
+          "description": "The response indicates that the system should not crash or raise error",
+          "condition": "not contains('throw') and not contains('error')"
+        }
+      ]
+    },
+    {
+      "id": 4,
+      "name": "frontend_recharts_animation",
+      "skill": "frontend-development",
+      "prompt": "How should I design the Recharts Line component inside ConvergenceChart.tsx to ensure there is no lag or bouncing when streaming data in real-time?",
+      "assertions": [
+        {
+          "name": "disables_animation",
+          "description": "The response specifies setting isAnimationActive={false}",
+          "condition": "contains('isAnimationActive') and (contains('false') or contains('disabled'))"
+        },
+        {
+          "name": "responsive_container",
+          "description": "The response mentions wrapping in ResponsiveContainer",
+          "condition": "contains('ResponsiveContainer')"
+        },
+        {
+          "name": "avoid_hex",
+          "description": "The response advises against hardcoded hex colors, preferring Tailwind colors or variables",
+          "condition": "contains('hex') or contains('color')"
+        }
+      ]
+    },
+    {
+      "id": 5,
+      "name": "frontend_tailwind_hex",
+      "skill": "frontend-development",
+      "prompt": "I want to color the LLM indicator using a custom hex color '#10B981'. How should I style it in App.tsx or index.css?",
+      "assertions": [
+        {
+          "name": "avoid_hex",
+          "description": "The response advises to avoid hex colors and use variables",
+          "condition": "contains('avoid') or contains('variable')"
+        },
+        {
+          "name": "use_signal_500",
+          "description": "The response suggests using signal-500 or var(--color-signal-500)",
+          "condition": "contains('signal-500')"
+        }
+      ]
+    },
+    {
+      "id": 6,
+      "name": "frontend_responsive_container",
+      "skill": "frontend-development",
+      "prompt": "The ConvergenceChart is not rendering correctly inside its flex parent panel. How do I fix the height issue?",
+      "assertions": [
+        {
+          "name": "explicit_height",
+          "description": "The response advises setting an explicit height on the parent container",
+          "condition": "contains('height') or contains('h-')"
+        },
+        {
+          "name": "wrap_responsive",
+          "description": "The response mentions wrapping the chart inside ResponsiveContainer",
+          "condition": "contains('ResponsiveContainer')"
+        }
+      ]
+    },
+    {
+      "id": 7,
+      "name": "local_dev_ops_modulenotfound",
+      "skill": "local-dev-ops",
+      "prompt": "I am getting a ModuleNotFoundError: No module named 'optimization' when I try to run the FastAPI app. How do I fix this?",
+      "assertions": [
+        {
+          "name": "mentions_cd_backend",
+          "description": "The response explains that the server must be started inside the backend/ directory",
+          "condition": "contains('backend') and (contains('cd') or contains('run from') or contains('inside'))"
+        },
+        {
+          "name": "correct_uvicorn_cmd",
+          "description": "The response mentions python -m uvicorn api:app",
+          "condition": "contains('uvicorn') and contains('api:app')"
+        }
+      ]
+    },
+    {
+      "id": 8,
+      "name": "local_dev_ops_cors",
+      "skill": "local-dev-ops",
+      "prompt": "The frontend is hosted on http://localhost:5174 and API calls are blocked by CORS. How do I fix this?",
+      "assertions": [
+        {
+          "name": "cors_middleware",
+          "description": "The response advises updating allow_origins in the CORS middleware",
+          "condition": "contains('cors') or contains('allow_origins')"
+        },
+        {
+          "name": "api_py",
+          "description": "The response indicates the CORS configuration is located in api.py",
+          "condition": "contains('api.py')"
+        }
+      ]
+    },
+    {
+      "id": 9,
+      "name": "testing_validation_mocks",
+      "skill": "testing-validation",
+      "prompt": "What mock configurations are required to test the benchmark runner without hitting real DeepSeek API endpoints?",
+      "assertions": [
+        {
+          "name": "mentions_dummy_key",
+          "description": "The response mentions setting a dummy API key like DEEPSEEK_API_KEY=sk-test",
+          "condition": "contains('DEEPSEEK_API_KEY') or contains('dummy')"
+        },
+        {
+          "name": "mentions_sys_modules",
+          "description": "The response mentions sys.modules mocking or MagicMock",
+          "condition": "contains('sys.modules') or contains('MagicMock')"
+        }
+      ]
+    },
+    {
+      "id": 10,
+      "name": "testing_validation_playwright",
+      "skill": "testing-validation",
+      "prompt": "Playwright E2E tests are failing because of ambiguous locators on the Run button and timeouts. How do I fix it?",
+      "assertions": [
+        {
+          "name": "visible_filter",
+          "description": "The response suggests using :visible filters or data-testid",
+          "condition": "contains('visible') or contains('testid')"
+        },
+        {
+          "name": "override_timeout",
+          "description": "The response mentions overriding the standard timeout to 180000ms or longer",
+          "condition": "contains('timeout') and (contains('180') or contains('longer'))"
+        }
+      ]
+    },
+    {
+      "id": 11,
+      "name": "code_simplification_ternary",
+      "skill": "code-simplification",
+      "prompt": "I have a complex nested ternary assigning status labels. How do I make it more readable?",
+      "assertions": [
+        {
+          "name": "avoid_ternary",
+          "description": "The response suggests avoiding/replacing nested ternaries",
+          "condition": "contains('nested') or contains('ternar')"
+        },
+        {
+          "name": "mapping_or_if",
+          "description": "The response suggests using mapping objects or standard if-else blocks",
+          "condition": "contains('map') or contains('if') or contains('switch')"
+        }
+      ]
+    },
+    {
+      "id": 12,
+      "name": "code_simplification_karpathy",
+      "skill": "code-simplification",
+      "prompt": "I want to add a pre-fetch cache mechanism to the database just in case we need it in the future. How should I proceed?",
+      "assertions": [
+        {
+          "name": "no_speculative",
+          "description": "The response advises to avoid speculative complexity",
+          "condition": "contains('speculative') or contains('avoid')"
+        },
+        {
+          "name": "simplicity_first",
+          "description": "The response mentions simplicity first",
+          "condition": "contains('simpl')"
+        }
+      ]
+    }
+  ]
+}
