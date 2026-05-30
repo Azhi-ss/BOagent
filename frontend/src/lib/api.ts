@@ -3,6 +3,8 @@ import type {
   BenchmarkResponse,
   CompareEvent,
   CompareRequest,
+  OperationalSuggestRequest,
+  OperationalSuggestResponse,
   Task,
 } from "../types";
 
@@ -52,6 +54,13 @@ async function request<T>(path: string, init?: RequestInit): Promise<T> {
 export async function getTasks() {
   const payload = await request<TasksResponse>("/api/v1/tasks");
   return Array.isArray(payload) ? payload : payload.tasks || [];
+}
+
+export function getOperationalSuggestion(payload: OperationalSuggestRequest) {
+  return request<OperationalSuggestResponse>("/api/v1/operational/suggest", {
+    method: "POST",
+    body: JSON.stringify(payload),
+  });
 }
 
 export function createBenchmarkRun(payload: BenchmarkRequest) {

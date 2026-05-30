@@ -1,10 +1,10 @@
 interface MetricReadoutProps {
   accent: string;
-  best: number | null;
-  gen: number | null;
-  candidate: number | null;
-  iteration: number;
-  totalTrials: number;
+  bestMean: number | null;
+  bestStd: number | null;
+  genMean: number | null;
+  completedSeeds: number;
+  totalSeeds: number;
   busy?: boolean;
   busyLabel?: string;
 }
@@ -21,7 +21,7 @@ function Stat({
   mono?: boolean;
 }) {
   return (
-    <div style={{ flex: 1 }}>
+    <div style={{ flex: 1, minWidth: 0 }}>
       <div
         style={{
           fontSize: 10,
@@ -53,16 +53,23 @@ function Stat({
 
 export function MetricReadout({
   accent,
-  best,
-  gen,
-  candidate,
-  iteration,
-  totalTrials,
+  bestMean,
+  bestStd,
+  genMean,
+  completedSeeds,
+  totalSeeds,
   busy = false,
-  busyLabel = "computing…",
+  busyLabel = "计算中 (computing)...",
 }: MetricReadoutProps) {
   const fmt = (v: number | null) => (v === null ? "—" : v.toFixed(4));
-  const progress = totalTrials > 0 ? Math.min(100, (iteration / totalTrials) * 100) : 0;
+  // Headline: mean ± std across completed seeds.
+  const bestText =
+    bestMean === null
+      ? "—"
+      : bestStd !== null
+        ? `${bestMean.toFixed(3)} ± ${bestStd.toFixed(2)}`
+        : bestMean.toFixed(4);
+  const progress = totalSeeds > 0 ? Math.min(100, (completedSeeds / totalSeeds) * 100) : 0;
 
   return (
     <div
@@ -75,9 +82,8 @@ export function MetricReadout({
       }}
     >
       <div style={{ display: "flex", gap: 12 }}>
-        <Stat label="Best Score" value={fmt(best)} accent={accent} />
-        <Stat label="Generalization" value={fmt(gen)} />
-        <Stat label="Candidate" value={fmt(candidate)} />
+        <Stat label="Best Score (均值±标准差)" value={bestText} accent={accent} />
+        <Stat label="Generalization (泛化均值)" value={fmt(genMean)} />
       </div>
       <div style={{ marginTop: 12 }}>
         <div
@@ -106,10 +112,10 @@ export function MetricReadout({
             {busy ? (
               <span style={{ color: accent }}>{busyLabel}</span>
             ) : (
-              <span>ITER {iteration}</span>
+              <span>已完成 {completedSeeds}/{totalSeeds} 个种子 (SEEDS)</span>
             )}
           </span>
-          <span>{totalTrials} TRIALS</span>
+          <span>{totalSeeds} 次重复 (RUNS)</span>
         </div>
         <div
           style={{

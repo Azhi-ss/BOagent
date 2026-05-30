@@ -122,11 +122,18 @@ class DeepSeekClient:
 
 
 def load_env_file(path: Path = DEFAULT_ENV_PATH) -> None:
+    # Try current path first, then parent
     if not path.exists():
-        return
+        parent_env = path.parent.parent / ".env"
+        if parent_env.exists():
+            path = parent_env
+        else:
+            return
+            
     for raw_line in path.read_text(encoding="utf-8").splitlines():
         line = raw_line.strip()
         if not line or line.startswith("#") or "=" not in line:
             continue
         key, value = line.split("=", 1)
-        os.environ.setdefault(key.strip(), value.strip().strip('"').strip("'"))
+        # Use direct assignment so .env overrides existing env vars (e.g. broken ones)
+        os.environ[key.strip()] = value.strip().strip('"').strip("'")

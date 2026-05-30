@@ -7,6 +7,7 @@ from datetime import UTC, datetime
 from pathlib import Path
 from typing import Any
 
+from dotenv import load_dotenv
 from fastapi import FastAPI, HTTPException, status
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import HTMLResponse, JSONResponse, StreamingResponse
@@ -15,6 +16,13 @@ from pydantic import BaseModel, Field
 from benchmark.comparison import ComparisonRunner
 from benchmark.data_loader import DATA_LOADERS, DEFAULT_DATA_ROOT
 from benchmark.runner import BenchmarkRunner, run_multi_seed
+from optimization.optimizer import BayesianOptimizer
+from optimization.space import ContinuousSearchSpace
+from optimization.knowledge import KnowledgeEngine
+
+# Load environment variables from .env (project root, then backend fallback)
+load_dotenv(Path(__file__).parent.parent / ".env")  # project root
+load_dotenv(Path(__file__).parent / ".env")  # backend fallback
 
 app = FastAPI(
     title="BOagent API",
@@ -130,9 +138,30 @@ class CompareBenchmarkBody(BaseModel):
     task_id: str = Field(default="band_alignment", pattern="^(band_alignment|defects_doping)$")
     n_initial: int = Field(default=5, ge=1, le=50)
     n_trials: int = Field(default=20, ge=1, le=200)
-    seed: int = Field(default=42, ge=0)
+    seeds: list[int] = Field(default=[42, 7, 100, 1, 21])
     traditional: TraditionalConfig = Field(default_factory=TraditionalConfig)
     llmbo: LLMBOConfig = Field(default_factory=LLMBOConfig)
+
+
+class OperationalVariable(BaseModel):
+    name: str
+    min: float
+    max: float
+    unit: str = ""
+
+
+class OperationalObservation(BaseModel):
+    config: dict[str, float]
+    score: float
+
+
+class OperationalSuggestBody(BaseModel):
+    target: str = "score"
+    variables: list[OperationalVariable]
+    history: list[OperationalObservation]
+    llm_config: LLMBOConfig = Field(default_factory=LLMBOConfig)
+    n_sample: int = Field(default=2000, ge=100, le=10000)
+    seed: int = Field(default=42, ge=0)
 
 
 # ---------------------------------------------------------------------------
@@ -367,26 +396,28 @@ def create_benchmark_run(body: CreateBenchmarkBody) -> dict[str, Any]:
 
 @app.post("/api/v1/benchmark/compare/stream")
 async def compare_benchmark_stream(body: CompareBenchmarkBody) -> StreamingResponse:
-    """Run traditional BO and LLMBO over a shared train/test split, streaming
-    per-iteration convergence events as Server-Sent Events.
+    """Run traditional BO and LLMBO across multiple seeds over a shared
+    train/test split, streaming aggregate convergence events as SSE.
 
     Each SSE ``data:`` line is one JSON event:
       - {"type": "meta", ...}        once at start
-      - {"type": "iteration", ...}   per engine per step
-      - {"type": "done", ...}        once at end
+      - {"type": "seed_start", ...}  per seed
+      - {"type": "step_start", ...}  per engine per step (drives busy indicator)
+      - {"type": "aggregate", ...}   per seed completion (mean/std trajectories)
+      - {"type": "done", ...}        once at end (final mean ± std summary)
       - {"type": "error", ...}       on failure
     """
     emit_backend_log(
         "compare.request",
         f"Comparison request: {body.task_id}",
-        detail={"task_id": body.task_id, "seed": body.seed, "n_trials": body.n_trials},
+        detail={"task_id": body.task_id, "seeds": body.seeds, "n_trials": body.n_trials},
     )
 
     runner = ComparisonRunner(
         task_id=body.task_id,
         n_initial=body.n_initial,
         n_trials=body.n_trials,
-        seed=body.seed,
+        seeds=body.seeds,
         traditional=body.traditional.model_dump(),
         llmbo=body.llmbo.model_dump(),
     )
@@ -420,3 +451,56 @@ async def compare_benchmark_stream(body: CompareBenchmarkBody) -> StreamingRespo
         emit_backend_log("compare.complete", f"Comparison complete: {body.task_id}")
 
     return StreamingResponse(event_stream(), media_type="text/event-stream")
+
+
+@app.post("/api/v1/operational/suggest")
+async def operational_suggest(body: OperationalSuggestBody) -> dict[str, Any]:
+    """Provide next experiment suggestions for human-in-the-loop operational mode."""
+    emit_backend_log(
+        "operational.suggest",
+        f"Operational suggest request for {body.target}",
+        detail={"variables": len(body.variables), "history": len(body.history)},
+    )
+
+    try:
+        # 1. Setup Space and Optimizer
+        space = ContinuousSearchSpace(
+            variables=[v.model_dump() for v in body.variables],
+            n_samples=body.n_sample,
+            seed=body.seed
+        )
+        
+        chat_engine = body.llm_config.chat_engine or os.environ.get("DEEPSEEK_FLASH_MODEL") or "deepseek-v4-flash"
+        knowledge = KnowledgeEngine(chat_engine=chat_engine)
+        
+        optimizer = BayesianOptimizer(
+            space=space,
+            target_name=body.target,
+            knowledge_engine=knowledge
+        )
+        
+        # 2. Reconstruct history
+        for obs in body.history:
+            optimizer.observe(obs.config, obs.score)
+            
+        # 3. Get suggestion (hiding all complexity)
+        result = optimizer.suggest(
+            top_k=body.llm_config.top_k,
+            kappa=body.llm_config.kappa,
+            use_llm=True
+        )
+
+        return success({
+            "suggestions": result.suggestions,
+            "analysis": result.analysis,
+            "prompt": result.prompt
+        })
+
+    except Exception as exc:
+        emit_backend_log("operational.error", f"Operational suggest failed: {exc}")
+        import traceback
+        traceback.print_exc()
+        raise HTTPException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            detail=str(exc),
+        ) from None
