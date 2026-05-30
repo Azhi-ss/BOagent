@@ -1,0 +1,151 @@
+# BOagent AI Developer Guide (AGENTS.md)
+
+Welcome to the **BOagent** codebase! This guide serves as your primary context document to help you understand the architecture, domain concepts, local workflows, and development guidelines. Always consult this document before starting any implementation, refactoring, or testing task.
+
+---
+
+## 1. Project Overview & Tech Stack
+
+BOagent is an LLM-driven Bayesian Optimization (BO) workflow orchestrator and scientific dashboard designed for perovskite solar cell material formulation optimization. It leverages high-context domain reasoning to augment traditional Gaussian Process (GP) statistical modeling.
+
+### Core Tech Stack
+*   **Backend**: FastAPI, Python 3.10+, Uvicorn, Scikit-learn (Gaussian Process Regressor), NumPy, Pandas, SciPy, pytest.
+*   **Frontend**: React 19, Vite 6, TypeScript 6, Recharts 3.8, Tailwind CSS 4.x.
+*   **AI/LLM**: DeepSeek API (`deepseek-v4-flash` / `deepseek-v4-pro`), Doubao Embedding API (Volcengine/Ark) utilizing the default `doubao-embedding-vision-250615` model (configured via `DOUBAO_EMBEDDING_MODEL`) for semantic memory retrieval.
+*   **Dataset Integration**: Sibling repository `PVK-LLM` containing Excel-based experimental datasets.
+
+---
+
+## 2. Codebase Structure & Responsibilities
+
+```
+BOagent/
+├── backend/                       # Python Backend Service
+│   ├── api.py                    # FastAPI server, SSE stream controller, rest endpoints
+│   ├── requirements.txt          # Python dependencies
+│   ├── llm_client.py             # Unified DeepSeek API client wrapper
+│   ├── pvk_llm_compat.py         # Legacy patches bridging pandas, langchain, OpenAI
+│   ├── optimization/             # Core Bayesian Optimization Engine
+│   │   ├── optimizer.py          # BayesianOptimizer orchestrator, GP training, acquisition scoring
+│   │   ├── knowledge.py          # KnowledgeEngine, semiconductor physics rules & prompting
+│   │   ├── memory.py             # VectorMemory, Doubao Ark embedding and numpy retrieval
+│   │   └── space.py              # SearchSpace definitions (Continuous & Discrete)
+│   ├── benchmark/                # Performance Evaluation Engine
+│   │   ├── data_loader.py        # Dataset loading & deterministic seed-based splitting
+│   │   ├── runner.py             # Single seed benchmark coordinator
+│   │   ├── comparison.py         # Multi-seed parallel benchmark comparison
+│   │   └── bo_step.py            # Step-by-step benchmark runner bridging BO components
+│   └── tests/                    # Backend automated tests
+├── frontend/                      # React Frontend Application
+│   ├── src/
+│   │   ├── App.tsx               # Root view container & mode manager
+│   │   ├── BenchMode.tsx         # Benchmark execution & dual-curve visualization panel
+│   │   ├── OperationalMode.tsx   # Human-in-the-loop experimental suggestion interface
+│   │   ├── types.ts              # Global TypeScript declarations
+│   │   ├── components/           # UI elements (ConvergenceChart, LandscapeCanvas, etc.)
+│   │   └── lib/api.ts            # Typed Axios/SSE client configurations
+│   ├── tests/                    # Playwright E2E functional test cases
+│   ├── package.json              # Frontend npm dependencies
+│   └── vite.config.ts            # Vite compile settings (with Tailwind 4.x integration)
+├── scripts/                       # Orchestration & Evaluation Scripts
+│   ├── smart_gemini.sh           # Gemini CLI Smart Routing runner with fallback
+│   ├── run_parallel_subagents.sh # Multi-agent concurrent analysis coordinator
+│   └── grade_skills.py           # Custom AI skill card grading evaluation runner
+├── evals/                         # AI Skill Evaluation Suites
+│   ├── evals.json                # JSON-configured test cases and assertions
+│   └── grading.json              # Output evaluation execution results
+└── AGENTS.md                      # This guide
+```
+
+---
+
+## 3. Core Physics-Informed Domain Rules
+
+The optimizer is not a purely statistical black-box model. It incorporates explicit device physics heuristics during the suggestion phase.
+
+### Semiconductor Physics Formulas
+*   **Conduction Band Offset (CBO)**: $CBO = \chi_{PVK} - \chi_{ETL}$. Ideal range: $[-0.1, 0.3]$ eV.
+    *   *Constraint*: A negative CBO (cliff) results in high $V_{oc}$ loss due to interface recombination. A large positive CBO (spike) blocks electron extraction, hurting $J_{sc}$.
+*   **Valence Band Offset (VBO)**: $VBO = (\chi_{HTL} + E_{g,HTL}) - \chi_{PVK}$. Ideal range: $[1.7, 2.0]$ eV.
+    *   *Constraint*: VBO below $1.7$ eV causes $V_{oc}$ loss; above $2.0$ eV blocks hole extraction.
+*   **Electron Blocking**: HTL LUMO ($\chi_{HTL}$) must be higher than PVK LUMO ($\chi_{PVK}$) by at least $0.5$ eV.
+*   **Recombination Trap Density ($Nt$)**: Trap density at interfaces ($N_{t,\text{PVK/ETL}}$ or $N_{t,\text{HTL/PVK}}$) must be minimized to avoid recombination losses. Logarithmic reduction in $Nt$ yields linear gains in open-circuit voltage ($V_{oc}$).
+*   **Doping Concentration ($Na, Nd$)**: Active doping improves built-in potential ($V_{bi}$) but must be capped below $10^{19} \text{ cm}^{-3}$ to prevent tunneling-assisted recombination.
+*   **Shunt Resistance**: Minimize counter-doping concentration in layer interfaces to avoid parasitic leakage shunts.
+
+---
+
+## 4. Key Developer Workflows & Commands
+
+### 4.1 Local Development Commands
+
+#### Backend (FastAPI on Port 8000)
+> [!NOTE]
+> The backend server must be started inside the `backend/` directory to resolve python relative imports correctly. The system environment utilizing miniconda3 is pre-configured with the required packages.
+```bash
+cd backend
+python -m uvicorn api:app --reload --port 8000
+```
+
+#### Frontend (Vite on Port 5173)
+```bash
+cd frontend
+npm install
+npm run dev
+```
+
+### 4.2 Automated Testing Commands
+
+#### Backend Unit/Integration Tests
+```bash
+cd backend
+python -m pytest
+```
+
+#### Frontend Playwright E2E Tests
+*Note: Make sure the backend server is running on port 8000 before executing E2E tests.*
+```bash
+cd frontend
+npm run test:e2e             # Headless E2E (Playwright)
+npm run test:e2e:chromium    # Run E2E tests exclusively on Chromium
+npx playwright test --ui     # Interactive UI Mode
+```
+
+---
+
+## 5. Architectural Red Lines & Constraints
+
+> [!WARNING]
+> **No Direct LLM Scoring**: Never let the LLM score or select candidate formulations from the raw search space. The search space must always be pre-filtered using the Gaussian Process surrogate model to produce a Top-K pool (typically top 20). The LLM's role is strictly to refine these top candidates using physical reasoning.
+> Failure to follow this rule will blow the token budget and ruin convergence guarantees.
+
+> [!IMPORTANT]
+> **Do Not Refactor `pvk_llm_compat.py`**: This file contains critical monkey-patches bridging legacy pandas, langchain, and OpenAI schemas used by the original `PVK-LLM` package. It fixes:
+> - **Pandas**: Restores legacy integer-positional indexing (`Series.__getitem__` falling back to `iloc` if KeyErrors occur).
+> - **Langchain**: Exposes `FewShotPromptTemplate` and `PromptTemplate` at the top level namespace if they were moved to `langchain_core`.
+> - **OpenAI/DeepSeek**: Intercepts `AsyncCompletions.create` for models starting with `deepseek`, forcing `n=1`, `max_tokens >= 512`, and setting thinking disabled to prevent warnings.
+> Removing or modifying these patches without exhaustive testing will break the core `PVKBO` integration.
+
+> [!CAUTION]
+> **Local RNG State**: Always use locally seeded instances of `np.random.RandomState` in data loaders and optimization loops. Avoid using the global `np.random` to prevent random state leakage across parallel benchmark threads.
+
+---
+
+## 6. Existing Capabilities & Reuse Guide
+
+Before writing new utility helpers or components, check if they already exist:
+*   **API SSE client**: `frontend/src/lib/api.ts` contains `streamComparison` which implements POST-based SSE stream chunk decoding. Use this for any long-running API streaming.
+*   **Tailwind 4.x Theme & Fonts**: All custom colors (`traditional`, `llm`, `graphite`, `fault`) and typography families (`Space Grotesk` for display, `Plus Jakarta Sans` for body, `JetBrains Mono` for code) are defined in `frontend/src/index.css` via the `@theme` block. Avoid using hardcoded hex values in inline styles.
+*   **Physics Formulas Prompt Builder**: `backend/optimization/knowledge.py` maps task feature columns to formulas and hints. If you add new parameters, add them to `build_prompt` mapping instead of copying the builder logic.
+*   **Insight Persistence & RAG**: `backend/optimization/memory.py` handles writing insights to `insights.jsonl` and calculating embeddings using Doubao API. If the embedding client is missing keys or unreachable, it falls back to recency-based retrieval (returning the last `top_k` insights) instead of raising an error.
+
+---
+
+## 7. Change Verification Checklist
+
+Before marking a task as complete, execute this checklist:
+- [ ] Backend tests (`python -m pytest`) pass without errors.
+- [ ] Frontend E2E tests (`npm run test:e2e` or `npm run test:e2e:chromium`) pass.
+- [ ] No hardcoded API keys are committed. All secrets are loaded via `os.environ` or `.env`.
+- [ ] The `output_dir` in `api.py` endpoint is validated to prevent path traversal attempts (`..`).
+- [ ] No typescript type compiler warnings are introduced (`npm run build` runs clean).

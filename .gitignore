@@ -51,3 +51,12 @@ scratch/
 tmp/
 temp/
 *.md.tmp
+
+# Ephemeral Backend Data
+backend/tmp_report/
+backend/tmp_results/
+backend/*.json
+
+# Agent & Infrastructure State
+.superpowers/
+.codegraph/
