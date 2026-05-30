@@ -102,6 +102,12 @@ export interface IterationEvent {
   completed: boolean;
 }
 
+export interface StepStartEvent {
+  type: "step_start";
+  method: Method;
+  iteration: number;
+}
+
 export interface DoneEvent {
   type: "done";
   traditional: Omit<IterationEvent, "type" | "method">;
@@ -113,7 +119,7 @@ export interface ErrorEvent {
   message: string;
 }
 
-export type CompareEvent = MetaEvent | IterationEvent | DoneEvent | ErrorEvent;
+export type CompareEvent = MetaEvent | IterationEvent | StepStartEvent | DoneEvent | ErrorEvent;
 
 /** One row of the merged chart series, keyed by iteration. */
 export interface ChartPoint {

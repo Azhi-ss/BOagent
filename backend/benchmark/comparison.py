@@ -113,8 +113,18 @@ class ComparisonRunner:
 
         for _ in range(self.n_trials):
             if not traditional.completed:
+                yield {
+                    "type": "step_start",
+                    "method": "traditional",
+                    "iteration": traditional.iteration + 1,
+                }
                 yield {"type": "iteration", **traditional.step()}
             if not llmbo.completed:
+                yield {
+                    "type": "step_start",
+                    "method": "llmbo",
+                    "iteration": llmbo.iteration + 1,
+                }
                 yield {"type": "iteration", **llmbo.step()}
             if traditional.completed and llmbo.completed:
                 break

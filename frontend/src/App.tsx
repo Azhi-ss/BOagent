@@ -62,6 +62,8 @@ function App() {
   const [chartData, setChartData] = useState<ChartPoint[]>([]);
   const [tradSnap, setTradSnap] = useState<MethodSnapshot>(EMPTY_SNAPSHOT);
   const [llmSnap, setLlmSnap] = useState<MethodSnapshot>(EMPTY_SNAPSHOT);
+  const [tradBusy, setTradBusy] = useState(false);
+  const [llmBusy, setLlmBusy] = useState(false);
   const abortRef = useRef<(() => void) | null>(null);
   const chartRef = useRef<Map<number, ChartPoint>>(new Map());
 
@@ -97,19 +99,31 @@ function App() {
       iteration: ev.iteration,
       bestConfig: ev.best_config,
     };
-    if (ev.method === "traditional") setTradSnap(snap);
-    else setLlmSnap(snap);
+    if (ev.method === "traditional") {
+      setTradSnap(snap);
+      setTradBusy(false);
+    } else {
+      setLlmSnap(snap);
+      setLlmBusy(false);
+    }
   }, []);
 
   const handleEvent = useCallback(
     (ev: CompareEvent) => {
       if (ev.type === "meta") {
         setTargetCol(ev.target_col);
+      } else if (ev.type === "step_start") {
+        if (ev.method === "traditional") setTradBusy(true);
+        else setLlmBusy(true);
       } else if (ev.type === "iteration") {
         applyIteration(ev);
       } else if (ev.type === "done") {
+        setTradBusy(false);
+        setLlmBusy(false);
         setRunState("done");
       } else if (ev.type === "error") {
+        setTradBusy(false);
+        setLlmBusy(false);
         setError(ev.message);
         setRunState("error");
       }
@@ -123,6 +137,8 @@ function App() {
     setChartData([]);
     setTradSnap(EMPTY_SNAPSHOT);
     setLlmSnap(EMPTY_SNAPSHOT);
+    setTradBusy(false);
+    setLlmBusy(false);
     setError("");
     setRunState("running");
 
@@ -138,6 +154,8 @@ function App() {
 
   const handleStop = useCallback(() => {
     abortRef.current?.();
+    setTradBusy(false);
+    setLlmBusy(false);
     setRunState("idle");
   }, []);
 
@@ -253,6 +271,8 @@ function App() {
                 candidate={tradSnap.candidate}
                 iteration={tradSnap.iteration}
                 totalTrials={nTrials}
+                busy={tradBusy}
+                busyLabel="GP optimizing…"
               />
             </div>
           </div>
@@ -288,6 +308,8 @@ function App() {
                 candidate={llmSnap.candidate}
                 iteration={llmSnap.iteration}
                 totalTrials={nTrials}
+                busy={llmBusy}
+                busyLabel="LLM reasoning…"
               />
             </div>
           </div>

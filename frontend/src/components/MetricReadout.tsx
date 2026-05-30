@@ -5,6 +5,8 @@ interface MetricReadoutProps {
   candidate: number | null;
   iteration: number;
   totalTrials: number;
+  busy?: boolean;
+  busyLabel?: string;
 }
 
 function Stat({
@@ -56,6 +58,8 @@ export function MetricReadout({
   candidate,
   iteration,
   totalTrials,
+  busy = false,
+  busyLabel = "computing…",
 }: MetricReadoutProps) {
   const fmt = (v: number | null) => (v === null ? "—" : v.toFixed(4));
   const progress = totalTrials > 0 ? Math.min(100, (iteration / totalTrials) * 100) : 0;
@@ -63,10 +67,11 @@ export function MetricReadout({
   return (
     <div
       style={{
-        border: "1px solid var(--color-graphite-700)",
+        border: `1px solid ${busy ? accent : "var(--color-graphite-700)"}`,
         borderRadius: 10,
         padding: "12px 14px",
         background: "var(--color-graphite-880)",
+        transition: "border-color 0.3s",
       }}
     >
       <div style={{ display: "flex", gap: 12 }}>
@@ -85,7 +90,25 @@ export function MetricReadout({
             fontFamily: "var(--font-mono)",
           }}
         >
-          <span>ITER {iteration}</span>
+          <span style={{ display: "flex", alignItems: "center", gap: 6 }}>
+            {busy && (
+              <span
+                className="live-dot"
+                style={{
+                  width: 6,
+                  height: 6,
+                  borderRadius: "50%",
+                  background: accent,
+                  display: "inline-block",
+                }}
+              />
+            )}
+            {busy ? (
+              <span style={{ color: accent }}>{busyLabel}</span>
+            ) : (
+              <span>ITER {iteration}</span>
+            )}
+          </span>
           <span>{totalTrials} TRIALS</span>
         </div>
         <div
