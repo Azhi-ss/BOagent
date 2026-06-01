@@ -169,3 +169,40 @@ class TestBenchmarkRunner:
             path.unlink(missing_ok=True)
             import shutil
             shutil.rmtree(tmp_dir, ignore_errors=True)
+
+    def test_comparison_runner_aggregate_does_not_drop_mean(self):
+        from benchmark.comparison import ComparisonRunner
+        
+        runner = ComparisonRunner(
+            task_id="band_alignment",
+            n_initial=3,
+            n_trials=5,
+            seeds=[42, 7],
+            traditional={"acquisition": "ei", "xi": 0.01, "kappa": 2.576},
+            llmbo={"acquisition": "ucb", "xi": 0.01, "kappa": 2.576},
+        )
+        
+        trajectories = [
+            {
+                "trad_best": [10.0, 15.0, 20.0, 25.0],
+                "trad_gen": [10.0, 15.0, 20.0, 25.0],
+                "llm_best": [10.0, 15.0, 20.0, 26.0],
+                "llm_gen": [10.0, 15.0, 20.0, 26.0],
+            },
+            {
+                "trad_best": [8.0],
+                "trad_gen": [8.0],
+                "llm_best": [8.0],
+                "llm_gen": [8.0],
+            }
+        ]
+        
+        points = runner._aggregate(trajectories)
+        
+        assert len(points) == 6
+        assert points[0]["trad_best_mean"] == 9.0
+        assert points[3]["trad_best_mean"] == 16.5
+        assert points[3]["llm_best_mean"] == 17.0
+        assert points[5]["trad_best_mean"] == 16.5
+        assert points[5]["llm_best_mean"] == 17.0
+

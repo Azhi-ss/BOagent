@@ -13,11 +13,11 @@ TMP_OUT=$(mktemp)
 RC=0
 
 echo "Executing gemini prompt with auto model..." >&2
-gemini -p "$PROMPT" --approval-mode yolo --skip-trust "$@" > "$TMP_OUT" 2>&1 || RC=$?
+gemini -p "$PROMPT" -y --skip-trust "$@" > "$TMP_OUT" 2>&1 || RC=$?
 
 if [ $RC -ne 0 ] && grep -q -i -E "(quota|exhausted|429)" "$TMP_OUT"; then
   echo "⚠️ Flash model quota exhausted ($RC). Smart routing fallback to Pro model..." >&2
-  gemini -m pro -p "$PROMPT" --approval-mode yolo --skip-trust "$@"
+  gemini -m pro -p "$PROMPT" -y --skip-trust "$@"
 else
   cat "$TMP_OUT"
   rm -f "$TMP_OUT"

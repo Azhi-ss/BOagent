@@ -9,9 +9,15 @@ from typing import Any
 import sys
 
 # Ensure backend directory is in sys.path for local module imports
-backend_path = Path(__file__).parent.absolute()
-if str(backend_path) not in sys.path:
-    sys.path.insert(0, str(backend_path))
+# We use resolve() to handle symlinks and absolute paths correctly.
+_current_dir = Path(__file__).resolve().parent
+if str(_current_dir) not in sys.path:
+    sys.path.insert(0, str(_current_dir))
+
+# Also add the project root just in case, to support 'from backend.optimization...' style
+_root_dir = _current_dir.parent
+if str(_root_dir) not in sys.path:
+    sys.path.append(str(_root_dir))
 
 from dotenv import load_dotenv
 from fastapi import FastAPI, HTTPException, status
@@ -40,14 +46,24 @@ app.add_middleware(
     allow_origins=[
         "http://localhost:3000",
         "http://127.0.0.1:3000",
+        "http://[::1]:3000",
         "http://localhost:4173",
         "http://127.0.0.1:4173",
+        "http://[::1]:4173",
         "http://localhost:5173",
         "http://127.0.0.1:5173",
+        "http://[::1]:5173",
         "http://localhost:5174",
         "http://127.0.0.1:5174",
+        "http://[::1]:5174",
+        "http://localhost:5175",
+        "http://127.0.0.1:5175",
+        "http://[::1]:5175",
+        "http://0.0.0.0:5173",
+        "http://0.0.0.0:5174",
+        "http://0.0.0.0:5175",
     ],
-    allow_origin_regex=r"^http://(localhost|127\.0\.0\.1):\d+$",
+    allow_origin_regex=r"^http://(localhost|127\.0\.0\.1|\[::1\]|0\.0\.0\.0):\d+$",
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
@@ -138,6 +154,9 @@ class LLMBOConfig(BaseModel):
     top_k: int = Field(default=20, ge=1, le=100)
     alpha: float = Field(default=0.1, ge=-1.0, le=1.0)
     chat_engine: str | None = None
+    use_llm_heuristic: bool = False
+    use_direct_full_pool: bool = False
+    heuristic_weight: float = 0.3
 
 
 class CompareBenchmarkBody(BaseModel):
@@ -248,6 +267,18 @@ def _logs_page_html() -> str:
 @app.get("/logs", response_class=HTMLResponse)
 def logs_page() -> HTMLResponse:
     return HTMLResponse(_logs_page_html())
+
+
+@app.get("/architecture", response_class=HTMLResponse)
+def architecture_page() -> HTMLResponse:
+    """Serve the system architecture interactive documentation."""
+    path = Path(__file__).parent.parent / "docs" / "architecture" / "architecture.html"
+    if not path.exists():
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail="Architecture documentation file not found.",
+        )
+    return HTMLResponse(content=path.read_text(encoding="utf-8"))
 
 
 @app.get("/api/v1/logs")
@@ -496,7 +527,10 @@ async def operational_suggest(body: OperationalSuggestBody) -> dict[str, Any]:
             acquisition=body.llm_config.acquisition,
             kappa=body.llm_config.kappa,
             xi=body.llm_config.xi,
-            use_llm=True
+            use_llm=True,
+            use_llm_heuristic=body.llm_config.use_llm_heuristic,
+            use_direct_full_pool=body.llm_config.use_direct_full_pool,
+            heuristic_weight=body.llm_config.heuristic_weight
         )
 
         return success({

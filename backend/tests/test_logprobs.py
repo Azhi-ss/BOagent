@@ -156,6 +156,54 @@ def test_evaluate_candidate_viability(mock_post):
     assert payload["top_logprobs"] == 5
 
 
+@patch("llm_client.requests.post")
+def test_evaluate_candidate_viability_with_gp_context(mock_post):
+    # Mock client config
+    client = DeepSeekClient(api_key="sk-test")
+    engine = KnowledgeEngine(chat_engine="deepseek-v4-flash")
+    engine._client = client
+    
+    # Mock successful response
+    mock_response = MagicMock()
+    mock_response.ok = True
+    mock_response.json.return_value = {
+        "choices": [
+            {
+                "message": {"content": "Yes"},
+                "logprobs": {
+                    "content": [
+                        {
+                            "token": "Yes",
+                            "logprob": -0.05,
+                            "top_logprobs": [
+                                {"token": "Yes", "logprob": -0.05}
+                            ]
+                        }
+                    ]
+                }
+            }
+        ],
+        "usage": {}
+    }
+    mock_post.return_value = mock_response
+    
+    candidate = {"CHI_PVK": 3.9, "Eg_HTL": 1.9}
+    feature_cols = ["CHI_PVK", "Eg_HTL"]
+    
+    logprob = engine.evaluate_candidate_viability(
+        candidate, "System Prompt", feature_cols, gp_mean=23.4, gp_std=1.2
+    )
+    assert logprob == -0.05
+    
+    # Verify post payload includes GP prediction context in user prompt
+    _, kwargs = mock_post.call_args
+    payload = kwargs["json"]
+    user_message = payload["messages"][1]["content"]
+    assert "GP Surrogate Predictions:" in user_message
+    assert "- Predicted Score (mean): 23.4000" in user_message
+    assert "- Prediction Uncertainty (std): 1.2000" in user_message
+
+
 # ---------------------------------------------------------------------------
 # 4. Test suggest hybrid scoring
 # ---------------------------------------------------------------------------
@@ -166,17 +214,23 @@ def test_suggest_hybrid_scoring_calculates_correct_ranking():
     # Assume client is configured
     knowledge._client.is_configured.return_value = True
     knowledge.build_system_prompt_for_viability.return_value = "Mock System Prompt"
+    knowledge.enrich_suggestions.side_effect = lambda x: x
     
     # Mock evaluate_candidate_viability:
     # Candidate 1: viability -0.05 (highly viable)
     # Candidate 2: viability -5.0 (not viable)
     # Candidate 3: viability -0.1 (viable)
-    def mock_eval(candidate, system_prompt, feature_cols):
+    def mock_eval(candidate, system_prompt, feature_cols, gp_mean=None, gp_std=None):
+        assert gp_mean is not None
+        assert gp_std == 1.0
         if candidate["A"] == 1.0:
+            assert gp_mean == 21.0
             return -0.05
         elif candidate["A"] == 2.0:
+            assert gp_mean == 22.0
             return -5.0
         else:
+            assert gp_mean == 20.5
             return -0.1
             
     knowledge.evaluate_candidate_viability.side_effect = mock_eval

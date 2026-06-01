@@ -5,6 +5,7 @@ export class AppPage {
   readonly title: Locator
   readonly taskSelector: Locator
   readonly runButton: Locator
+  readonly stopButton: Locator
   readonly boCurveContainer: Locator
   readonly modeEvaluationButton: Locator
   readonly modeOperationalButton: Locator
@@ -12,11 +13,12 @@ export class AppPage {
   constructor(page: Page) {
     this.page = page
     this.title = page.getByRole("heading", { name: "BO·AGENT" })
-    this.taskSelector = page.locator("select").first()
-    this.runButton = page.getByRole("button", { name: /开启对比实验/ })
-    this.boCurveContainer = page.locator("svg")
-    this.modeEvaluationButton = page.getByRole("button", { name: /性能评测/ })
-    this.modeOperationalButton = page.getByRole("button", { name: /实验实操/ })
+    this.taskSelector = page.getByTestId("task-selector").filter({ visible: true })
+    this.runButton = page.getByTestId("run-bench-btn").filter({ visible: true })
+    this.stopButton = page.getByTestId("stop-bench-btn").filter({ visible: true })
+    this.boCurveContainer = page.locator("svg").filter({ visible: true })
+    this.modeEvaluationButton = page.getByRole("button", { name: /性能评测/ }).filter({ visible: true })
+    this.modeOperationalButton = page.getByRole("button", { name: /实验实操/ }).filter({ visible: true })
   }
 
   async goto() {
@@ -29,8 +31,12 @@ export class AppPage {
     await expect(this.runButton).toBeVisible()
   }
 
-  async selectTask(taskId: string) {
-    await this.taskSelector.selectOption(taskId)
+  async runBenchmark() {
+    await this.runButton.click()
+  }
+
+  async stopBenchmark() {
+    await this.stopButton.click()
   }
 
   async assertBoCurveVisible() {

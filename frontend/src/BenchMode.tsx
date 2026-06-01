@@ -15,8 +15,8 @@ import type {
   TraditionalConfig,
 } from "./types";
 
-const TRAD = "#f59e0b"; // Amber-500
-const LLM = "#10b981";  // Emerald-500
+const TRAD = "var(--color-amber-500)";
+const LLM = "var(--color-signal-500)";
 
 type RunState = "idle" | "running" | "done" | "error";
 
@@ -205,7 +205,7 @@ export function BenchMode() {
           }}
         >
           <Field label="数据集 (Dataset)">
-            <select className="field-input" value={taskId} onChange={(e) => setTaskId(e.target.value)}>
+            <select className="field-input" data-testid="task-selector" value={taskId} onChange={(e) => setTaskId(e.target.value)}>
               {tasks.map((t) => (
                 <option key={t.task_id} value={t.task_id}>
                   {t.name || t.task_id}
@@ -214,18 +214,19 @@ export function BenchMode() {
             </select>
           </Field>
           <Field label="初始点数 (Initial Points)">
-            <NumberField value={nInitial} onChange={setNInitial} min={1} max={50} />
+            <NumberField value={nInitial} onChange={setNInitial} min={1} max={50} data-testid="input-n-initial" />
           </Field>
           <Field label="迭代次数 (Trials)">
-            <NumberField value={nTrials} onChange={setNTrials} min={1} max={200} />
+            <NumberField value={nTrials} onChange={setNTrials} min={1} max={200} data-testid="input-n-trials" />
           </Field>
           <Field label="重复次数 (Seeds / Runs)">
-            <NumberField value={nSeeds} onChange={setNSeeds} min={1} max={10} />
+            <NumberField value={nSeeds} onChange={setNSeeds} min={1} max={10} data-testid="input-n-seeds" />
           </Field>
           
           <div style={{ display: "flex", gap: 12 }}>
             <button
               className="run-btn"
+              data-testid="run-bench-btn"
               onClick={handleRun}
               disabled={running}
               style={{
@@ -241,9 +242,10 @@ export function BenchMode() {
             {running && (
               <button
                 className="run-btn"
+                data-testid="stop-bench-btn"
                 onClick={handleStop}
-                style={{ 
-                  background: "rgba(244, 63, 94, 0.15)", 
+                style={{
+                  background: "rgba(244, 63, 94, 0.15)",
                   border: "1px solid rgba(244, 63, 94, 0.4)",
                   color: "var(--color-fault-400)",
                   boxShadow: "none"
@@ -331,14 +333,14 @@ export function BenchMode() {
         </div>
       </div>
 
-      <div className="panel" style={{ padding: 24, marginBottom: 24 }}>
-        <div style={{ display: "flex", alignItems: "center", gap: 10, marginBottom: 20 }}>
+      <div className="panel" style={{ padding: 24, marginBottom: 24, display: "flex", flexDirection: "column" }}>
+        <div style={{ display: "flex", alignItems: "center", gap: 10, marginBottom: 20, flexShrink: 0 }}>
           <h2 style={{ margin: 0, fontSize: 16, fontWeight: 700, fontFamily: "var(--font-display)" }}>收敛曲线 (Convergence Analytics)</h2>
           {running && <span className="live-dot" style={{ width: 8, height: 8, borderRadius: "50%", background: LLM }} />}
           {running && <span style={{ fontSize: 11, color: LLM, fontFamily: "var(--font-mono)", fontWeight: 600 }}>实时 (LIVE)</span>}
         </div>
         {chartData.length === 0 ? (
-          <div style={{ height: 420, display: "flex", alignItems: "center", justifyContent: "center", color: "var(--color-ink-500)", fontFamily: "var(--font-mono)", fontSize: 13, background: "rgba(0, 0, 0, 0.15)", borderRadius: 12, border: "1px dashed rgba(255, 255, 255, 0.05)" }}>
+          <div style={{ flex: 1, minHeight: 420, display: "flex", alignItems: "center", justifyContent: "center", color: "var(--color-ink-500)", fontFamily: "var(--font-mono)", fontSize: 13, background: "rgba(0, 0, 0, 0.15)", borderRadius: 12, border: "1px dashed rgba(255, 255, 255, 0.05)" }}>
             {runState === "idle" ? "Please configure parameters and click 'Start Comparison' (请配置对比实验参数并开启)" : "Waiting for first iteration results... (等待迭代结果)"}
           </div>
         ) : <ConvergenceChart data={chartData} targetCol={targetCol} />}

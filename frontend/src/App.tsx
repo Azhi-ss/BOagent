@@ -2,8 +2,8 @@ import { useState } from "react";
 import { BenchMode } from "./BenchMode";
 import { OperationalMode } from "./OperationalMode";
 
-const TRAD = "#f59e0b"; // Amber-500
-const LLM = "#10b981";  // Emerald-500
+const TRAD = "var(--color-amber-500)";
+const LLM = "var(--color-signal-500)";
 
 type Mode = "bench" | "operational";
 

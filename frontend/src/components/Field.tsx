@@ -173,6 +173,7 @@ export function NumberField({
   min,
   max,
   width = "100%",
+  ...props
 }: {
   value: number;
   onChange: (v: number) => void;
@@ -180,6 +181,7 @@ export function NumberField({
   min?: number;
   max?: number;
   width?: string | number;
+  [key: string]: any;
 }) {
   return (
     <input
@@ -191,6 +193,7 @@ export function NumberField({
       max={max}
       style={{ width }}
       onChange={(e) => onChange(Number(e.target.value))}
+      {...props}
     />
   );
 }

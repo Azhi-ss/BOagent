@@ -32,7 +32,7 @@ Use this skill when implementing new API endpoints, adjusting GP/Acquisition cal
 *   **Rest Endpoints**: Use Pydantic schemas (v2) to validate incoming request bodies (e.g., `CreateBenchmarkBody`, `CompareBenchmarkBody`, `OperationalSuggestBody`).
 *   **SSE Streams**:
     *   **GET Stream (`/api/v1/logs/stream`)**: Formatted as `data: {json}\n\n` with UTF-8 encoding.
-    *   **POST Stream (`/api/v1/benchmark/compare/stream`)**: Streams real-time aggregate events using `StreamingResponse` wrapping an `asyncio.Queue` consumer. Heavy calculations must execute in a thread/executor (`loop.run_in_executor(None, produce)`) to prevent blocking the event loop.
+    *   **POST Stream (`/api/v1/benchmark/compare/stream`)**: Streams real-time aggregate events using `StreamingResponse` wrapping an `asyncio.Queue` consumer. SSE event types: `meta`, `seed_start`, `step_start`, `aggregate`, `done`. Heavy calculations must execute in a thread/executor (`loop.run_in_executor(None, produce)`) to prevent blocking the event loop.
 *   **Input Validation**: Prevent path traversal by sanitizing file output paths:
     ```python
     output_path = Path(body.output_dir)
@@ -46,6 +46,7 @@ Use this skill when implementing new API endpoints, adjusting GP/Acquisition cal
     kernel = C(1.0, (1e-3, 1e3)) * Matern([1.0] * len(self.space.feature_cols), (1e-2, 1e2), nu=2.5)
     ```
 *   **Acquisition Strategies**: Supports `ei`, `ucb`, and `pi`. Scaling parameter `kappa` (default `2.576`) controls exploration-exploitation balance.
+*   **Hybrid LLM-GP Scoring**: Top-K candidates from GP are queried via a "Yes/No" viability prompt. The log-probability of "Yes" is extracted and combined: `Hybrid = GP_Score + (γ × std(GP_Scores)) × log_prob(Yes)` where `γ` defaults to `0.1`.
 *   **RNG Isolation**: Always use locally seeded instances of `np.random.RandomState` (e.g., `rng = np.random.RandomState()`) in data loaders and optimization loops. Avoid using the global `np.random` to prevent random state leakage across parallel benchmark threads.
 
 ### 3.3 Physics-Informed KnowledgeEngine
@@ -77,5 +78,5 @@ pytest tests/test_unification.py
 
 ## 5. Prohibited Actions (Red Lines)
 > [!WARNING]
-> **No Direct LLM Scoring**: Never let the LLM score or select candidate formulations from the raw search space. The search space must always be pre-filtered using the Gaussian Process surrogate model to produce a Top-K pool (typically top 20). The LLM's role is strictly to refine these top candidates using physical reasoning.
+> **No Direct LLM Scoring**: Never let the LLM score or select candidate formulations from the raw search space. The search space must always be pre-filtered using the Gaussian Process surrogate model first to produce a Top-K pool (typically top 20). The LLM's role is strictly to refine these top candidates using physical reasoning. Even when using a generated heuristic function, the primary workflow must prioritize the GP surrogate model as the first-stage filter to maintain convergence guarantees.
 > Failure to follow this rule will blow the token budget and ruin convergence guarantees.

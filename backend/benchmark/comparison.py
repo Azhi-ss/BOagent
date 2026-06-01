@@ -191,20 +191,34 @@ class ComparisonRunner:
     def _aggregate(
         self, trajectories: list[dict[str, list[float]]]
     ) -> list[dict[str, float]]:
-        """Compute per-iteration mean/std across completed seeds."""
+        """Compute per-iteration mean/std across completed and active seeds.
+        
+        Active trajectories are padded with their latest values to prevent
+        downward jumps in average scores as slower seeds catch up.
+        """
         length = self.n_trials + 1
         keys = ["trad_best", "trad_gen", "llm_best", "llm_gen"]
-        stacked = {
-            k: np.array([self._pad(t[k], length) for t in trajectories])
-            for k in keys
-        }
         points: list[dict[str, float]] = []
+        
         for i in range(length):
             point: dict[str, float] = {"iteration": i}
             for k in keys:
-                col = stacked[k][:, i]
-                point[f"{k}_mean"] = float(np.mean(col))
-                point[f"{k}_std"] = float(np.std(col))
+                vals = []
+                for t in trajectories:
+                    traj_list = t[k]
+                    if len(traj_list) > i:
+                        vals.append(traj_list[i])
+                    elif traj_list:
+                        vals.append(traj_list[-1])
+                
+                if vals:
+                    mean_val = float(np.mean(vals))
+                    std_val = float(np.std(vals)) if len(vals) > 1 else 0.0
+                else:
+                    mean_val, std_val = 0.0, 0.0
+                
+                point[f"{k}_mean"] = mean_val
+                point[f"{k}_std"] = std_val
             points.append(point)
         return points
 

@@ -35,6 +35,7 @@ BOagent/
 │   │   ├── runner.py             # Single seed benchmark coordinator
 │   │   ├── comparison.py         # Multi-seed parallel benchmark comparison
 │   │   └── bo_step.py            # Step-by-step benchmark runner bridging BO components
+│   ├── run_prompt_ablation.py    # A/B/C prompt variant benchmark experiment
 │   └── tests/                    # Backend automated tests
 ├── frontend/                      # React Frontend Application
 │   ├── src/
@@ -68,10 +69,18 @@ The optimizer is not a purely statistical black-box model. It incorporates expli
     *   *Constraint*: A negative CBO (cliff) results in high $V_{oc}$ loss due to interface recombination. A large positive CBO (spike) blocks electron extraction, hurting $J_{sc}$.
 *   **Valence Band Offset (VBO)**: $VBO = (\chi_{HTL} + E_{g,HTL}) - \chi_{PVK}$. Ideal range: $[1.7, 2.0]$ eV.
     *   *Constraint*: VBO below $1.7$ eV causes $V_{oc}$ loss; above $2.0$ eV blocks hole extraction.
-*   **Electron Blocking**: HTL LUMO ($\chi_{HTL}$) must be higher than PVK LUMO ($\chi_{PVK}$) by at least $0.5$ eV.
-*   **Recombination Trap Density ($Nt$)**: Trap density at interfaces ($N_{t,\text{PVK/ETL}}$ or $N_{t,\text{HTL/PVK}}$) must be minimized to avoid recombination losses. Logarithmic reduction in $Nt$ yields linear gains in open-circuit voltage ($V_{oc}$).
-*   **Doping Concentration ($Na, Nd$)**: Active doping improves built-in potential ($V_{bi}$) but must be capped below $10^{19} \text{ cm}^{-3}$ to prevent tunneling-assisted recombination.
-*   **Shunt Resistance**: Minimize counter-doping concentration in layer interfaces to avoid parasitic leakage shunts.
+*   **Electron Blocking**: HTL LUMO ($\chi_{HTL}$) must be higher than PVK LUMO ($\chi_{PVK}$) by at least $0.5$ eV to effectively suppress electron flow to the anode.
+*   **Recombination Trap Density ($Nt$)**: Trap density at interfaces ($N_{t,\text{PVK/ETL}}$ or $N_{t,\text{HTL/PVK}}$) must be minimized. Logarithmic reduction in $Nt$ yields linear gains in open-circuit voltage ($V_{oc}$).
+*   **Doping Concentration ($Na, Nd$) & Built-in Potential ($V_{bi}$)**: Active acceptor doping in HTL ($Na_{HTL}$) and donor doping in ETL ($Nd_{ETL}$) improves charge separation built-in potential ($V_{bi}$).
+    *   *Constraint*: Active doping must be strictly capped below $10^{19} \text{ cm}^{-3}$ to prevent tunneling-assisted recombination and interface leakages.
+*   **Shunt Resistance (Rsh)**: Minimize counter-doping concentration in layer interfaces (e.g., $Nd_{HTL}$, $Na_{ETL}$) to avoid parasitic shunt paths that reduce Fill Factor (FF).
+
+### Hybrid LLM-GP Selection Pipeline
+The optimizer combines GP surrogate scores with LLM viability judgments via a hybrid scoring formula:
+1.  GP produces a Top-K candidate pool (default K=20) ranked by acquisition score.
+2.  Each candidate is queried via a "Yes/No" viability prompt; the log-probability of "Yes" is extracted.
+3.  **Hybrid Score**: `GP_Score + (γ × std(GP_Scores)) × log_prob(Yes)`, where `γ` (default 0.1) controls LLM influence.
+4.  The LLM can alternatively generate a Python `score_candidate(c: dict) -> float` heuristic function, executed in a sandboxed `exec()` to rank large pools (10k+ points) before GP scoring.
 
 ---
 
@@ -134,18 +143,24 @@ npx playwright test --ui     # Interactive UI Mode
 ## 6. Existing Capabilities & Reuse Guide
 
 Before writing new utility helpers or components, check if they already exist:
-*   **API SSE client**: `frontend/src/lib/api.ts` contains `streamComparison` which implements POST-based SSE stream chunk decoding. Use this for any long-running API streaming.
-*   **Tailwind 4.x Theme & Fonts**: All custom colors (`traditional`, `llm`, `graphite`, `fault`) and typography families (`Space Grotesk` for display, `Plus Jakarta Sans` for body, `JetBrains Mono` for code) are defined in `frontend/src/index.css` via the `@theme` block. Avoid using hardcoded hex values in inline styles.
+*   **API SSE client**: `frontend/src/lib/api.ts` contains `streamComparison` which implements POST-based SSE stream chunk decoding. SSE event types: `meta`, `seed_start`, `step_start`, `aggregate`, `done`. Use this for any long-running API streaming.
+*   **Tailwind 4.x Theme & Fonts**: All custom colors are defined in `frontend/src/index.css` via the `@theme` block. Key palettes: `--color-graphite-*` (slate/dark), `--color-signal-*` (emerald/LLMBO), `--color-amber-*` (Traditional BO). Typography: `Space Grotesk` (display), `Plus Jakarta Sans` (body), `JetBrains Mono` (code). Custom animations: `pulse-ring` (live status), `value-flash` (data updates). **Avoid hardcoded hex values** — use CSS variables.
 *   **Physics Formulas Prompt Builder**: `backend/optimization/knowledge.py` maps task feature columns to formulas and hints. If you add new parameters, add them to `build_prompt` mapping instead of copying the builder logic.
 *   **Insight Persistence & RAG**: `backend/optimization/memory.py` handles writing insights to `insights.jsonl` and calculating embeddings using Doubao API. If the embedding client is missing keys or unreachable, it falls back to recency-based retrieval (returning the last `top_k` insights) instead of raising an error.
+*   **Flat API Response Helpers**: Use `success(data)` and `error_response(msg, code)` in `api.py` for consistent response shapes. Avoid deeply nested response structures.
+*   **Declarative Color Maps**: Frontend components use lookup maps (e.g., `typeColorMap` in `LandscapeCanvas.tsx`) instead of nested ternaries for conditional styling.
 
 ---
 
 ## 7. Change Verification Checklist
 
 Before marking a task as complete, execute this checklist:
-- [ ] Backend tests (`python -m pytest`) pass without errors.
-- [ ] Frontend E2E tests (`npm run test:e2e` or `npm run test:e2e:chromium`) pass.
-- [ ] No hardcoded API keys are committed. All secrets are loaded via `os.environ` or `.env`.
-- [ ] The `output_dir` in `api.py` endpoint is validated to prevent path traversal attempts (`..`).
-- [ ] No typescript type compiler warnings are introduced (`npm run build` runs clean).
+- [ ] **Backend Test Verification**: Run `python -m pytest` inside `backend/` to verify all unit/integration tests pass.
+- [ ] **Frontend E2E Verification**: Run `npm run test:e2e:chromium` inside `frontend/` to confirm React renders. Ensure Playwright locators use `:visible` filters (e.g., `page.locator("button:has-text('Run'):visible")`) to avoid ambiguous locator failures due to co-rendering of modes via display toggles.
+- [ ] **E2E Timeout Settings**: Ensure testing specs override defaults using `test.setTimeout(180000)` or `240000` for benchmark specs to prevent timeouts during long-running LLM analysis.
+- [ ] **Typescript Compiler Build**: Ensure `npm run build` runs clean without type compiler warnings.
+- [ ] **Security Boundaries**: Validate that `output_dir` prevents path traversal (`..` and absolute paths validation). No API secrets should be hardcoded (always load via environment variables).
+- [ ] **Scientific Memory Fallback**: Confirm that VectorMemory retrieves insights via recency-based fallback safely without throwing exceptions when `ARK_API_KEY` is missing or unreachable.
+- [ ] **UI Animation Restraints**: Ensure Recharts Line elements in `ConvergenceChart.tsx` set `isAnimationActive={false}` to avoid bouncing glitches during SSE streaming.
+- [ ] **Local RNG Isolation**: Verify no global `np.random` usage in optimization or benchmark paths; all randomness via locally seeded `RandomState`.
+

@@ -18,37 +18,37 @@ test.describe("Algorithm Comparison - LLMBO vs Traditional BO", () => {
 
   test("both algorithms should produce valid non-zero scores", async ({ page }) => {
     // nTrials=5, nSeeds=1 → ~30-60s total.
-    test.setTimeout(180000);
+    test.setTimeout(300000);
 
     await expect(page.getByText(/TRADITIONAL BO|传统贝叶斯优化/)).toBeVisible();
 
-    // Set minimal config: nInitial=3, nTrials=5, nSeeds=1
-    const inputs = page.locator('input[type="number"]');
-    await inputs.nth(0).fill("3"); // nInitial
-    await inputs.nth(1).fill("5"); // nTrials
-    await inputs.nth(2).fill("1"); // nSeeds
+    // Set minimal config: nTrials=5, nSeeds=1 → ~30-60s total.
+    // Use stable data-testid instead of fragile nth(i) locators
+    await page.getByTestId("input-n-initial").filter({ visible: true }).fill("3");
+    await page.getByTestId("input-n-trials").filter({ visible: true }).fill("5");
+    await page.getByTestId("input-n-seeds").filter({ visible: true }).fill("1");
 
-    // Start the run using stable CSS-class locator (text changes when running)
-    const runBtn = page.locator("button.run-btn").first();
+    // Start the run using stable data-testid
+    const runBtn = page.getByTestId("run-bench-btn").filter({ visible: true });
     await expect(runBtn).toBeVisible();
     await runBtn.click();
-    await expect(runBtn).toBeDisabled({ timeout: 5000 });
+    await expect(runBtn).toBeDisabled({ timeout: 20000 });
 
-    // Wait for run to fully complete
-    await expect(runBtn).toBeEnabled({ timeout: 150000 });
+    // Wait for run to fully complete (LLM calls can be slow)
+    await expect(runBtn).toBeEnabled({ timeout: 480000 });
 
     // Both SummaryCards must appear
-    const tradCard = page.getByTestId("summary-trad");
-    const llmCard = page.getByTestId("summary-llm");
-    await expect(tradCard).toBeVisible();
-    await expect(llmCard).toBeVisible();
+    const tradCard = page.getByTestId("summary-trad").filter({ visible: true });
+    const llmCard = page.getByTestId("summary-llm").filter({ visible: true });
+    await expect(tradCard).toBeVisible({ timeout: 30000 });
+    await expect(llmCard).toBeVisible({ timeout: 30000 });
 
-    const tradScoreEl = tradCard.getByTestId("score-value");
-    const llmScoreEl = llmCard.getByTestId("score-value");
+    const tradScoreEl = tradCard.getByTestId("score-value").filter({ visible: true });
+    const llmScoreEl = llmCard.getByTestId("score-value").filter({ visible: true });
 
     // Both must show a real numeric score (not "—")
-    await expect(tradScoreEl).toHaveText(/^\s*\d+\.\d{4}\s*$/, { timeout: 15000 });
-    await expect(llmScoreEl).toHaveText(/^\s*\d+\.\d{4}\s*$/, { timeout: 15000 });
+    await expect(tradScoreEl).toHaveText(/^\s*\d+\.\d{4}\s*$/, { timeout: 60000 });
+    await expect(llmScoreEl).toHaveText(/^\s*\d+\.\d{4}\s*$/, { timeout: 60000 });
 
     const tradScore = parseFloat((await tradScoreEl.textContent())!.trim());
     const llmScore = parseFloat((await llmScoreEl.textContent())!.trim());
@@ -70,21 +70,20 @@ test.describe("Algorithm Comparison - LLMBO vs Traditional BO", () => {
 
     await expect(page.getByText(/TRADITIONAL BO|传统贝叶斯优化/)).toBeVisible();
 
-    const inputs = page.locator('input[type="number"]');
-    await inputs.nth(0).fill("5");  // nInitial
-    await inputs.nth(1).fill("15"); // nTrials
-    await inputs.nth(2).fill("3");  // nSeeds
+    await page.getByTestId("input-n-initial").filter({ visible: true }).fill("5");
+    await page.getByTestId("input-n-trials").filter({ visible: true }).fill("15");
+    await page.getByTestId("input-n-seeds").filter({ visible: true }).fill("3");
 
-    const runBtn = page.locator("button.run-btn").first();
+    const runBtn = page.getByTestId("run-bench-btn").filter({ visible: true });
     await runBtn.click();
-    await expect(runBtn).toBeDisabled({ timeout: 5000 });
-    await expect(runBtn).toBeEnabled({ timeout: 550000 });
+    await expect(runBtn).toBeDisabled({ timeout: 20000 });
+    await expect(runBtn).toBeEnabled({ timeout: 1200000 });
 
-    const tradScoreEl = page.getByTestId("summary-trad").getByTestId("score-value");
-    const llmScoreEl = page.getByTestId("summary-llm").getByTestId("score-value");
+    const tradScoreEl = page.getByTestId("summary-trad").filter({ visible: true }).getByTestId("score-value").filter({ visible: true });
+    const llmScoreEl = page.getByTestId("summary-llm").filter({ visible: true }).getByTestId("score-value").filter({ visible: true });
 
-    await expect(tradScoreEl).toHaveText(/^\s*\d+\.\d{4}\s*$/, { timeout: 30000 });
-    await expect(llmScoreEl).toHaveText(/^\s*\d+\.\d{4}\s*$/, { timeout: 30000 });
+    await expect(tradScoreEl).toHaveText(/^\s*\d+\.\d{4}\s*$/, { timeout: 60000 });
+    await expect(llmScoreEl).toHaveText(/^\s*\d+\.\d{4}\s*$/, { timeout: 60000 });
 
     const tradScore = parseFloat((await tradScoreEl.textContent())!.trim());
     const llmScore = parseFloat((await llmScoreEl.textContent())!.trim());

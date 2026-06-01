@@ -46,7 +46,9 @@ Use this skill when editing frontend elements, implementing new interactive page
   - LLMBO/AI: Green/Emerald (`text-signal-500`, `--color-signal-*`).
   - Fault/Error: Red/Rose (`text-fault-400`, `--color-fault-*`).
 - **Glassmorphism**: Always apply `.panel` and `.sub-panel` styles (utilizing `backdrop-filter: blur(16px)` and semi-transparent backgrounds) for container layouts to preserve the "Scientific Instrument" aesthetic.
-- **Hex Colors**: Avoid hardcoding hex colors in inline style blocks. Reference utility classes or Tailwind custom properties instead.
+- **Custom Animations**: `pulse-ring` (live status indicator), `value-flash` (data update highlight). Defined in `index.css` — reuse instead of creating new keyframes.
+- **Hex Colors**: Avoid hardcoding hex colors in inline style blocks or Recharts elements. You must explicitly advise against using raw hex colors and instead reference Tailwind v4 custom properties (e.g., `var(--color-signal-500)`) for UI styling and Recharts Line coloring.
+- **Vite Integration**: Uses `@tailwindcss/vite` plugin. Do NOT add `postcss.config.js` or `tailwind.config.js`.
 
 ### 3.2 Charting & Visualization (Recharts)
 - **Animation Disabling**: All `<Line>`, `<Area>`, and `<Scatter>` components inside `ConvergenceChart.tsx` and `LandscapeCanvas.tsx` must set `isAnimationActive={false}`. This avoids re-drawing/bouncing charts from zero when receiving frequent SSE updates.
@@ -56,8 +58,9 @@ Use this skill when editing frontend elements, implementing new interactive page
 
 ### 3.3 State Management & API Communications
 - **State Separation**: Keep states for `BenchMode` and `OperationalMode` completely separated. Both components are kept rendered with `display: none` toggles; combining states will lead to rendering synchronization conflicts.
-- **SSE Stream Decoding**: The custom `streamComparison` in `src/lib/api.ts` decodes chunked JSON streams. It splits raw bytes by `\n\n`. Ensure your messages match this framing.
+- **SSE Stream Decoding**: The custom `streamComparison` in `src/lib/api.ts` decodes chunked JSON streams. It splits raw bytes by `\n\n`. SSE event types: `meta`, `seed_start`, `step_start`, `aggregate`, `done`. Ensure your messages match this framing.
 - **Input Pre-validation**: Validate range constraints (`min <= max` and positive trap densities) on the client side inside `OperationalMode.tsx` before sending suggest requests.
+- **Declarative Color Maps**: Use lookup objects (e.g., `typeColorMap` in `LandscapeCanvas.tsx`) instead of nested ternaries for conditional styling.
 
 ---
 

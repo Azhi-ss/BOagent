@@ -11,7 +11,7 @@ import type {
   OperationalSuggestResponse
 } from "./types";
 
-const LLM = "#10b981"; // Emerald-500
+const LLM = "var(--color-signal-500)"; // Emerald-500
 
 function SuggestionCard({ 
   suggestion, 
@@ -189,6 +189,7 @@ export function OperationalMode() {
                 value={target} 
                 onChange={e => setTarget(e.target.value)}
                 placeholder="e.g. Power Conversion Efficiency"
+                data-testid="op-target-input"
               />
             </Field>
             
@@ -303,14 +304,16 @@ export function OperationalMode() {
                      value={inputConfig[v.name] ?? 0} 
                      onChange={val => setInputConfig({...inputConfig, [v.name]: val})}
                      width={100}
+                     data-testid={`op-input-var-${v.name}`}
                    />
                  </Field>
                ))}
                <Field label="实测得分" subLabel={target}>
-                 <NumberField value={Number(inputScore)} onChange={val => setInputScore(val)} width={120} />
+                 <NumberField value={Number(inputScore)} onChange={val => setInputScore(val)} width={120} data-testid="op-input-score" />
                </Field>
                <button 
                  className="run-btn" 
+                 data-testid="op-add-btn"
                  onClick={addObservation}
                  disabled={inputScore === ""}
                  style={{ padding: "10px 20px", background: LLM, color: "#020617", height: 42 }}
@@ -344,33 +347,40 @@ export function OperationalMode() {
             <AcquisitionConfig config={llmConfig} onChange={v => setLlmConfig(prev => ({...prev, ...v}))} accent={LLM} />
           </div>
 
-          <div className="sub-panel">
+          <div className="sub-panel" style={{ marginTop: 16 }}>
+            <span className="sub-panel-title">高级采样与先验配置 ADVANCED SCORING</span>
             <div style={{ display: "flex", flexWrap: "wrap", gap: 16 }}>
-              <Field label="模型引擎" subLabel="Model">
-                <select 
-                  className="field-input" 
-                  style={{ width: 140, padding: '0 8px' }}
-                  value={llmConfig.chat_engine} 
-                  onChange={e => setLlmConfig({...llmConfig, chat_engine: e.target.value})}
-                >
-                  <option value="deepseek-v4-flash">DeepSeek V4</option>
-                </select>
-              </Field>
-
-              <Field label="权衡系数" subLabel="Alpha α">
-                <NumberField value={llmConfig.alpha} onChange={v => setLlmConfig({...llmConfig, alpha: v})} step={0.1} width={80} />
-              </Field>
-              <Field label="筛选规模" subLabel="Top-K">
-                <NumberField value={llmConfig.top_k} onChange={v => setLlmConfig({...llmConfig, top_k: v})} width={80} />
-              </Field>
-              <Field label="建议数量" subLabel="Candidates">
-                <NumberField value={llmConfig.n_candidates} onChange={v => setLlmConfig({...llmConfig, n_candidates: v})} width={80} />
-              </Field>
+              <label style={{ display: "flex", alignItems: "center", gap: 8, fontSize: 12, color: "var(--color-ink-300)", cursor: "pointer" }}>
+                <input 
+                  type="checkbox" 
+                  checked={llmConfig.use_llm_heuristic} 
+                  onChange={e => setLlmConfig({...llmConfig, use_llm_heuristic: e.target.checked})} 
+                />
+                物理启发式打分 (LLM Heuristic)
+              </label>
+              <label style={{ display: "flex", alignItems: "center", gap: 8, fontSize: 12, color: "var(--color-ink-300)", cursor: "pointer" }}>
+                <input 
+                  type="checkbox" 
+                  checked={llmConfig.use_direct_full_pool} 
+                  onChange={e => setLlmConfig({...llmConfig, use_direct_full_pool: e.target.checked})} 
+                />
+                全样本直接打分 (Direct Full-Pool)
+              </label>
+              { (llmConfig.use_llm_heuristic || llmConfig.use_direct_full_pool) && (
+                <Field label="融合权重" subLabel="Weight">
+                  <NumberField 
+                    value={llmConfig.heuristic_weight ?? 0.3} 
+                    onChange={v => setLlmConfig({...llmConfig, heuristic_weight: v})} 
+                    step={0.1} min={0.1} max={0.9} width={80} 
+                  />
+                </Field>
+              )}
             </div>
           </div>
 
           <button 
             className="run-btn"
+            data-testid="op-suggest-btn"
             onClick={handleSuggest}
             disabled={loading}
             style={{ 
@@ -438,3 +448,4 @@ export function OperationalMode() {
     </div>
   );
 }
+

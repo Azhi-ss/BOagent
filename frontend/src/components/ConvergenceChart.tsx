@@ -12,8 +12,8 @@ import {
 } from "recharts";
 import type { ChartPoint } from "../types";
 
-const TRAD = "#f59e0b"; // Amber-500
-const LLM = "#10b981";  // Emerald-500
+const TRAD = "var(--color-amber-500)";
+const LLM = "var(--color-signal-500)";
 
 interface ConvergenceChartProps {
   data: ChartPoint[];
@@ -163,7 +163,7 @@ export function ConvergenceChart({ data, targetCol }: ConvergenceChartProps) {
       : null;
 
   return (
-    <div style={{ display: "flex", flexDirection: "column", gap: 16, width: "100%" }}>
+    <div style={{ display: "flex", flexDirection: "column", gap: 16, width: "100%", flex: 1, minHeight: 0 }}>
       {/* Interactive Legend */}
       <div
         style={{
@@ -173,6 +173,7 @@ export function ConvergenceChart({ data, targetCol }: ConvergenceChartProps) {
           flexWrap: "wrap",
           alignItems: "center",
           userSelect: "none",
+          flexShrink: 0,
         }}
       >
         <div
@@ -245,8 +246,8 @@ export function ConvergenceChart({ data, targetCol }: ConvergenceChartProps) {
       </div>
 
       {/* Chart container */}
-      <div style={{ width: "100%", height: 420 }}>
-        <ResponsiveContainer>
+      <div style={{ width: "100%", height: 400 }}>
+        <ResponsiveContainer width="100%" height="100%">
           <ComposedChart data={data} margin={{ top: 16, right: 12, bottom: 8, left: -24 }}>
             <CartesianGrid stroke="rgba(255, 255, 255, 0.03)" strokeDasharray="4 4" />
             <XAxis
@@ -267,6 +268,7 @@ export function ConvergenceChart({ data, targetCol }: ConvergenceChartProps) {
               }}
             />
             <YAxis
+              width={60}
               stroke="var(--color-ink-500)"
               tickLine={false}
               axisLine={{ stroke: "rgba(255, 255, 255, 0.08)" }}

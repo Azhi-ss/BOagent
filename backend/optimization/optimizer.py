@@ -60,22 +60,72 @@ class BayesianOptimizer:
         xi: float = 0.01,
         use_llm: bool = True,
         gamma: float = 0.1,
-        use_logprobs: bool = True
+        use_logprobs: bool = True,
+        use_llm_heuristic: bool = False,
+        heuristic_weight: float = 0.3,
+        use_direct_full_pool: bool = False
     ) -> SuggestionResult:
-        """Generate the next best experiments to try."""
+        """Generate the next best experiments to try.
+        
+        Args:
+            top_k: Number of candidates to pass to LLM for final refinement.
+            n_candidates: Final number of suggestions to return.
+            acquisition: GP acquisition function ('ucb', 'ei', 'pi').
+            use_llm: Whether to use LLM refinement.
+            use_logprobs: Use pointwise log-probs for top-K candidates.
+            use_llm_heuristic: Use LLM-generated Python code to score the ENTIRE pool (10k+).
+            heuristic_weight: Weight of LLM heuristic score in hybrid fusion [0, 1].
+            use_direct_full_pool: Use batch-based direct LLM scoring for the pool (sampled).
+        """
         # 1. Get candidates from the search space
         pool_df = self.space.get_unobserved(self.observed_configs)
         
         # 2. Fit GP and predict Acquisition scores
         scored_df = self._score_candidates(pool_df, acquisition, kappa, xi)
         
-        # 3. Take Top-K for refinement
-        top_candidates = scored_df.sort_values("score", ascending=False).head(top_k)
-        
-        # 4. Domain Refinement (LLM)
+        # 3. Apply Full-Pool LLM Scoring (Directly scoring the raw search space)
         observed_data = []
         for i, (_, row) in enumerate(self.observed_configs.iterrows()):
             observed_data.append((row.to_dict(), self.observed_scores[i]))
+
+        # Path A: LLM-Generated Heuristic (Scalable to 1M+ points)
+        if use_llm_heuristic and self.knowledge_engine._client.is_configured() and not pool_df.empty:
+            h_code = self.knowledge_engine.generate_physical_heuristic(
+                self.target_name, self.space.feature_cols, observed_data
+            )
+            h_scores = self.knowledge_engine.apply_heuristic_to_pool(scored_df, h_code)
+            
+            if h_scores.std() > 0:
+                h_min, h_max = h_scores.min(), h_scores.max()
+                h_norm = (h_scores - h_min) / (h_max - h_min)
+            else:
+                h_norm = h_scores
+                
+            scored_df["llm_score"] = h_norm
+            scored_df["score"] = (1 - heuristic_weight) * scored_df["score"] + heuristic_weight * h_norm
+
+        # Path B: Direct Batch Scoring (Higher fidelity, sampled for 10k+)
+        elif use_direct_full_pool and self.knowledge_engine._client.is_configured() and not pool_df.empty:
+            # For 10,000 formulations, we sample a representative set to keep costs down
+            # or we could batch everything. Here we take top 100 by GP as representative samples.
+            sample_size = min(100, len(scored_df))
+            sample_df = scored_df.sort_values("score", ascending=False).head(sample_size)
+            
+            batch_scores = self.knowledge_engine.score_candidates_direct_batch(
+                self.target_name, self.space.feature_cols, 
+                sample_df[self.space.feature_cols].to_dict("records"),
+                observed_data
+            )
+            
+            # Map back to full scored_df (others get 0 or mean)
+            scored_df["llm_score"] = 0.0
+            scored_df.loc[sample_df.index, "llm_score"] = batch_scores
+            scored_df["score"] = (1 - heuristic_weight) * scored_df["score"] + heuristic_weight * scored_df["llm_score"]
+        
+        # 4. Take Top-K for refinement
+        top_candidates = scored_df.sort_values("score", ascending=False).head(top_k)
+        
+        # 5. Domain Refinement (LLM Pointwise Log-probs)
 
         if use_llm and use_logprobs and self.knowledge_engine._client.is_configured() and not top_candidates.empty:
             # Pointwise Log-probs based evaluation
@@ -87,6 +137,8 @@ class BayesianOptimizer:
             prompt = system_prompt # Store system prompt for audit / logs
             
             candidates_list = [row[self.space.feature_cols].to_dict() for _, row in top_candidates.iterrows()]
+            gp_means = top_candidates["mean"].values if "mean" in top_candidates.columns else [None] * len(candidates_list)
+            gp_stds = top_candidates["std"].values if "std" in top_candidates.columns else [None] * len(candidates_list)
             
             import concurrent.futures
             with concurrent.futures.ThreadPoolExecutor(max_workers=len(candidates_list)) as executor:
@@ -95,11 +147,22 @@ class BayesianOptimizer:
                         self.knowledge_engine.evaluate_candidate_viability,
                         cand,
                         system_prompt,
-                        self.space.feature_cols
+                        self.space.feature_cols,
+                        gp_mean=float(gp_mean) if gp_mean is not None else None,
+                        gp_std=float(gp_std) if gp_std is not None else None,
                     )
-                    for cand in candidates_list
+                    for cand, gp_mean, gp_std in zip(candidates_list, gp_means, gp_stds)
                 ]
-                log_probs = [f.result() for f in futures]
+                log_probs = []
+                for f in futures:
+                    try:
+                        log_probs.append(f.result(timeout=30.0))
+                    except concurrent.futures.TimeoutError:
+                        print("[BO] Candidate viability evaluation timed out. Using default log_prob.")
+                        log_probs.append(-2.0)
+                    except Exception as e:
+                        print(f"[BO] Candidate viability evaluation failed: {e}. Using default log_prob.")
+                        log_probs.append(-2.0)
             
             # Adaptive scaling weight: lambda_t = gamma * std(GP_scores)
             gp_scores = top_candidates["score"].values
@@ -120,6 +183,7 @@ class BayesianOptimizer:
                 row[self.space.feature_cols].to_dict()
                 for _, row in sorted_candidates.head(n_candidates).iterrows()
             ]
+            suggestions = self.knowledge_engine.enrich_suggestions(suggestions)
             
             analysis_lines = ["Log-probs Hybrid Selection Analysis:"]
             for idx, (_, row) in enumerate(sorted_candidates.head(n_candidates).iterrows()):
@@ -149,6 +213,7 @@ class BayesianOptimizer:
                 )
             else:
                 suggestions = [row[self.space.feature_cols].to_dict() for _, row in top_candidates.head(n_candidates).iterrows()]
+                suggestions = self.knowledge_engine.enrich_suggestions(suggestions)
                 analysis = "LLM refinement skipped. Using GP top candidates."
 
         # Guarantee at least one suggestion: fall back to GP-ranked top candidates.
@@ -157,6 +222,7 @@ class BayesianOptimizer:
                 row[self.space.feature_cols].to_dict()
                 for _, row in top_candidates.head(n_candidates).iterrows()
             ]
+            suggestions = self.knowledge_engine.enrich_suggestions(suggestions)
 
         return SuggestionResult(
             suggestions=suggestions,

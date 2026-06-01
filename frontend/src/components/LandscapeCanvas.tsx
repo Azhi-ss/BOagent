@@ -12,9 +12,9 @@ import {
 } from "recharts";
 import type { OperationalVariable, OperationalObservation } from "../types";
 
-const LLM = "#10b981"; // Emerald-500
-const BEST = "#f59e0b"; // Amber-500
-const OBSERVED = "#64748b"; // Slate-500
+const LLM = "var(--color-signal-500)"; // Emerald-500
+const BEST = "var(--color-amber-500)"; // Amber-500
+const OBSERVED = "var(--color-ink-500)"; // Slate-500
 
 interface LandscapeCanvasProps {
   variables: OperationalVariable[];
@@ -153,9 +153,15 @@ export function LandscapeCanvas({
               content={({ active, payload }) => {
                 if (active && payload && payload.length) {
                   const data = payload[0].payload;
+                  const typeColorMap: Record<string, string> = {
+                    candidate: LLM,
+                    best: BEST
+                  };
+                  const labelColor = typeColorMap[data.type] || "var(--color-ink-300)";
+
                   return (
                     <div style={{ background: "rgba(11, 15, 25, 0.95)", border: "1px solid rgba(255,255,255,0.12)", padding: "12px 16px", borderRadius: 12, fontSize: 11, backdropFilter: "blur(16px)", boxShadow: "0 10px 20px rgba(0,0,0,0.5)" }}>
-                      <div style={{ fontWeight: 700, color: data.type === "candidate" ? LLM : data.type === "best" ? BEST : "var(--color-ink-300)", marginBottom: 8, fontSize: 10, textTransform: "uppercase", letterSpacing: "0.05em" }}>
+                      <div style={{ fontWeight: 700, color: labelColor, marginBottom: 8, fontSize: 10, textTransform: "uppercase", letterSpacing: "0.05em" }}>
                         {data.id}
                       </div>
                       <div style={{ display: "flex", flexDirection: "column", gap: 4 }}>
@@ -180,14 +186,14 @@ export function LandscapeCanvas({
             />
             
             {/* Observed Points (Shadow Projection) */}
-            <Scatter name="Observed" data={chartData.observed} fill={OBSERVED} fillOpacity={0.6}>
+            <Scatter name="Observed" data={chartData.observed} fill={OBSERVED} fillOpacity={0.6} isAnimationActive={false}>
               {chartData.observed.map((entry, index) => (
                 <Cell key={`cell-obs-${index}`} stroke="rgba(255,255,255,0.2)" />
               ))}
             </Scatter>
 
             {/* Candidate Points */}
-            <Scatter name="Candidates" data={chartData.candidates}>
+            <Scatter name="Candidates" data={chartData.candidates} isAnimationActive={false}>
               {chartData.candidates.map((entry, index) => (
                 <Cell 
                   key={`cell-can-${index}`} 
@@ -202,7 +208,7 @@ export function LandscapeCanvas({
 
             {/* Best Point Highlight */}
             {chartData.bestPoint && (
-              <Scatter name="Best" data={[chartData.bestPoint]} fill={BEST}>
+              <Scatter name="Best" data={[chartData.bestPoint]} fill={BEST} isAnimationActive={false}>
                 <Cell stroke="#fff" strokeWidth={2} style={{ filter: `drop-shadow(0 0 10px ${BEST})` }} />
               </Scatter>
             )}

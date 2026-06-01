@@ -45,7 +45,14 @@ class TestAcquisitionUnification:
         )
         
         assert len(result.suggestions) == 5
-        assert all(c in features for c in result.suggestions[0])
+        # Suggestions are enriched with physics parameters (CBO, VBO)
+        for sug in result.suggestions:
+            for feat in features:
+                assert feat in sug
+            assert "CBO" in sug
+            assert "CBO_Status" in sug
+            assert "VBO" in sug
+            assert "VBO_Status" in sug
 
     def test_vectorized_performance_preserved(self):
         """

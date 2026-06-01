@@ -17,6 +17,13 @@ class SuggestionResult:
 
 def extract_yes_logprob(logprobs_payload: dict[str, Any] | None) -> float:
     """Helper function to parse token log-probabilities for 'Yes' from OpenAI/DeepSeek schema."""
+    raw_val = _extract_yes_logprob_raw(logprobs_payload)
+    if raw_val <= -20.0:
+        return raw_val
+    return max(-10.0, raw_val)
+
+
+def _extract_yes_logprob_raw(logprobs_payload: dict[str, Any] | None) -> float:
     if not logprobs_payload:
         return -20.0
     
@@ -63,24 +70,16 @@ class KnowledgeEngine:
         self.memory = VectorMemory(persist_path=memory_path)
         self._iteration = 0
 
-    def build_prompt(
-        self,
-        target_name: str,
-        feature_cols: List[str],
-        top_candidates: pd.DataFrame,
-        observed_data: List[Tuple[Dict[str, float], float]],
-        n_candidates: int = 5,
-        scientific_notes: str = ""
-    ) -> str:
-        """Construct the materials-science domain prompt with task-specific hints."""
-        
-        # 1. Determine task-specific physical context and semiconductor rules
+    def _get_physical_context_and_hints(
+        self, feature_cols: List[str], include_task_prefix: bool = True
+    ) -> Tuple[str, Dict[str, str]]:
         physical_context = ""
         feature_hints = {}
         
         if "CHI_PVK" in feature_cols and "Eg_HTL" in feature_cols:
+            prefix = "This task involves optimizing energy band alignment in perovskite solar cells to maximize PCE.\n" if include_task_prefix else ""
             physical_context = (
-                "This task involves optimizing energy band alignment in perovskite solar cells to maximize PCE.\n"
+                prefix +
                 "Semiconductor Physics Rules for Energy Alignment:\n"
                 "1. Conduction Band Offset (CBO): (CHI_PVK - CHI_ETL). Ideal range: [-0.1, 0.3] eV. A negative CBO (cliff) causes huge V_oc loss due to interface recombination. A large positive CBO (spike) blocks electron extraction, reducing J_sc.\n"
                 "2. Valence Band Offset (VBO): Approximated as (CHI_HTL + Eg_HTL) - CHI_PVK. Ideal range: [1.7, 2.0] eV. Values below 1.7 eV cause V_oc loss; above 2.0 eV blocks hole extraction.\n"
@@ -94,8 +93,9 @@ class KnowledgeEngine:
                 "CHI_ETL": "Electron affinity of ETL (LUMO position)"
             }
         elif "Nt_PVK/ETL" in feature_cols or "Na_PVK" in feature_cols:
+            prefix = "This task involves optimizing defects and doping to minimize non-radiative recombination and maximize carrier extraction.\n" if include_task_prefix else ""
             physical_context = (
-                "This task involves optimizing defects and doping to minimize non-radiative recombination and maximize carrier extraction.\n"
+                prefix +
                 "Physical Guidelines for Defect/Doping Optimization:\n"
                 "1. Recombination Centers: Interface trap densities (Nt) are the primary source of V_oc loss. Logarithmic reduction in Nt usually leads to linear gain in V_oc.\n"
                 "2. Built-in Potential (V_bi): Higher doping in HTL (Na_HTL) and ETL (Nd_ETL) increases V_bi, improving charge separation. However, excessive doping (> 10^19 cm^-3) can cause tunneling-assisted recombination or shunting.\n"
@@ -111,6 +111,44 @@ class KnowledgeEngine:
                 "Nd_HTL": "Parasitic donor doping in HTL (causes shunting)",
                 "Na_ETL": "Parasitic acceptor doping in ETL (causes shunting)"
             }
+        return physical_context, feature_hints
+
+    def _get_cbo_metrics(self, data: Dict[str, float], for_ui: bool = False) -> Tuple[float, str] | None:
+        """Calculate CBO and map to status string."""
+        if "CHI_PVK" not in data or "CHI_ETL" not in data:
+            return None
+        cbo = data["CHI_PVK"] - data["CHI_ETL"]
+        if for_ui:
+            if cbo < -0.1: status = "Cliff (Recombination Loss)"
+            elif cbo > 0.3: status = "Spike (Extraction Barrier)"
+            else: status = "Ideal"
+        else:
+            if cbo < -0.1: status = "Cliff (Violated)"
+            elif cbo > 0.3: status = "Spike (Violated)"
+            else: status = "Ideal"
+        return cbo, status
+
+    def _get_vbo_metrics(self, data: Dict[str, float]) -> Tuple[float, str] | None:
+        """Calculate VBO and map to status string."""
+        if not all(k in data for k in ["CHI_HTL", "Eg_HTL", "CHI_PVK"]):
+            return None
+        vbo = (data["CHI_HTL"] + data["Eg_HTL"]) - data["CHI_PVK"]
+        status = "Ideal" if 1.7 <= vbo <= 2.0 else "Sub-optimal"
+        return vbo, status
+
+    def build_prompt(
+        self,
+        target_name: str,
+        feature_cols: List[str],
+        top_candidates: pd.DataFrame,
+        observed_data: List[Tuple[Dict[str, float], float]],
+        n_candidates: int = 5,
+        scientific_notes: str = ""
+    ) -> str:
+        """Construct the materials-science domain prompt with task-specific hints."""
+        
+        # 1. Determine task-specific physical context and semiconductor rules
+        physical_context, feature_hints = self._get_physical_context_and_hints(feature_cols, include_task_prefix=True)
 
         prompt = f"""You are a senior materials scientist specializing in device physics for Perovskite Solar Cells. 
 Your goal is to evaluate candidate formulations and select those that best balance charge extraction, recombination mitigation, and physical stability to achieve the highest PCE ({target_name}).
@@ -137,6 +175,11 @@ Your goal is to evaluate candidate formulations and select those that best balan
             prompt += f"\n formulation{i + 1}: "
             for col in feature_cols:
                 prompt += f"{col}={obs_values.get(col, 0):.4f}, "
+            
+            cbo_metrics = self._get_cbo_metrics(obs_values)
+            if cbo_metrics:
+                prompt += f"CBO={cbo_metrics[0]:.3f} eV, "
+            
             prompt += f"{target_name}={obs_eta:.4f}"
 
         prompt += "\n\n### Candidate Formulations (GP UCB High-potential candidates)"
@@ -146,15 +189,13 @@ Your goal is to evaluate candidate formulations and select those that best balan
                 prompt += f"{col}={row[col]:.4f}, "
             
             # Explicitly calculate critical offsets if relevant features are present
-            if "CHI_PVK" in row and "CHI_ETL" in row:
-                cbo = row["CHI_PVK"] - row["CHI_ETL"]
-                prompt += f"\nCalculated CBO: {cbo:.4f} eV"
-                if not (-0.1 <= cbo <= 0.3):
-                    prompt += " (!! OUTSIDE IDEAL RANGE [-0.1, 0.3] !!)"
+            cbo_metrics = self._get_cbo_metrics(row)
+            if cbo_metrics:
+                prompt += f"\nCalculated CBO: {cbo_metrics[0]:.4f} eV ({cbo_metrics[1]})"
             
-            if all(k in row for k in ["CHI_HTL", "Eg_HTL", "CHI_PVK"]):
-                vbo = (row["CHI_HTL"] + row["Eg_HTL"]) - row["CHI_PVK"]
-                prompt += f", Calculated VBO: {vbo:.4f} eV"
+            vbo_metrics = self._get_vbo_metrics(row)
+            if vbo_metrics:
+                prompt += f", Calculated VBO: {vbo_metrics[0]:.4f} eV ({vbo_metrics[1]})"
             
             prompt += f"\nGP Prediction: Mean PCE={row.get('mean', 0):.4f}, Uncertainty(std)={row.get('std', 0):.4f}"
 
@@ -200,7 +241,11 @@ Selected Formulations:
         history_str = ""
         for i, (_, row) in enumerate(observed_configs.iterrows()):
             feats = ", ".join(f"{col}={row[col]:.4f}" for col in feature_cols)
-            history_str += f"\n  [{i+1}] {feats} → {target_name}={observed_scores[i]:.4f}"
+            cbo_str = ""
+            cbo_metrics = self._get_cbo_metrics(row)
+            if cbo_metrics:
+                cbo_str = f", CBO={cbo_metrics[0]:.3f}eV"
+            history_str += f"\n  [{i+1}] {feats}{cbo_str} → {target_name}={observed_scores[i]:.4f}"
 
         # Ask LLM to produce structured JSON insight (Reasoning-BO ReasoningNotesResponse pattern)
         prompt = f"""You are a materials scientist analyzing perovskite solar cell optimization experiments.
@@ -259,6 +304,22 @@ Each list should have 1-3 concise bullet strings. Focus on what drives high {tar
             self.memory.add(insight)
             return raw[:200]
 
+    def enrich_suggestions(self, suggestions: List[Dict[str, float]]) -> List[Dict[str, float]]:
+        """Add calculated physical parameters (CBO, VBO) and status to suggestion dictionaries for UI display."""
+        for sug in suggestions:
+            # Conduction Band Offset (CBO): Ideal range [-0.1, 0.3] eV
+            cbo_metrics = self._get_cbo_metrics(sug, for_ui=True)
+            if cbo_metrics:
+                sug["CBO"] = cbo_metrics[0]
+                sug["CBO_Status"] = cbo_metrics[1]
+
+            # Valence Band Offset (VBO): Ideal range [1.7, 2.0] eV
+            vbo_metrics = self._get_vbo_metrics(sug)
+            if vbo_metrics:
+                sug["VBO"] = vbo_metrics[0]
+                sug["VBO_Status"] = vbo_metrics[1]
+        return suggestions
+
     def refine_suggestions(
         self,
         prompt: str,
@@ -287,18 +348,8 @@ Each list should have 1-3 concise bullet strings. Focus on what drives high {tar
         selected_indices = self._parse_response(analysis, len(top_candidates), n_candidates)
         selected_indices = sorted(selected_indices)
         
-        suggestions = []
-        for idx in selected_indices:
-            row = top_candidates.iloc[idx]
-            sug = row[feature_cols].to_dict()
-            
-            # Add calculated physical parameters for UI display
-            if "CHI_PVK" in row and "CHI_ETL" in row:
-                sug["CBO"] = row["CHI_PVK"] - row["CHI_ETL"]
-            if all(k in row for k in ["CHI_HTL", "Eg_HTL", "CHI_PVK"]):
-                sug["VBO"] = (row["CHI_HTL"] + row["Eg_HTL"]) - row["CHI_PVK"]
-                
-            suggestions.append(sug)
+        suggestions = [top_candidates.iloc[idx][feature_cols].to_dict() for idx in selected_indices]
+        suggestions = self.enrich_suggestions(suggestions)
             
         return suggestions, analysis
 
@@ -398,42 +449,7 @@ Each list should have 1-3 concise bullet strings. Focus on what drives high {tar
         n_select: int,
     ) -> str:
         # Determine task-specific physical context and semiconductor rules
-        physical_context = ""
-        feature_hints = {}
-        
-        if "CHI_PVK" in feature_cols and "Eg_HTL" in feature_cols:
-            physical_context = (
-                "This task involves optimizing energy band alignment in perovskite solar cells to maximize PCE.\n"
-                "Semiconductor Physics Rules for Energy Alignment:\n"
-                "1. Conduction Band Offset (CBO): (CHI_PVK - CHI_ETL). Ideal range: [-0.1, 0.3] eV. A negative CBO (cliff) causes huge V_oc loss due to interface recombination. A large positive CBO (spike) blocks electron extraction, reducing J_sc.\n"
-                "2. Valence Band Offset (VBO): Approximated as (CHI_HTL + Eg_HTL) - CHI_PVK. Ideal range: [1.7, 2.0] eV. Values below 1.7 eV cause V_oc loss; above 2.0 eV blocks hole extraction.\n"
-                "3. Electron Blocking: The HTL LUMO (CHI_HTL) should be much higher than PVK LUMO (CHI_PVK) to block electrons. Difference > 0.5 eV preferred."
-            )
-            feature_hints = {
-                "CHI_PVK": "Electron affinity of Perovskite (LUMO position)",
-                "Eg_HTL": "Band gap of HTL",
-                "CHI_HTL": "Electron affinity of HTL (LUMO position)",
-                "Eg_ETL": "Band gap of ETL",
-                "CHI_ETL": "Electron affinity of ETL (LUMO position)"
-            }
-        elif "Nt_PVK/ETL" in feature_cols or "Na_PVK" in feature_cols:
-            physical_context = (
-                "This task involves optimizing defects and doping to minimize non-radiative recombination and maximize carrier extraction.\n"
-                "Physical Guidelines for Defect/Doping Optimization:\n"
-                "1. Recombination Centers: Interface trap densities (Nt) are the primary source of V_oc loss. Logarithmic reduction in Nt usually leads to linear gain in V_oc.\n"
-                "2. Built-in Potential (V_bi): Higher doping in HTL (Na_HTL) and ETL (Nd_ETL) increases V_bi, improving charge separation. However, excessive doping (> 10^19 cm^-3) can cause tunneling-assisted recombination or shunting.\n"
-                "3. Shunt Resistance: Counter-doping (e.g. Nd_HTL) must be minimized as it introduces parasitic leakage paths, killing the Fill Factor (FF)."
-            )
-            feature_hints = {
-                "Nt_PVK/ETL": "Trap density at PVK/ETL interface (minimize to reduce J_0)",
-                "Nt_HTL/PVK": "Trap density at HTL/PVK interface (minimize to reduce J_0)",
-                "Na_PVK": "P-type doping in Perovskite absorber",
-                "Nd_PVK": "N-type doping in Perovskite absorber",
-                "Na_HTL": "Acceptor doping in HTL (improves hole extraction)",
-                "Nd_ETL": "Donor doping in ETL (improves electron extraction)",
-                "Nd_HTL": "Parasitic donor doping in HTL (causes shunting)",
-                "Na_ETL": "Parasitic acceptor doping in ETL (causes shunting)"
-            }
+        physical_context, feature_hints = self._get_physical_context_and_hints(feature_cols, include_task_prefix=True)
 
         n_cand = len(candidate_points)
         prompt = f"""You are a senior materials scientist specializing in device physics for Perovskite Solar Cells.
@@ -453,14 +469,13 @@ Your goal is to select {n_select} most promising initial points from {n_cand} ca
             prompt += f"\nPoint {i + 1}: {feats}"
             
             # Explicitly calculate critical offsets
-            if "CHI_PVK" in point and "CHI_ETL" in point:
-                cbo = point["CHI_PVK"] - point["CHI_ETL"]
-                prompt += f" | CBO: {cbo:.3f} eV"
-                if not (-0.1 <= cbo <= 0.3):
-                    prompt += " (OUTSIDE RANGE)"
-            if all(k in point for k in ["CHI_HTL", "Eg_HTL", "CHI_PVK"]):
-                vbo = (point["CHI_HTL"] + point["Eg_HTL"]) - point["CHI_PVK"]
-                prompt += f" | VBO: {vbo:.3f} eV"
+            cbo_metrics = self._get_cbo_metrics(point)
+            if cbo_metrics:
+                prompt += f" | CBO: {cbo_metrics[0]:.3f} eV ({cbo_metrics[1]})"
+            
+            vbo_metrics = self._get_vbo_metrics(point)
+            if vbo_metrics:
+                prompt += f" | VBO: {vbo_metrics[0]:.3f} eV ({vbo_metrics[1]})"
 
         prompt += f"""
 
@@ -501,40 +516,7 @@ Respond with only the point numbers (1-{n_cand}) separated by commas, like: 1,5,
         observed_data: list[tuple[dict[str, float], float]],
     ) -> str:
         """Construct a system prompt detailing physical rules and observations for pointwise viability queries."""
-        physical_context = ""
-        feature_hints = {}
-        
-        if "CHI_PVK" in feature_cols and "Eg_HTL" in feature_cols:
-            physical_context = (
-                "Semiconductor Physics Rules for Energy Alignment:\n"
-                "1. Conduction Band Offset (CBO): (CHI_PVK - CHI_ETL). Ideal range: [-0.1, 0.3] eV. A negative CBO (cliff) causes huge V_oc loss due to interface recombination. A large positive CBO (spike) blocks electron extraction, reducing J_sc.\n"
-                "2. Valence Band Offset (VBO): Approximated as (CHI_HTL + Eg_HTL) - CHI_PVK. Ideal range: [1.7, 2.0] eV. Values below 1.7 eV cause V_oc loss; above 2.0 eV blocks hole extraction.\n"
-                "3. Electron Blocking: The HTL LUMO (CHI_HTL) should be much higher than PVK LUMO (CHI_PVK) to block electrons. Difference > 0.5 eV preferred."
-            )
-            feature_hints = {
-                "CHI_PVK": "Electron affinity of Perovskite (LUMO position)",
-                "Eg_HTL": "Band gap of HTL",
-                "CHI_HTL": "Electron affinity of HTL (LUMO position)",
-                "Eg_ETL": "Band gap of ETL",
-                "CHI_ETL": "Electron affinity of ETL (LUMO position)"
-            }
-        elif "Nt_PVK/ETL" in feature_cols or "Na_PVK" in feature_cols:
-            physical_context = (
-                "Physical Guidelines for Defect/Doping Optimization:\n"
-                "1. Recombination Centers: Interface trap densities (Nt) are the primary source of V_oc loss. Logarithmic reduction in Nt usually leads to linear gain in V_oc.\n"
-                "2. Built-in Potential (V_bi): Higher doping in HTL (Na_HTL) and ETL (Nd_ETL) increases V_bi, improving charge separation. However, excessive doping (> 10^19 cm^-3) can cause tunneling-assisted recombination or shunting.\n"
-                "3. Shunt Resistance: Counter-doping (e.g. Nd_HTL) must be minimized as it introduces parasitic leakage paths, killing the Fill Factor (FF)."
-            )
-            feature_hints = {
-                "Nt_PVK/ETL": "Trap density at PVK/ETL interface (minimize to reduce J_0)",
-                "Nt_HTL/PVK": "Trap density at HTL/PVK interface (minimize to reduce J_0)",
-                "Na_PVK": "P-type doping in Perovskite absorber",
-                "Nd_PVK": "N-type doping in Perovskite absorber",
-                "Na_HTL": "Acceptor doping in HTL (improves hole extraction)",
-                "Nd_ETL": "Donor doping in ETL (improves electron extraction)",
-                "Nd_HTL": "Parasitic donor doping in HTL (causes shunting)",
-                "Na_ETL": "Parasitic acceptor doping in ETL (causes shunting)"
-            }
+        physical_context, feature_hints = self._get_physical_context_and_hints(feature_cols, include_task_prefix=False)
 
         prompt = f"""You are a senior materials scientist specializing in device physics for Perovskite Solar Cells.
 Your goal is to evaluate if a candidate formulation is physically viable and likely to achieve high power conversion efficiency ({target_name}).
@@ -547,10 +529,10 @@ Your goal is to evaluate if a candidate formulation is physically viable and lik
             hint = feature_hints.get(col, "Feature parameter")
             prompt += f"\n- {col}: {hint}"
 
-        # Sort history to show top performing ones (up to 5)
-        sorted_obs = sorted(observed_data, key=lambda x: x[1], reverse=True)[:5]
+        # Sort history to show all observed formulations
+        sorted_obs = sorted(observed_data, key=lambda x: x[1], reverse=True)
         if sorted_obs:
-            prompt += "\n\n### Top Performing Observed Formulations (For reference)"
+            prompt += "\n\n### All Observed Formulations (sorted by performance)"
             for i, (obs_values, obs_score) in enumerate(sorted_obs):
                 feats_str = ", ".join(f"{k}={obs_values.get(k, 0.0):.4f}" for k in feature_cols)
                 prompt += f"\n [{i+1}] {feats_str} -> {target_name}={obs_score:.4f}"
@@ -564,11 +546,146 @@ Your goal is to evaluate if a candidate formulation is physically viable and lik
         prompt += "\n\nBased on these rules and guidelines, evaluate the candidate formulation provided in the user message. Answer strictly with either 'Yes' or 'No'."
         return prompt
 
+    def generate_physical_heuristic(
+        self,
+        target_name: str,
+        feature_cols: List[str],
+        observed_data: List[Tuple[Dict[str, float], float]],
+    ) -> str:
+        """Generate a Python-executable heuristic function to score candidates.
+        
+        This allows the LLM to 'score' 10,000+ candidates efficiently by defining 
+        the selection logic rather than evaluating each point manually.
+        """
+        physical_context, _ = self._get_physical_context_and_hints(feature_cols, include_task_prefix=True)
+        
+        prompt = f"""You are a senior materials scientist. Based on the experimental history and device physics, define a technical 'heuristic score' function in Python to rank new candidates.
+
+### Task Physics
+{physical_context}
+
+### Experimental History
+"""
+        # Sort history by performance for clearer trend identification
+        sorted_history = sorted(observed_data, key=lambda x: x[1], reverse=True)
+        for i, (obs_values, obs_score) in enumerate(sorted_history):
+            feats = ", ".join(f"{k}={v:.4f}" for k, v in obs_values.items())
+            prompt += f"- {feats} -> {target_name}={obs_score:.4f}\n"
+
+        prompt += f"""
+### Requirements
+1. The function must be named `score_candidate(c: dict) -> float`.
+2. It should return a higher value for candidates that are physically robust and match successful trends.
+3. It must use the following features: {', '.join(feature_cols)}.
+4. It should penalize violations of semiconductor physics (e.g., bad CBO/VBO offsets).
+5. It MUST NOT use any external libraries except `math`.
+6. Handle potential edge cases (e.g. division by zero) by using small epsilons.
+
+Return ONLY the Python code for the function, no explanation.
+"""
+        result: LlmCallResult = self._client.chat(
+            messages=[{"role": "user", "content": prompt}],
+            max_tokens=800,
+            extra_body={"thinking": {"type": "disabled"}}
+        )
+        
+        if result.status != "success":
+            return "def score_candidate(c): return 0.0"
+            
+        code = result.content.strip()
+        # Clean markdown if LLM includes it
+        code = re.sub(r"```python\n", "", code)
+        code = re.sub(r"```", "", code)
+        return code
+
+    def score_candidates_direct_batch(
+        self,
+        target_name: str,
+        feature_cols: List[str],
+        candidates: List[Dict[str, float]],
+        observed_data: List[Tuple[Dict[str, float], float]],
+    ) -> List[float]:
+        """Ask the LLM to directly score a batch of candidates.
+        
+        Useful for smaller batches (e.g. 50-100) or representative samples of a large pool.
+        """
+        if not self._client.is_configured() or not candidates:
+            return [0.0] * len(candidates)
+
+        physical_context, _ = self._get_physical_context_and_hints(feature_cols, include_task_prefix=True)
+        
+        cand_list = ""
+        for i, cand in enumerate(candidates):
+            feats = ", ".join(f"{k}={cand.get(k, 0.0):.3f}" for k in feature_cols)
+            cand_list += f"[{i+1}] {feats}\n"
+
+        prompt = f"""You are a senior materials scientist. Evaluate and score the following {len(candidates)} candidate formulations for Perovskite Solar Cells.
+
+### Task Physics
+{physical_context}
+
+### Candidates to Score:
+{cand_list}
+
+### Instructions:
+Assign a 'Viability Score' between 0.0 and 1.0 to each candidate based on physical principles and historical performance.
+1.0 = Highly promising, physically robust.
+0.0 = Poor physics (e.g. bad offsets), likely low performance.
+
+Respond ONLY with a JSON list of scores corresponding to the candidate indices.
+Example: [0.85, 0.12, 0.45, ...]
+"""
+        result: LlmCallResult = self._client.chat(
+            messages=[{"role": "user", "content": prompt}],
+            max_tokens=1000,
+            extra_body={"thinking": {"type": "disabled"}}
+        )
+        
+        if result.status != "success":
+            return [0.0] * len(candidates)
+            
+        try:
+            raw = result.content.strip()
+            raw = re.sub(r'^```(?:json)?\s*', '', raw, flags=re.MULTILINE)
+            raw = re.sub(r'\s*```$', '', raw, flags=re.MULTILINE).strip()
+            scores = json.loads(raw)
+            if isinstance(scores, list) and len(scores) == len(candidates):
+                return [float(s) for s in scores]
+            return [0.0] * len(candidates)
+        except Exception:
+            return [0.0] * len(candidates)
+
+    def apply_heuristic_to_pool(self, pool_df: pd.DataFrame, heuristic_code: str) -> pd.Series:
+        """Apply the LLM-generated heuristic function to a large pool of candidates."""
+        try:
+            # Create a safe execution environment with necessary built-ins
+            import math
+            safe_builtins = {
+                "abs": abs, "min": min, "max": max, "round": round, "pow": pow,
+                "float": float, "int": int, "len": len, "list": list, "dict": dict,
+                "range": range, "sum": sum
+            }
+            loc = {"math": math}
+            exec(heuristic_code, {"__builtins__": safe_builtins}, loc)
+            score_fn = loc.get("score_candidate")
+            
+            if not score_fn:
+                return pd.Series(0.0, index=pool_df.index)
+                
+            # Use a slightly more efficient vectorized-like approach or just apply
+            scores = pool_df.apply(lambda row: float(score_fn(row.to_dict())), axis=1)
+            return scores
+        except Exception as e:
+            print(f"[KnowledgeEngine] Error applying heuristic: {e}")
+            return pd.Series(0.0, index=pool_df.index)
+
     def evaluate_candidate_viability(
         self,
         candidate: dict[str, float],
         system_prompt: str,
         feature_cols: list[str],
+        gp_mean: float | None = None,
+        gp_std: float | None = None,
     ) -> float:
         """Query LLM for a single candidate's physical viability and return log_prob(Yes)."""
         if not self._client.is_configured():
@@ -578,12 +695,18 @@ Your goal is to evaluate if a candidate formulation is physically viable and lik
         for col in feature_cols:
             user_prompt += f"- {col}: {candidate.get(col, 0.0):.4f}\n"
 
-        if "CHI_PVK" in candidate and "CHI_ETL" in candidate:
-            cbo = candidate["CHI_PVK"] - candidate["CHI_ETL"]
-            user_prompt += f"- Calculated CBO: {cbo:.4f} eV\n"
-        if all(k in candidate for k in ["CHI_HTL", "Eg_HTL", "CHI_PVK"]):
-            vbo = (candidate["CHI_HTL"] + candidate["Eg_HTL"]) - candidate["CHI_PVK"]
-            user_prompt += f"- Calculated VBO: {vbo:.4f} eV\n"
+        cbo_metrics = self._get_cbo_metrics(candidate)
+        if cbo_metrics:
+            user_prompt += f"- Calculated CBO: {cbo_metrics[0]:.4f} eV ({cbo_metrics[1]})\n"
+        
+        vbo_metrics = self._get_vbo_metrics(candidate)
+        if vbo_metrics:
+            user_prompt += f"- Calculated VBO: {vbo_metrics[0]:.4f} eV ({vbo_metrics[1]})\n"
+
+        if gp_mean is not None and gp_std is not None:
+            user_prompt += f"\nGP Surrogate Predictions:\n"
+            user_prompt += f"- Predicted Score (mean): {gp_mean:.4f}\n"
+            user_prompt += f"- Prediction Uncertainty (std): {gp_std:.4f}\n"
 
         user_prompt += "\nIs this candidate formulation physically viable and likely to achieve high PCE? Answer 'Yes' or 'No'."
 

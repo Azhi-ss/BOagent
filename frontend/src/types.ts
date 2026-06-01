@@ -71,6 +71,9 @@ export interface LLMBOConfig {
   top_k: number;
   alpha: number;
   chat_engine: string;
+  use_llm_heuristic?: boolean;
+  use_direct_full_pool?: boolean;
+  heuristic_weight?: number;
 }
 
 export interface CompareRequest {

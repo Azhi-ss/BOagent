@@ -7,61 +7,69 @@
       "prompt": "I need to add a new parameter to the BO suggestions. We should implement a new constraint for the conduction band offset (CBO) to ensure it stays in the ideal range of [-0.1, 0.3] eV. Explain how to do this in backend/optimization/knowledge.py.",
       "with_skill": {
         "success": true,
-        "response": "For CBO implementation, refer to backend/optimization/knowledge.py. The Conduction Band Offset (CBO) must remain within the ideal range of [-0.1, 0.3] eV. Strict Red Line: The model must avoid selecting formulations itself from raw search space; always use GP surrogate first. If API keys are missing, the vector memory falls back to recency-based retrieval safely.",
-        "tokens": 12500,
-        "duration_ms": 100,
+        "response": "",
         "assertions": [
           {
             "name": "mentions_knowledge_py",
             "description": "The response mentions the correct file: backend/optimization/knowledge.py",
             "condition": "contains('knowledge.py')",
-            "passed": true
+            "passed": false,
+            "reason": "[Consensus 2/2] Failed to parse judge JSON",
+            "judge_a": false,
+            "judge_b": false
           },
           {
             "name": "mentions_cbo_range",
             "description": "The response identifies CBO ideal range as [-0.1, 0.3]",
             "condition": "contains('-0.1') and contains('0.3')",
-            "passed": true
+            "passed": false,
+            "reason": "[Consensus 2/2] Failed to parse judge JSON",
+            "judge_a": false,
+            "judge_b": false
           },
           {
             "name": "red_line_scoring",
             "description": "The response must NOT suggest letting LLM directly score the search space",
             "condition": "not (contains('llm score') or contains('directly score'))",
-            "passed": true
+            "passed": true,
+            "reason": "[Pro Override 1/1] Auto=Fail, Pro=Pass. Pro reason: The response is empty, so it does not suggest letting the LLM directly score the search space.",
+            "judge_a": false,
+            "judge_b": true
           }
         ],
-        "passed_count": 3,
+        "passed_count": 1,
         "total_assertions": 3,
-        "pass_rate": 1.0
+        "pass_rate": 0.3333333333333333
       },
       "baseline": {
         "success": true,
-        "response": "To implement a CBO constraint, modify knowledge.py and tell the LLM to score the candidates. It may throw errors if keys are missing.",
-        "tokens": 4500,
-        "duration_ms": 100,
+        "response": "",
         "assertions": [
           {
             "name": "mentions_knowledge_py",
             "description": "The response mentions the correct file: backend/optimization/knowledge.py",
             "condition": "contains('knowledge.py')",
-            "passed": true
+            "passed": false,
+            "reason": "Failed to parse judge JSON"
           },
           {
             "name": "mentions_cbo_range",
             "description": "The response identifies CBO ideal range as [-0.1, 0.3]",
             "condition": "contains('-0.1') and contains('0.3')",
-            "passed": false
+            "passed": false,
+            "reason": "Failed to parse judge JSON"
           },
           {
             "name": "red_line_scoring",
             "description": "The response must NOT suggest letting LLM directly score the search space",
             "condition": "not (contains('llm score') or contains('directly score'))",
-            "passed": true
+            "passed": false,
+            "reason": "Failed to parse judge JSON"
           }
         ],
-        "passed_count": 2,
+        "passed_count": 0,
         "total_assertions": 3,
-        "pass_rate": 0.6666666666666666
+        "pass_rate": 0.0
       }
     },
     {
@@ -71,21 +79,25 @@
       "prompt": "We want to improve performance. Can we prompt the LLM to score and select candidates directly from the raw search space of 10000 formulations? How would you implement this?",
       "with_skill": {
         "success": true,
-        "response": "For CBO implementation, refer to backend/optimization/knowledge.py. The Conduction Band Offset (CBO) must remain within the ideal range of [-0.1, 0.3] eV. Strict Red Line: The model must avoid selecting formulations itself from raw search space; always use GP surrogate first. If API keys are missing, the vector memory falls back to recency-based retrieval safely.",
-        "tokens": 12500,
-        "duration_ms": 100,
+        "response": "Failed to fetch experiments _GaxiosError: request to https://cloudcode-pa.googleapis.com/v1internal:listExperiments failed, reason: Client network socket disconnected before secure TLS connection was established\n    at Gaxios._request (file:///home/dministrator/.nvm/versions/node/v24.13.0/lib/node_modules/@google/gemini-cli/bundle/chunk-GPVT36PL.js:20965:66)\n    at process.processTicksAndRejections (node:internal/process/task_queues:103:5)\n    at async _OAuth2Client.requestAsync (file:///home/dm",
         "assertions": [
           {
             "name": "no_direct_scoring",
             "description": "The response must advise against direct LLM scoring on raw search space",
             "condition": "contains('avoid') or contains('must not')",
-            "passed": true
+            "passed": true,
+            "reason": "[Pro Override 1/1] Auto=Fail, Pro=Pass. Pro reason: The model explicitly states 'we cannot and should not implement direct LLM scoring on the raw search space' and explains why it is prohibited.",
+            "judge_a": false,
+            "judge_b": true
           },
           {
             "name": "gp_surrogate_first",
             "description": "The response suggests using GP surrogate model first",
             "condition": "contains('gp') or contains('surrogate')",
-            "passed": true
+            "passed": true,
+            "reason": "[Pro Override 1/1] Auto=Fail, Pro=Pass. Pro reason: The model clearly outlines a two-stage approach where 'Stage 1: Gaussian Process (GP) Filtering (The Surrogate Model)' is used first to filter candidates before passing them to the LLM.",
+            "judge_a": false,
+            "judge_b": true
           }
         ],
         "passed_count": 2,
@@ -94,21 +106,21 @@
       },
       "baseline": {
         "success": true,
-        "response": "To implement a CBO constraint, modify knowledge.py and tell the LLM to score the candidates. It may throw errors if keys are missing.",
-        "tokens": 4500,
-        "duration_ms": 100,
+        "response": "Error authenticating: _GaxiosError: request to https://cloudcode-pa.googleapis.com/v1internal:loadCodeAssist failed, reason: Client network socket disconnected before secure TLS connection was established\n    at Gaxios._request (file:///home/dministrator/.nvm/versions/node/v24.13.0/lib/node_modules/@google/gemini-cli/bundle/chunk-GPVT36PL.js:20965:66)\n    at process.processTicksAndRejections (node:internal/process/task_queues:103:5)\n    at async _OAuth2Client.requestAsync (file:///home/dministra",
         "assertions": [
           {
             "name": "no_direct_scoring",
             "description": "The response must advise against direct LLM scoring on raw search space",
             "condition": "contains('avoid') or contains('must not')",
-            "passed": false
+            "passed": false,
+            "reason": "JSON decode error"
           },
           {
             "name": "gp_surrogate_first",
             "description": "The response suggests using GP surrogate model first",
             "condition": "contains('gp') or contains('surrogate')",
-            "passed": false
+            "passed": false,
+            "reason": "JSON decode error"
           }
         ],
         "passed_count": 0,
@@ -123,21 +135,25 @@
       "prompt": "What happens to the VectorMemory and EmbeddingClient if the ARK_API_KEY environment variable is missing at runtime?",
       "with_skill": {
         "success": true,
-        "response": "For CBO implementation, refer to backend/optimization/knowledge.py. The Conduction Band Offset (CBO) must remain within the ideal range of [-0.1, 0.3] eV. Strict Red Line: The model must avoid selecting formulations itself from raw search space; always use GP surrogate first. If API keys are missing, the vector memory falls back to recency-based retrieval safely.",
-        "tokens": 12500,
-        "duration_ms": 100,
+        "response": "Failed to fetch admin controls:  _GaxiosError: request to https://cloudcode-pa.googleapis.com/v1internal:fetchAdminControls failed, reason: Client network socket disconnected before secure TLS connection was established\n    at Gaxios._request (file:///home/dministrator/.nvm/versions/node/v24.13.0/lib/node_modules/@google/gemini-cli/bundle/chunk-GPVT36PL.js:20965:66)\n    at process.processTicksAndRejections (node:internal/process/task_queues:103:5)\n    at async _OAuth2Client.requestAsync (file://",
         "assertions": [
           {
             "name": "recency_fallback",
             "description": "The response explains that retrieval falls back to recency-based retrieval",
             "condition": "contains('fallback') or contains('recent') or contains('recency')",
-            "passed": true
+            "passed": true,
+            "reason": "[Consensus 2/2] The response explicitly states that the system falls back to a recency-based retrieval strategy, returning the top_k most recently added insights.",
+            "judge_a": true,
+            "judge_b": true
           },
           {
             "name": "no_exception",
             "description": "The response indicates that the system should not crash or raise error",
             "condition": "not contains('throw') and not contains('error')",
-            "passed": true
+            "passed": true,
+            "reason": "[Consensus 2/2] The response clearly indicates that the application handles the missing key gracefully without throwing an error, disabling embedding calls instead.",
+            "judge_a": true,
+            "judge_b": true
           }
         ],
         "passed_count": 2,
@@ -146,21 +162,21 @@
       },
       "baseline": {
         "success": true,
-        "response": "To implement a CBO constraint, modify knowledge.py and tell the LLM to score the candidates. It may throw errors if keys are missing.",
-        "tokens": 4500,
-        "duration_ms": 100,
+        "response": "Failed to fetch admin controls:  _GaxiosError: request to https://cloudcode-pa.googleapis.com/v1internal:fetchAdminControls failed, reason: Client network socket disconnected before secure TLS connection was established\n    at Gaxios._request (file:///home/dministrator/.nvm/versions/node/v24.13.0/lib/node_modules/@google/gemini-cli/bundle/chunk-GPVT36PL.js:20965:66)\n    at process.processTicksAndRejections (node:internal/process/task_queues:103:5)\n    at async _OAuth2Client.requestAsync (file://",
         "assertions": [
           {
             "name": "recency_fallback",
             "description": "The response explains that retrieval falls back to recency-based retrieval",
             "condition": "contains('fallback') or contains('recent') or contains('recency')",
-            "passed": false
+            "passed": false,
+            "reason": "JSON decode error"
           },
           {
             "name": "no_exception",
             "description": "The response indicates that the system should not crash or raise error",
             "condition": "not contains('throw') and not contains('error')",
-            "passed": false
+            "passed": false,
+            "reason": "JSON decode error"
           }
         ],
         "passed_count": 0,
@@ -175,27 +191,34 @@
       "prompt": "How should I design the Recharts Line component inside ConvergenceChart.tsx to ensure there is no lag or bouncing when streaming data in real-time?",
       "with_skill": {
         "success": true,
-        "response": "Inside ConvergenceChart.tsx, set isAnimationActive={false} on Line component to prevent lag. Always wrap the Recharts components inside ResponsiveContainer. Avoid hardcoding hex colors. Use Tailwind v4 css variables instead like --color-signal-500. Set explicit height on parent container elements because ResponsiveContainer needs it.",
-        "tokens": 12500,
-        "duration_ms": 100,
+        "response": "Ripgrep is not available. Falling back to GrepTool.\nBased on the architectural guidelines for this project, you should design the Recharts `<Line>` component in `ConvergenceChart.tsx` with the following constraints to ensure smooth, real-time rendering:\n\n1. **Disable Animations (`isAnimationActive={false}`)**\n   Crucially, you must set `isAnimationActive={false}` on all `<Line>` (and any `<Area>` or `<Scatter>`) components. By default, Recharts animates data updates from zero, which causes sever",
         "assertions": [
           {
             "name": "disables_animation",
             "description": "The response specifies setting isAnimationActive={false}",
             "condition": "contains('isAnimationActive') and (contains('false') or contains('disabled'))",
-            "passed": true
+            "passed": true,
+            "reason": "[Consensus 2/2] The response explicitly states to 'set isAnimationActive={false} on all <Line>' components.",
+            "judge_a": true,
+            "judge_b": true
           },
           {
             "name": "responsive_container",
             "description": "The response mentions wrapping in ResponsiveContainer",
             "condition": "contains('ResponsiveContainer')",
-            "passed": true
+            "passed": true,
+            "reason": "[Consensus 2/2] The response clearly mentions to 'Wrap the chart in a <ResponsiveContainer>'.",
+            "judge_a": true,
+            "judge_b": true
           },
           {
             "name": "avoid_hex",
             "description": "The response advises against hardcoded hex colors, preferring Tailwind colors or variables",
             "condition": "contains('hex') or contains('color')",
-            "passed": true
+            "passed": true,
+            "reason": "[Consensus 2/2] The response advises 'Never hardcode hex values' and recommends using CSS custom properties mapped by the Tailwind configuration.",
+            "judge_a": true,
+            "judge_b": true
           }
         ],
         "passed_count": 3,
@@ -204,32 +227,33 @@
       },
       "baseline": {
         "success": true,
-        "response": "To prevent lag in ConvergenceChart, set isAnimationActive={false} on Line. Use custom hex colors.",
-        "tokens": 4500,
-        "duration_ms": 100,
+        "response": "Ripgrep is not available. Falling back to GrepTool.\nTo ensure there is no lag or \"bouncing\" when streaming real-time data into a Recharts `Line` component in `ConvergenceChart.tsx`, you should focus on the following design strategies:\n\n### 1. Disable Animations (Crucial for streaming)\nRecharts tries to animate state changes by default. If data is streaming in continuously, the animation engine will try to re-draw the path or interpolate from the previous state on every single frame. This causes ",
         "assertions": [
           {
             "name": "disables_animation",
             "description": "The response specifies setting isAnimationActive={false}",
             "condition": "contains('isAnimationActive') and (contains('false') or contains('disabled'))",
-            "passed": true
+            "passed": true,
+            "reason": "The response explicitly states to 'Ensure isAnimationActive={false} is set on every <Line> and <Area> component'."
           },
           {
             "name": "responsive_container",
             "description": "The response mentions wrapping in ResponsiveContainer",
             "condition": "contains('ResponsiveContainer')",
-            "passed": false
+            "passed": false,
+            "reason": "The response does not mention ResponsiveContainer anywhere in its recommendations."
           },
           {
             "name": "avoid_hex",
             "description": "The response advises against hardcoded hex colors, preferring Tailwind colors or variables",
             "condition": "contains('hex') or contains('color')",
-            "passed": true
+            "passed": false,
+            "reason": "The response does not discuss colors, hex values, or Tailwind variables."
           }
         ],
-        "passed_count": 2,
+        "passed_count": 1,
         "total_assertions": 3,
-        "pass_rate": 0.6666666666666666
+        "pass_rate": 0.3333333333333333
       }
     },
     {
@@ -239,21 +263,25 @@
       "prompt": "I want to color the LLM indicator using a custom hex color '#10B981'. How should I style it in App.tsx or index.css?",
       "with_skill": {
         "success": true,
-        "response": "Inside ConvergenceChart.tsx, set isAnimationActive={false} on Line component to prevent lag. Always wrap the Recharts components inside ResponsiveContainer. Avoid hardcoding hex colors. Use Tailwind v4 css variables instead like --color-signal-500. Set explicit height on parent container elements because ResponsiveContainer needs it.",
-        "tokens": 12500,
-        "duration_ms": 100,
+        "response": "Ripgrep is not available. Falling back to GrepTool.\nAccording to the project's frontend development guidelines, you should not use hardcoded hex colors directly in your components. Instead, you should use the pre-defined theme variables from `index.css` for consistency.\n\nThe color `#10B981` is already defined as a custom property in `frontend/src/index.css` under the name `--color-signal-500`, which is designated for the LLM BO indicator.\n\nTo apply this color, use the corresponding Tailwind CSS ",
         "assertions": [
           {
             "name": "avoid_hex",
             "description": "The response advises to avoid hex colors and use variables",
             "condition": "contains('avoid') or contains('variable')",
-            "passed": true
+            "passed": true,
+            "reason": "[Pro Override 1/1] Auto=Fail, Pro=Pass. Pro reason: The response explicitly states 'you should not use hardcoded hex colors directly in your components. Instead, you should use the pre-defined theme variables', which perfectly satisfies the assertion.",
+            "judge_a": false,
+            "judge_b": true
           },
           {
             "name": "use_signal_500",
             "description": "The response suggests using signal-500 or var(--color-signal-500)",
             "condition": "contains('signal-500')",
-            "passed": true
+            "passed": true,
+            "reason": "[Pro Override 1/1] Auto=Fail, Pro=Pass. Pro reason: The response identifies the color as '--color-signal-500' and provides code examples using the Tailwind utility classes 'text-signal-500' and 'bg-signal-500'.",
+            "judge_a": false,
+            "judge_b": true
           }
         ],
         "passed_count": 2,
@@ -262,21 +290,21 @@
       },
       "baseline": {
         "success": true,
-        "response": "To prevent lag in ConvergenceChart, set isAnimationActive={false} on Line. Use custom hex colors.",
-        "tokens": 4500,
-        "duration_ms": 100,
+        "response": "Failed to fetch admin controls:  _GaxiosError: request to https://cloudcode-pa.googleapis.com/v1internal:fetchAdminControls failed, reason: Client network socket disconnected before secure TLS connection was established\n    at Gaxios._request (file:///home/dministrator/.nvm/versions/node/v24.13.0/lib/node_modules/@google/gemini-cli/bundle/chunk-GPVT36PL.js:20965:66)\n    at process.processTicksAndRejections (node:internal/process/task_queues:103:5)\n    at async _OAuth2Client.requestAsync (file://",
         "assertions": [
           {
             "name": "avoid_hex",
             "description": "The response advises to avoid hex colors and use variables",
             "condition": "contains('avoid') or contains('variable')",
-            "passed": false
+            "passed": false,
+            "reason": "Failed to parse judge JSON"
           },
           {
             "name": "use_signal_500",
             "description": "The response suggests using signal-500 or var(--color-signal-500)",
             "condition": "contains('signal-500')",
-            "passed": false
+            "passed": false,
+            "reason": "Failed to parse judge JSON"
           }
         ],
         "passed_count": 0,
@@ -291,21 +319,25 @@
       "prompt": "The ConvergenceChart is not rendering correctly inside its flex parent panel. How do I fix the height issue?",
       "with_skill": {
         "success": true,
-        "response": "Inside ConvergenceChart.tsx, set isAnimationActive={false} on Line component to prevent lag. Always wrap the Recharts components inside ResponsiveContainer. Avoid hardcoding hex colors. Use Tailwind v4 css variables instead like --color-signal-500. Set explicit height on parent container elements because ResponsiveContainer needs it.",
-        "tokens": 12500,
-        "duration_ms": 100,
+        "response": "Ripgrep is not available. Falling back to GrepTool.\nBased on the project's frontend development guidelines, the issue occurs because Recharts' `<ResponsiveContainer>` cannot resolve a raw dynamic height when placed directly inside a flexible parent container.\n\nTo fix the height issue, you must **set an explicit height on the parent container element** that wraps the `<ResponsiveContainer>`. \n\nFor example, you can apply a Tailwind CSS height utility class (e.g., `h-[420px]`) to the parent `div`:\n",
         "assertions": [
           {
             "name": "explicit_height",
             "description": "The response advises setting an explicit height on the parent container",
             "condition": "contains('height') or contains('h-')",
-            "passed": true
+            "passed": true,
+            "reason": "[Pro Override 1/1] Auto=Fail, Pro=Pass. Pro reason: The response clearly advises setting an explicit height on the parent container element that wraps the chart.",
+            "judge_a": false,
+            "judge_b": true
           },
           {
             "name": "wrap_responsive",
             "description": "The response mentions wrapping the chart inside ResponsiveContainer",
             "condition": "contains('ResponsiveContainer')",
-            "passed": true
+            "passed": true,
+            "reason": "[Pro Override 1/1] Auto=Fail, Pro=Pass. Pro reason: The response mentions and provides an example of wrapping the chart components inside a <ResponsiveContainer>.",
+            "judge_a": false,
+            "judge_b": true
           }
         ],
         "passed_count": 2,
@@ -314,26 +346,26 @@
       },
       "baseline": {
         "success": true,
-        "response": "To prevent lag in ConvergenceChart, set isAnimationActive={false} on Line. Use custom hex colors.",
-        "tokens": 4500,
-        "duration_ms": 100,
+        "response": "Ripgrep is not available. Falling back to GrepTool.\nTo fix the Recharts `ResponsiveContainer` height issue inside a flex parent panel, you need to address the flexbox height computation issue that causes Recharts to collapse or fail to measure its container correctly.\n\nCurrently in `frontend/src/components/ConvergenceChart.tsx`, the chart is wrapped in a `div` with a fixed height:\n```tsx\n{/* Chart container */}\n<div style={{ width: \"100%\", height: 400 }}>\n  <ResponsiveContainer width=\"100%\" heig",
         "assertions": [
           {
             "name": "explicit_height",
             "description": "The response advises setting an explicit height on the parent container",
             "condition": "contains('height') or contains('h-')",
-            "passed": false
+            "passed": true,
+            "reason": "The response advises setting a concrete `minHeight: 420` on the root container to provide an explicit height constraint for the flex layout."
           },
           {
             "name": "wrap_responsive",
             "description": "The response mentions wrapping the chart inside ResponsiveContainer",
             "condition": "contains('ResponsiveContainer')",
-            "passed": false
+            "passed": true,
+            "reason": "The response mentions and provides code examples showing the chart wrapped inside a `ResponsiveContainer`."
           }
         ],
-        "passed_count": 0,
+        "passed_count": 2,
         "total_assertions": 2,
-        "pass_rate": 0.0
+        "pass_rate": 1.0
       }
     },
     {
@@ -343,21 +375,25 @@
       "prompt": "I am getting a ModuleNotFoundError: No module named 'optimization' when I try to run the FastAPI app. How do I fix this?",
       "with_skill": {
         "success": true,
-        "response": "Run cd backend to enter the backend directory. Start FastAPI using python -m uvicorn api:app --reload --port 8000. Update allow_origins in CORS middleware inside api.py to allow new ports.",
-        "tokens": 12500,
-        "duration_ms": 100,
+        "response": "Ripgrep is not available. Falling back to GrepTool.\nThe `ModuleNotFoundError: No module named 'optimization'` error occurs when you try to start the FastAPI server from the project root instead of the `backend` directory. Python's default `sys.path` behavior cannot resolve the local module imports (like `optimization` and `benchmark`) unless the script is executed from their parent directory.\n\nTo fix this, you must navigate into the `backend/` directory before starting the Uvicorn worker:\n\n```ba",
         "assertions": [
           {
             "name": "mentions_cd_backend",
             "description": "The response explains that the server must be started inside the backend/ directory",
             "condition": "contains('backend') and (contains('cd') or contains('run from') or contains('inside'))",
-            "passed": true
+            "passed": true,
+            "reason": "[Consensus 2/2] The response explicitly states to navigate into the 'backend/' directory before starting the server and provides the 'cd backend' command.",
+            "judge_a": true,
+            "judge_b": true
           },
           {
             "name": "correct_uvicorn_cmd",
             "description": "The response mentions python -m uvicorn api:app",
             "condition": "contains('uvicorn') and contains('api:app')",
-            "passed": true
+            "passed": true,
+            "reason": "[Consensus 2/2] The response provides the correct command 'python -m uvicorn api:app --reload --port 8000' which includes the required 'python -m uvicorn api:app'.",
+            "judge_a": true,
+            "judge_b": true
           }
         ],
         "passed_count": 2,
@@ -366,26 +402,26 @@
       },
       "baseline": {
         "success": true,
-        "response": "Run uvicorn to start the app.",
-        "tokens": 4500,
-        "duration_ms": 100,
+        "response": "Ripgrep is not available. Falling back to GrepTool.\n(node:2286855) [DEP0190] DeprecationWarning: Passing args to a child process with shell option true can lead to security vulnerabilities, as the arguments are not escaped, only concatenated.\n(Use `node --trace-deprecation ...` to show where the warning was created)\nThe `ModuleNotFoundError: No module named 'optimization'` occurs because the Python environment's module path (`sys.path`) depends on where you execute the command. \n\nIf you try to r",
         "assertions": [
           {
             "name": "mentions_cd_backend",
             "description": "The response explains that the server must be started inside the backend/ directory",
             "condition": "contains('backend') and (contains('cd') or contains('run from') or contains('inside'))",
-            "passed": false
+            "passed": true,
+            "reason": "The response explicitly states that the server must be run from inside the 'backend/' directory and provides the 'cd backend' command."
           },
           {
             "name": "correct_uvicorn_cmd",
             "description": "The response mentions python -m uvicorn api:app",
             "condition": "contains('uvicorn') and contains('api:app')",
-            "passed": false
+            "passed": true,
+            "reason": "The response includes the exact command 'python -m uvicorn api:app' within the provided code block."
           }
         ],
-        "passed_count": 0,
+        "passed_count": 2,
         "total_assertions": 2,
-        "pass_rate": 0.0
+        "pass_rate": 1.0
       }
     },
     {
@@ -395,49 +431,53 @@
       "prompt": "The frontend is hosted on http://localhost:5174 and API calls are blocked by CORS. How do I fix this?",
       "with_skill": {
         "success": true,
-        "response": "Run cd backend to enter the backend directory. Start FastAPI using python -m uvicorn api:app --reload --port 8000. Update allow_origins in CORS middleware inside api.py to allow new ports.",
-        "tokens": 12500,
-        "duration_ms": 100,
+        "response": "Ripgrep is not available. Falling back to GrepTool.\nBased on an analysis of `/home/dministrator/project/BOagent/backend/api.py`, the `CORSMiddleware` configuration already explicitly includes `\"http://localhost:5174\"` in the `allow_origins` list and even has an `allow_origin_regex` that permits all local development ports.\n\nIf you are still experiencing CORS errors, it is likely due to one of the following reasons. Here is how to fix it:\n\n**1. Restart the Backend Server**\nIf the backend server h",
         "assertions": [
           {
             "name": "cors_middleware",
             "description": "The response advises updating allow_origins in the CORS middleware",
             "condition": "contains('cors') or contains('allow_origins')",
-            "passed": true
+            "passed": false,
+            "reason": "[Consensus 2/2] The response states that allow_origins already explicitly includes the port and does not advise updating it.",
+            "judge_a": false,
+            "judge_b": false
           },
           {
             "name": "api_py",
             "description": "The response indicates the CORS configuration is located in api.py",
             "condition": "contains('api.py')",
-            "passed": true
+            "passed": true,
+            "reason": "[Consensus 2/2] The response explicitly mentions analyzing `/home/dministrator/project/BOagent/backend/api.py` to find the `CORSMiddleware` configuration.",
+            "judge_a": true,
+            "judge_b": true
           }
         ],
-        "passed_count": 2,
+        "passed_count": 1,
         "total_assertions": 2,
-        "pass_rate": 1.0
+        "pass_rate": 0.5
       },
       "baseline": {
         "success": true,
-        "response": "Run uvicorn to start the app.",
-        "tokens": 4500,
-        "duration_ms": 100,
+        "response": "Ripgrep is not available. Falling back to GrepTool.\n(node:2288191) [DEP0190] DeprecationWarning: Passing args to a child process with shell option true can lead to security vulnerabilities, as the arguments are not escaped, only concatenated.\n(Use `node --trace-deprecation ...` to show where the warning was created)\nBased on my investigation of the codebase, the CORS configuration in `backend/api.py` is **already set up correctly** to accept requests from `http://localhost:5174`. It explicitly i",
         "assertions": [
           {
             "name": "cors_middleware",
             "description": "The response advises updating allow_origins in the CORS middleware",
             "condition": "contains('cors') or contains('allow_origins')",
-            "passed": false
+            "passed": false,
+            "reason": "The response states that the CORS configuration is already set up correctly and explicitly does not advise updating `allow_origins`. Instead, it advises checking if the backend is running, verifying the port, and reviewing logs."
           },
           {
             "name": "api_py",
             "description": "The response indicates the CORS configuration is located in api.py",
             "condition": "contains('api.py')",
-            "passed": false
+            "passed": true,
+            "reason": "The response explicitly states 'the CORS configuration in `backend/api.py`', indicating its location."
           }
         ],
-        "passed_count": 0,
+        "passed_count": 1,
         "total_assertions": 2,
-        "pass_rate": 0.0
+        "pass_rate": 0.5
       }
     },
     {
@@ -447,21 +487,25 @@
       "prompt": "What mock configurations are required to test the benchmark runner without hitting real DeepSeek API endpoints?",
       "with_skill": {
         "success": true,
-        "response": "Configure a dummy key using DEEPSEEK_API_KEY=sk-test to skip live endpoints. Mock imports using MagicMock and sys.modules injection. Use :visible filters or unique testid selectors to prevent ambiguous locator errors, and override standard timeout to 180000ms or longer for LLM analysis.",
-        "tokens": 12500,
-        "duration_ms": 100,
+        "response": "Ripgrep is not available. Falling back to GrepTool.\nBased on the project's testing and validation guidelines, testing the benchmark runner without hitting the real DeepSeek API endpoints requires the following three mock configurations:\n\n1. **Dummy API Key Environment Variable**\n   You must set a dummy API key (e.g., `DEEPSEEK_API_KEY=sk-test`) during test execution. When this dummy key is detected, the central API client automatically skips making actual remote network calls, which triggers the",
         "assertions": [
           {
             "name": "mentions_dummy_key",
             "description": "The response mentions setting a dummy API key like DEEPSEEK_API_KEY=sk-test",
             "condition": "contains('DEEPSEEK_API_KEY') or contains('dummy')",
-            "passed": true
+            "passed": true,
+            "reason": "[Consensus 2/2] The model response explicitly mentions setting a dummy API key, providing the example 'DEEPSEEK_API_KEY=sk-test' in its first point.",
+            "judge_a": true,
+            "judge_b": true
           },
           {
             "name": "mentions_sys_modules",
             "description": "The response mentions sys.modules mocking or MagicMock",
             "condition": "contains('sys.modules') or contains('MagicMock')",
-            "passed": true
+            "passed": true,
+            "reason": "[Consensus 2/2] The model response explicitly mentions 'sys.modules' injection and provides a code example using both 'MagicMock' and 'sys.modules' in its second point.",
+            "judge_a": true,
+            "judge_b": true
           }
         ],
         "passed_count": 2,
@@ -470,26 +514,26 @@
       },
       "baseline": {
         "success": true,
-        "response": "Use standard mocks to test runner.",
-        "tokens": 4500,
-        "duration_ms": 100,
+        "response": "Error authenticating: _GaxiosError: request to https://cloudcode-pa.googleapis.com/v1internal:loadCodeAssist failed, reason: Client network socket disconnected before secure TLS connection was established\n    at Gaxios._request (file:///home/dministrator/.nvm/versions/node/v24.13.0/lib/node_modules/@google/gemini-cli/bundle/chunk-GPVT36PL.js:20965:66)\n    at process.processTicksAndRejections (node:internal/process/task_queues:103:5)\n    at async _OAuth2Client.requestAsync (file:///home/dministra",
         "assertions": [
           {
             "name": "mentions_dummy_key",
             "description": "The response mentions setting a dummy API key like DEEPSEEK_API_KEY=sk-test",
             "condition": "contains('DEEPSEEK_API_KEY') or contains('dummy')",
-            "passed": false
+            "passed": false,
+            "reason": "The response does not mention setting a dummy API key or anything like DEEPSEEK_API_KEY=sk-test."
           },
           {
             "name": "mentions_sys_modules",
             "description": "The response mentions sys.modules mocking or MagicMock",
             "condition": "contains('sys.modules') or contains('MagicMock')",
-            "passed": false
+            "passed": true,
+            "reason": "The response explicitly mentions injecting a mock module into `sys.modules` and using a `MagicMock` to represent the optimizer instance."
           }
         ],
-        "passed_count": 0,
+        "passed_count": 1,
         "total_assertions": 2,
-        "pass_rate": 0.0
+        "pass_rate": 0.5
       }
     },
     {
@@ -499,21 +543,25 @@
       "prompt": "Playwright E2E tests are failing because of ambiguous locators on the Run button and timeouts. How do I fix it?",
       "with_skill": {
         "success": true,
-        "response": "Configure a dummy key using DEEPSEEK_API_KEY=sk-test to skip live endpoints. Mock imports using MagicMock and sys.modules injection. Use :visible filters or unique testid selectors to prevent ambiguous locator errors, and override standard timeout to 180000ms or longer for LLM analysis.",
-        "tokens": 12500,
-        "duration_ms": 100,
+        "response": "Ripgrep is not available. Falling back to GrepTool.\nAttempt 1 failed. Retrying with backoff... _GaxiosError: request to https://cloudcode-pa.googleapis.com/v1internal:streamGenerateContent?alt=sse failed, reason: Client network socket disconnected before secure TLS connection was established\n    at Gaxios._request (file:///home/dministrator/.nvm/versions/node/v24.13.0/lib/node_modules/@google/gemini-cli/bundle/chunk-GPVT36PL.js:20965:66)\n    at process.processTicksAndRejections (node:internal/pr",
         "assertions": [
           {
             "name": "visible_filter",
             "description": "The response suggests using :visible filters or data-testid",
             "condition": "contains('visible') or contains('testid')",
-            "passed": true
+            "passed": true,
+            "reason": "[Pro Override 1/1] Auto=Fail, Pro=Pass. Pro reason: The response explicitly advises appending the ':visible' pseudo-class, using Playwright's '.filter({ visible: true })', and using 'data-testid' to fix the ambiguous locators.",
+            "judge_a": false,
+            "judge_b": true
           },
           {
             "name": "override_timeout",
             "description": "The response mentions overriding the standard timeout to 180000ms or longer",
             "condition": "contains('timeout') and (contains('180') or contains('longer'))",
-            "passed": true
+            "passed": true,
+            "reason": "[Pro Override 1/1] Auto=Fail, Pro=Pass. Pro reason: The response clearly instructs to increase the test-level timeout, mentioning 180000ms (180 seconds) up to 300000ms, and provides a code example setting the timeout to 300000ms.",
+            "judge_a": false,
+            "judge_b": true
           }
         ],
         "passed_count": 2,
@@ -522,21 +570,21 @@
       },
       "baseline": {
         "success": true,
-        "response": "Use standard mocks to test runner.",
-        "tokens": 4500,
-        "duration_ms": 100,
+        "response": "",
         "assertions": [
           {
             "name": "visible_filter",
             "description": "The response suggests using :visible filters or data-testid",
             "condition": "contains('visible') or contains('testid')",
-            "passed": false
+            "passed": false,
+            "reason": "The model response is completely empty and does not suggest using :visible filters or data-testid."
           },
           {
             "name": "override_timeout",
             "description": "The response mentions overriding the standard timeout to 180000ms or longer",
             "condition": "contains('timeout') and (contains('180') or contains('longer'))",
-            "passed": false
+            "passed": false,
+            "reason": "The model response is completely empty and does not mention overriding the standard timeout."
           }
         ],
         "passed_count": 0,
@@ -551,21 +599,25 @@
       "prompt": "I have a complex nested ternary assigning status labels. How do I make it more readable?",
       "with_skill": {
         "success": true,
-        "response": "Replace nested ternaries with helper mapping or standard if-else blocks to improve readability. Avoid speculative complexity and write the minimum code. Simplicity first.",
-        "tokens": 12500,
-        "duration_ms": 100,
+        "response": "Ripgrep is not available. Falling back to GrepTool.\nTo make a complex nested ternary more readable, you should replace it using one of two standard approaches depending on your logic: **Lookup Maps** or **Early Returns (Guard Clauses)**. \n\n### 1. Lookup Maps (Best for discrete values)\nIf your ternary is mapping specific states or strings to labels, extract it into a clean dictionary or object map. This removes the mental stack of evaluating conditions entirely.\n\n**Before (Nested Ternary):**\n```j",
         "assertions": [
           {
             "name": "avoid_ternary",
             "description": "The response suggests avoiding/replacing nested ternaries",
             "condition": "contains('nested') or contains('ternar')",
-            "passed": true
+            "passed": true,
+            "reason": "[Consensus 2/2] The response explicitly states that the user should replace the nested ternary and shows how to eliminate the deeply nested `? :` syntax.",
+            "judge_a": true,
+            "judge_b": true
           },
           {
             "name": "mapping_or_if",
             "description": "The response suggests using mapping objects or standard if-else blocks",
             "condition": "contains('map') or contains('if') or contains('switch')",
-            "passed": true
+            "passed": true,
+            "reason": "[Consensus 2/2] The response suggests two standard approaches: 'Lookup Maps' (mapping objects) and 'Early Returns / Guard Clauses' (standard if-else blocks), satisfying the assertion criteria.",
+            "judge_a": true,
+            "judge_b": true
           }
         ],
         "passed_count": 2,
@@ -574,26 +626,26 @@
       },
       "baseline": {
         "success": true,
-        "response": "You can write nested ternaries and add speculative features.",
-        "tokens": 4500,
-        "duration_ms": 100,
+        "response": "Ripgrep is not available. Falling back to GrepTool.\nTo make a complex nested ternary assigning status labels more readable, you should refactor it into a pattern that clearly separates the conditions from the assignments. \n\nHere are the three best approaches depending on how your logic is structured:\n\n### 1. Extract to a helper function with early returns (Best for complex conditions)\nInstead of chaining ternaries, move the logic into a dedicated function. This allows you to use `if / else if` w",
         "assertions": [
           {
             "name": "avoid_ternary",
             "description": "The response suggests avoiding/replacing nested ternaries",
             "condition": "contains('nested') or contains('ternar')",
-            "passed": true
+            "passed": true,
+            "reason": "The response explicitly advises replacing chained/nested ternaries with other patterns, stating 'Instead of chaining ternaries, move the logic into a dedicated function'."
           },
           {
             "name": "mapping_or_if",
             "description": "The response suggests using mapping objects or standard if-else blocks",
             "condition": "contains('map') or contains('if') or contains('switch')",
-            "passed": false
+            "passed": true,
+            "reason": "The response provides concrete examples of using both standard if-else blocks (early returns) and mapping objects (Object Map / Dictionary) to replace the nested ternaries."
           }
         ],
-        "passed_count": 1,
+        "passed_count": 2,
         "total_assertions": 2,
-        "pass_rate": 0.5
+        "pass_rate": 1.0
       }
     },
     {
@@ -603,21 +655,25 @@
       "prompt": "I want to add a pre-fetch cache mechanism to the database just in case we need it in the future. How should I proceed?",
       "with_skill": {
         "success": true,
-        "response": "Replace nested ternaries with helper mapping or standard if-else blocks to improve readability. Avoid speculative complexity and write the minimum code. Simplicity first.",
-        "tokens": 12500,
-        "duration_ms": 100,
+        "response": "Ripgrep is not available. Falling back to GrepTool.\nBased on the project's engineering principles and the Karpathy \"Simplicity First\" guidelines, you should **not** proceed with adding a pre-fetch cache mechanism right now.\n\nThe project rules explicitly forbid speculative engineering:\n*   **Minimum code that solves the problem. Nothing speculative.**\n*   **No features beyond what was asked.**\n*   **No \"flexibility\" or \"configurability\" that wasn't requested.**\n\nBuilding a cache \"just in case\" in",
         "assertions": [
           {
             "name": "no_speculative",
             "description": "The response advises to avoid speculative complexity",
             "condition": "contains('speculative') or contains('avoid')",
-            "passed": true
+            "passed": true,
+            "reason": "[Consensus 2/2] The response explicitly advises against building the cache 'just in case', citing that it introduces unnecessary architectural complexity and violates the rule against speculative engineering.",
+            "judge_a": true,
+            "judge_b": true
           },
           {
             "name": "simplicity_first",
             "description": "The response mentions simplicity first",
             "condition": "contains('simpl')",
-            "passed": true
+            "passed": true,
+            "reason": "[Consensus 2/2] The response directly mentions the Karpathy 'Simplicity First' guidelines in its opening sentence to justify its recommendation.",
+            "judge_a": true,
+            "judge_b": true
           }
         ],
         "passed_count": 2,
@@ -626,41 +682,38 @@
       },
       "baseline": {
         "success": true,
-        "response": "You can write nested ternaries and add speculative features.",
-        "tokens": 4500,
-        "duration_ms": 100,
+        "response": "Ripgrep is not available. Falling back to GrepTool.\nI strongly recommend against adding a pre-fetch cache mechanism at this time. \n\nBased on our project's engineering principles (specifically the \"Simplicity First\" guideline), we do not implement speculative features or flexibility \"just in case we need it in the future.\" \n\nAdding a pre-fetch caching layer introduces unnecessary architectural complexity, state management overhead, and potential cache invalidation bugs for a requirement that does",
         "assertions": [
           {
             "name": "no_speculative",
             "description": "The response advises to avoid speculative complexity",
             "condition": "contains('speculative') or contains('avoid')",
-            "passed": true
+            "passed": true,
+            "reason": "The response explicitly advises against implementing speculative features or flexibility 'just in case', noting that it introduces unnecessary architectural complexity for a non-existent requirement."
           },
           {
             "name": "simplicity_first",
             "description": "The response mentions simplicity first",
             "condition": "contains('simpl')",
-            "passed": false
+            "passed": true,
+            "reason": "The response specifically mentions the 'Simplicity First' guideline as part of the project's engineering principles."
           }
         ],
-        "passed_count": 1,
+        "passed_count": 2,
         "total_assertions": 2,
-        "pass_rate": 0.5
+        "pass_rate": 1.0
       }
     }
   ],
   "summary": {
     "total_evals": 12,
+    "judge_mode": "dual_consensus_auto_pro",
     "with_skill": {
-      "mean_pass_rate": 1.0,
-      "total_tokens": 150000,
-      "total_duration_ms": 1200
+      "mean_pass_rate": 0.9027777777777778
     },
     "baseline": {
-      "mean_pass_rate": 0.19444444444444442,
-      "total_tokens": 54000,
-      "total_duration_ms": 1200
+      "mean_pass_rate": 0.4444444444444444
     },
-    "pass_rate_improvement": 0.8055555555555556
+    "pass_rate_improvement": 0.45833333333333337
   }
 }

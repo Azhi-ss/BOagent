@@ -72,12 +72,14 @@ export function MetricReadout({
   busyLabel = "计算中 (computing)...",
 }: MetricReadoutProps) {
   const fmt = (v: number | null) => (v === null ? "—" : v.toFixed(4));
-  const bestText =
-    bestMean === null
-      ? "—"
-      : bestStd !== null
-        ? `${bestMean.toFixed(4)} ± ${bestStd.toFixed(3)}`
-        : bestMean.toFixed(4);
+  
+  let bestText = "—";
+  if (bestMean !== null) {
+    bestText = bestStd !== null 
+      ? `${bestMean.toFixed(4)} ± ${bestStd.toFixed(3)}` 
+      : bestMean.toFixed(4);
+  }
+
   // Use fine-grained iter progress when available; fall back to seed-level.
   const progress =
     totalIters && totalIters > 0

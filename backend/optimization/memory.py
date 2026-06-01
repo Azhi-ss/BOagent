@@ -94,15 +94,24 @@ class VectorMemory:
     # ------------------------------------------------------------------
 
     def add(self, insight: Insight) -> None:
-        """Append an insight and compute its embedding (if API available)."""
+        """Append an insight and compute its embedding in the background."""
         self._insights.append(insight)
-        text = insight.to_text()
-        vec = self._embed_client.embed([text])
-        self._embeddings.append(vec[0] if vec is not None else None)
+        idx = len(self._insights) - 1
+        self._embeddings.append(None)
 
         if self._persist_path:
             with open(self._persist_path, "a", encoding="utf-8") as f:
                 f.write(json.dumps(asdict(insight), ensure_ascii=False) + "\n")
+
+        # Compute embedding asynchronously
+        if self._embed_client.is_available():
+            import threading
+            def _worker():
+                text = insight.to_text()
+                vec = self._embed_client.embed([text])
+                if vec is not None and idx < len(self._embeddings):
+                    self._embeddings[idx] = vec[0]
+            threading.Thread(target=_worker, daemon=True).start()
 
     # ------------------------------------------------------------------
     # Query
@@ -116,15 +125,16 @@ class VectorMemory:
         # Try embedding-based retrieval first
         q_vec = self._embed_client.embed([query_text])
         if q_vec is not None:
-            stored = [e for e in self._embeddings if e is not None]
-            if len(stored) == len(self._embeddings):  # all have embeddings
-                mat = np.stack(stored)                  # (N, D)
-                q = q_vec[0]                            # (D,)
+            # Gather valid embeddings and their corresponding original indices
+            valid_indices = [i for i, e in enumerate(self._embeddings) if e is not None]
+            if valid_indices:
+                mat = np.stack([self._embeddings[i] for i in valid_indices]) # (M, D)
+                q = q_vec[0]                                                 # (D,)
                 scores = mat @ q / (
                     np.linalg.norm(mat, axis=1) * np.linalg.norm(q) + 1e-9
                 )
-                top_idx = np.argsort(scores)[::-1][:top_k]
-                return [self._insights[i] for i in top_idx]
+                top_valid_idx = np.argsort(scores)[::-1][:top_k]
+                return [self._insights[valid_indices[idx]] for idx in top_valid_idx]
 
         # Fallback: return most recent top_k
         return self._insights[-top_k:]
@@ -166,10 +176,25 @@ class VectorMemory:
                     data = json.loads(line)
                     insight = Insight(**data)
                     self._insights.append(insight)
-                    # Re-embed on load (lazy: defer to first query)
+                    # Initialize as None, will be computed in background
                     self._embeddings.append(None)
                 except Exception:
                     pass
+
+        # Trigger batch background embedding computation for all loaded insights
+        if self._insights and self._embed_client.is_available():
+            import threading
+            def _worker():
+                indices_to_embed = [i for i, e in enumerate(self._embeddings) if e is None]
+                if not indices_to_embed:
+                    return
+                texts = [self._insights[i].to_text() for i in indices_to_embed]
+                vecs = self._embed_client.embed(texts)
+                if vecs is not None:
+                    for i, idx in enumerate(indices_to_embed):
+                        if i < len(vecs) and idx < len(self._embeddings):
+                            self._embeddings[idx] = vecs[i]
+            threading.Thread(target=_worker, daemon=True).start()
 
     def __len__(self) -> int:
         return len(self._insights)

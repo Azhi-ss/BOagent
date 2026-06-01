@@ -62,7 +62,7 @@ npx playwright test --ui
 
 ### 3.4 Handling UI Selectors and E2E Timeouts
 - **Ambiguous Locators**: Benchmark mode and Operational mode pages render concurrently (using display toggles). Always use `:visible` filters or unique `data-testid` properties (e.g., `page.locator("button:has-text('Run'):visible")`) to avoid hitting ambiguous locator errors.
-- **Handling Latency (Timeouts)**: LLM analysis queries can take 20s to 40s. Playwright specs override standard 30s timeouts (often using `test.setTimeout(180000)` or longer) to accommodate API latency.
+- **Handling Latency (Timeouts)**: LLM analysis queries can take 20s to 40s. Playwright specs override standard 30s timeouts: use `test.setTimeout(180000)` for typical specs or `test.setTimeout(240000)` for benchmark specs to accommodate API latency.
 
 ---
 
