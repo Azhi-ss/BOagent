@@ -31,5 +31,6 @@ dev = [
     "mypy>=1.9.0",
     "pandera>=0.20.0",
     "hypothesis>=6.100.0",
-    "evidently>=0.4.0"
+    "evidently>=0.4.0",
+    "matplotlib>=3.8.0"
 ]
