@@ -58,8 +58,9 @@ class LGBOEngine:
         alpha: float = 1e-2,
         xi: float = 0.01,
         chat_engine: str = "deepseek-v4-flash",
-        llm_max_tokens: int = 4096,
+        llm_max_tokens: int = 8192,
         reasoning_effort: str = "low",
+        failure_log: str | Path | None = "lgbo_llm_failures.log",
     ) -> None:
         if dataset not in DATA_LOADERS:
             raise ValueError(f"Unknown dataset: {dataset}. Available: {list(DATA_LOADERS)}")
@@ -74,6 +75,7 @@ class LGBOEngine:
         self.chat_engine = chat_engine
         self.llm_max_tokens = llm_max_tokens
         self.reasoning_effort = reasoning_effort
+        self.failure_log = Path(failure_log) if failure_log else None
 
         self._load_data()
         self._init_state()

@@ -189,3 +189,16 @@ Before marking a task as complete, execute this checklist:
 - [ ] **UI Animation Restraints**: Ensure Recharts Line elements in `ConvergenceChart.tsx` set `isAnimationActive={false}` to avoid bouncing glitches during SSE streaming.
 - [ ] **Local RNG Isolation**: Verify no global `np.random` usage in optimization or benchmark paths; all randomness via locally seeded `RandomState`.
 
+---
+
+## 8. Real-Time Hardware & Deep Learning Framework Specifications (`docs/hardware/`)
+
+The repository maintains authoritative, version-locked API specifications, hardware acceleration guidelines, and defensive programming contracts in `docs/hardware/`:
+
+*   **[AMD Hardware Adaptation Guide](file:///home/dministrator/project/BOagent/docs/hardware/amd_adaptation.md)**: Hardware workload mapping for AMD Ryzen AI 9 / Zen 5 (AVX-512), Radeon 880M (ROCm 7.2+ WSL2 via `ROCDXG` & DirectML), and XDNA 2 NPU (50 TOPS).
+*   **[Context7 Official BoTorch 0.18.x API Reference](file:///home/dministrator/project/BOagent/docs/hardware/context7_botorch_docs.md)**: Context7-retrieved API contracts for `SingleTaskGP`, `optimize_acqf`, `fit_gpytorch_mll`, and data transforms.
+*   **[Official BoTorch & GPyTorch Integration Guide](file:///home/dministrator/project/BOagent/docs/hardware/botorch_official_guide.md)**: Warm-start (`state_dict`) hyperparameter refitting and discrete candidate pool scoring patterns.
+*   **[PyTorch CPU & Zen 5 Optimization Guide](file:///home/dministrator/project/BOagent/docs/hardware/pytorch_cpu_optimization.md)**: Physical thread allocation (`OMP_NUM_THREADS=10`), AMD `ZenDNN` (`zentorch`) integration, and `torch.compile` settings.
+*   **[Critical Pitfalls & Defensive Rules](file:///home/dministrator/project/BOagent/docs/hardware/gotchas_and_pitfalls.md)**: Numerical guards for GPyTorch `NotPSDError` (`cholesky_jitter`), CPU denormal float flush (`torch.set_flush_denormal(True)`), scale unscaling parity for hybrid LLM+GP scoring, multi-feature ARD lengthscales, and FastAPI thread-safety.
+
+
