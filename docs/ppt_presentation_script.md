@@ -6,11 +6,11 @@ PPT 的视觉设计采用**现代学术微光科技风（Modern Academic Sci-Tec
 ---
 
 ## 📂 汇报核心代码及文件映射 (Slide Concepts to Codebase Links)
-- **系统入口与前端**: [App.tsx](file:///home/dministrator/project/BOagent/frontend/src/App.tsx) | [BenchMode.tsx](file:///home/dministrator/project/BOagent/frontend/src/BenchMode.tsx) | [OperationalMode.tsx](file:///home/dministrator/project/BOagent/frontend/src/OperationalMode.tsx)
-- **优化决策大脑**: [optimizer.py](file:///home/dministrator/project/BOagent/backend/optimization/optimizer.py) | [knowledge.py](file:///home/dministrator/project/BOagent/backend/optimization/knowledge.py)
-- **语义经验记忆层**: [memory.py](file:///home/dministrator/project/BOagent/backend/optimization/memory.py)
-- **数据加载与划分**: [data_loader.py](file:///home/dministrator/project/BOagent/backend/benchmark/data_loader.py)
-- **接口与数据流**: [api.py](file:///home/dministrator/project/BOagent/backend/api.py)
+- **系统入口与前端**: [App.tsx](file:///home/dministrator/project/BOagent/apps/web/src/App.tsx) | [BenchMode.tsx](file:///home/dministrator/project/BOagent/apps/web/src/BenchMode.tsx) | [OperationalMode.tsx](file:///home/dministrator/project/BOagent/apps/web/src/OperationalMode.tsx)
+- **优化决策大脑**: [optimizer.py](file:///home/dministrator/project/BOagent/packages/bo-core/bo_core/optimization/optimizer.py) | [knowledge.py](file:///home/dministrator/project/BOagent/packages/bo-core/bo_core/optimization/knowledge.py)
+- **语义经验记忆层**: [memory.py](file:///home/dministrator/project/BOagent/packages/bo-core/bo_core/optimization/memory.py)
+- **数据加载与划分**: [data_loader.py](file:///home/dministrator/project/BOagent/apps/api/benchmark/data_loader.py)
+- **接口与数据流**: [api.py](file:///home/dministrator/project/BOagent/apps/api/api.py)
 
 ---
 
@@ -56,9 +56,9 @@ PPT 的视觉设计采用**现代学术微光科技风（Modern Academic Sci-Tec
 *   **幻灯片标题**: BOagent 系统架构与数据闭环
 *   **视觉布局设计**: 
     *   **结构**: 三层玻璃态卡片堆叠（Frontend UI -> API Gateway -> Optimization Backend）。
-    *   **左卡片 (前端)**: React 19 + Vite 6 + Tailwind 4 仪表盘切面，包含“性能评测模式 (Benchmark)”和“实验实操模式 (Operational)”，指向代码 [App.tsx](file:///home/dministrator/project/BOagent/frontend/src/App.tsx)。
-    *   **中卡片 (网关)**: FastAPI 接口网关，指向 [api.py](file:///home/dministrator/project/BOagent/backend/api.py)，利用 SSE（Server-Sent Events）实现流式通信。
-    *   **右卡片 (核心后端)**: 贝叶斯优化器（GP Regressor）与物理推理引擎（KnowledgeEngine），指向 [optimizer.py](file:///home/dministrator/project/BOagent/backend/optimization/optimizer.py) 与 [knowledge.py](file:///home/dministrator/project/BOagent/backend/optimization/knowledge.py)。
+    *   **左卡片 (前端)**: React 19 + Vite 6 + Tailwind 4 仪表盘切面，包含“性能评测模式 (Benchmark)”和“实验实操模式 (Operational)”，指向代码 [App.tsx](file:///home/dministrator/project/BOagent/apps/web/src/App.tsx)。
+    *   **中卡片 (网关)**: FastAPI 接口网关，指向 [api.py](file:///home/dministrator/project/BOagent/apps/api/api.py)，利用 SSE（Server-Sent Events）实现流式通信。
+    *   **右卡片 (核心后端)**: 贝叶斯优化器（GP Regressor）与物理推理引擎（KnowledgeEngine），指向 [optimizer.py](file:///home/dministrator/project/BOagent/packages/bo-core/bo_core/optimization/optimizer.py) 与 [knowledge.py](file:///home/dministrator/project/BOagent/packages/bo-core/bo_core/optimization/knowledge.py)。
 *   **AI 生图提示词 (Midjourney Prompt)**:
     > **Prompt**: `A beautiful 3D block diagram of software architecture, showcasing three layered semi-transparent glass plates floating in space. The top plate shows a colorful modern web UI dashboard (Recharts plots), the middle plate shows glowing data pipelines with SSE labels, and the bottom plate shows neural network nodes combined with statistical Gaussian distributions. Tech dark gray theme, vibrant neon green and cyan glowing connections, ultra high-tech --ar 16:9`
 *   **演讲口稿 (Speaker Notes)**:
@@ -76,7 +76,7 @@ PPT 的视觉设计采用**现代学术微光科技风（Modern Academic Sci-Tec
     *   **图表**: 经典的高斯过程一维拟合图（置信区间带、已知观测点和未观测点）。
     *   **右侧文字**: 
         *   **代理模型**: 使用 Matérn 5/2 核的高斯过程回归（GPR），拟合输入特征到 PCE 效率的映射。
-        *   **获取函数 (Acquisition Function)**: 支持 UCB（上限置信区间）、EI（期望改善）、PI（改善概率）策略解耦，代码实现在 [optimizer.py:L282-342](file:///home/dministrator/project/BOagent/backend/optimization/optimizer.py#L282-L342)。
+        *   **获取函数 (Acquisition Function)**: 支持 UCB（上限置信区间）、EI（期望改善）、PI（改善概率）策略解耦，代码实现在 [optimizer.py:L282-342](file:///home/dministrator/project/BOagent/packages/bo-core/bo_core/optimization/optimizer.py#L282-L342)。
 *   **AI 生图提示词 (Midjourney Prompt)**:
     > **Prompt**: `A glowing 3D visualization of a mathematical Gaussian Process regression graph, showing a smooth curve with a wide neon amber semi-transparent uncertainty band (confidence interval). Several white illuminated points sit on the curve. Below the graph, math equations for UCB (Upper Confidence Bound) and Expected Improvement are cleanly rendered in high-tech font. Dark background, scientific visualization, clean gridlines --ar 16:9`
 *   **演讲口稿 (Speaker Notes)**:
@@ -92,7 +92,7 @@ PPT 的视觉设计采用**现代学术微光科技风（Modern Academic Sci-Tec
 *   **幻灯片标题**: 物理启发：将半导体物理公式注入大模型
 *   **视觉布局设计**: 
     *   **左侧**: 钙钛矿器件能带对齐（Band Alignment）示意图（HTL / Perovskite / ETL 异质结能级结构），清晰标注 CBO 与 VBO。
-    *   **右侧**: 物理规则代码逻辑（对应 [knowledge.py:L73-114](file:///home/dministrator/project/BOagent/backend/optimization/knowledge.py#L73-L114)）：
+    *   **右侧**: 物理规则代码逻辑（对应 [knowledge.py:L73-114](file:///home/dministrator/project/BOagent/packages/bo-core/bo_core/optimization/knowledge.py#L73-L114)）：
         1.  **导带偏移 (CBO)**: $\chi_{PVK} - \chi_{ETL}$ (理想范围: $[-0.1, 0.3]$ eV)
         2.  **价带偏移 (VBO)**: $(\chi_{HTL} + E_{g,HTL}) - \chi_{PVK}$ (理想范围: $[1.7, 2.0]$ eV)
         3.  **缺陷与掺杂**: 抑制界面复合，限制掺杂上限 $10^{19} \text{ cm}^{-3}$ 以防止漏电。
@@ -100,7 +100,7 @@ PPT 的视觉设计采用**现代学术微光科技风（Modern Academic Sci-Tec
     > **Prompt**: `A stylized physics diagram showing energy band alignment (Conduction Band and Valence Band offsets) of a solar cell heterojunction. HTL, Perovskite, and ETL layers are represented as glowing glass blocks with stepping energy levels. Sharp neon green lines showing electronic charge transfer and arrows indicating offset values (CBO and VBO). Dark theme, academic blueprint style, sharp vector details --ar 16:9`
 *   **演讲口稿 (Speaker Notes)**:
     > “为了打破黑盒，BOagent 引入了‘物理启发式大模型提示机制’。我们拒绝让 LLM 做无脑的数值黑盒选择，而是赋予它物理学视角。
-    > 在系统运行过程中，[knowledge.py](file:///home/dministrator/project/BOagent/backend/optimization/knowledge.py) 会根据任务类型，自动将半导体物理公式及约束动态写入提示词中。
+    > 在系统运行过程中，[knowledge.py](file:///home/dministrator/project/BOagent/packages/bo-core/bo_core/optimization/knowledge.py) 会根据任务类型，自动将半导体物理公式及约束动态写入提示词中。
     > 例如，在能带对齐任务中，系统实时计算每个候选配方的 CBO（导带偏移）与 VBO（价带偏移）。我们知道，负 CBO 容易造成电压 Cliff 损失，而过高的正 CBO 会阻挡电流产生 Spike。
     > 系统将这些能级约束和计算结果结构化呈递给 LLM，指导大模型以一个‘材料科学家’的逻辑去筛选候选配方，使每一次决策都具备扎实的器件物理支撑。”
 
@@ -141,7 +141,7 @@ PPT 的视觉设计采用**现代学术微光科技风（Modern Academic Sci-Tec
           "optimization_principles": ["后续配方应避免 CHI_PVK > 4.1 eV"]
         }
         ```
-        展示使用豆包（Ark）文本嵌入服务（[memory.py](file:///home/dministrator/project/BOagent/backend/optimization/memory.py)）对知识进行持久化和时序检索（检索前 3 条经验）。
+        展示使用豆包（Ark）文本嵌入服务（[memory.py](file:///home/dministrator/project/BOagent/packages/bo-core/bo_core/optimization/memory.py)）对知识进行持久化和时序检索（检索前 3 条经验）。
 *   **AI 生图提示词 (Midjourney Prompt)**:
     > **Prompt**: `A conceptual illustration of a dynamic scientific database. A circular rotating glowing holographic memory disk with connection lines pointing to structured JSON text boxes floating in mid-air. Light-emitting lines representing Doubao embedding vector search connecting the disk to a neural core. Clean, glowing green and blue colors, futuristic sci-fi laboratory interface --ar 16:9`
 *   **演讲口稿 (Speaker Notes)**:
@@ -158,7 +158,7 @@ PPT 的视觉设计采用**现代学术微光科技风（Modern Academic Sci-Tec
 *   **幻灯片标题**: 严格的算法评测体系与数据划分
 *   **视觉布局设计**: 
     *   分栏布局。
-    *   **左侧**: 数据集来源。同级仓库 `PVK-LLM` 的两个核心 Excel 数据集：`bandAlignment.xlsx` 与 `defectsAndDoping.xlsx`，展示数据的读取与预处理，代码见 [data_loader.py](file:///home/dministrator/project/BOagent/backend/benchmark/data_loader.py)。
+    *   **左侧**: 数据集来源。同级仓库 `PVK-LLM` 的两个核心 Excel 数据集：`bandAlignment.xlsx` 与 `defectsAndDoping.xlsx`，展示数据的读取与预处理，代码见 [data_loader.py](file:///home/dministrator/project/BOagent/apps/api/benchmark/data_loader.py)。
     *   **右侧**: 评测机制设置。
         *   **多随机种子并行评估**: 5 个独立的随机种子 (`[42, 100, 123, 456, 789]`) 保证实验不确定性可控。
         *   **迭代轮数**: 20 次主动选点探索（Trials）。

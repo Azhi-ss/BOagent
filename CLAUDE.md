@@ -17,24 +17,29 @@
 
 ```bash
 # 后端 (端口 8000)
-cd backend
+cd apps/api
 source .venv/bin/activate
+pip install -r requirements.txt   # 首次运行需安装（含 bo-core editable 安装）
 python -m uvicorn api:app --reload --port 8000
 
 # 前端 (端口 5173)
-cd frontend
+cd apps/web
 npm run dev
 ```
 
 ### 2. 运行测试
 
 ```bash
-# 后端单元测试
-cd backend
+# API 单元测试
+cd apps/api
+python -m pytest tests/ -v
+
+# 算法核心测试
+cd packages/bo-core
 python -m pytest tests/ -v
 
 # 前端 E2E 测试
-cd frontend
+cd apps/web
 npm run test:e2e
 
 # E2E 调试模式
@@ -48,10 +53,10 @@ npm run test:e2e:ui
 ### 科学计算代码
 
 修改以下文件时，**必须**使用 `scientific-reviewer` agent 审查：
-- `backend/optimization/optimizer.py` - 贝叶斯优化核心
-- `backend/optimization/knowledge.py` - 物理公式计算
-- `backend/optimization/memory.py` - 向量记忆存储
-- `backend/benchmark/bo_step.py` - 优化步进逻辑
+- `packages/bo-core/bo_core/optimization/optimizer.py` - 贝叶斯优化核心
+- `packages/bo-core/bo_core/optimization/knowledge.py` - 物理公式计算
+- `packages/bo-core/bo_core/optimization/memory.py` - 向量记忆存储
+- `packages/bo-core/bo_core/benchmark/bo_step.py` - 优化步进逻辑
 
 **审查重点**:
 - 数值稳定性（除零、矩阵条件数、对数空间）
@@ -92,11 +97,11 @@ LUMO_barrier = LUMO_HTL - LUMO_PVK
 ## 测试覆盖率要求
 
 - **最低覆盖率**: 80%
-- **核心模块**: `backend/optimization/` 要求 ≥90%
+- **核心模块**: `packages/bo-core/bo_core/optimization/` 要求 ≥90%
 
 检查覆盖率:
 ```bash
-cd backend
+cd apps/api
 python -m pytest --cov=. --cov-report=term-missing
 ```
 
@@ -106,28 +111,33 @@ python -m pytest --cov=. --cov-report=term-missing
 
 以下文件受 hooks 保护，修改时需要确认：
 - `**/.env*` - 环境变量文件
-- `backend/*_results.json` - 评测结果数据
+- `**/*_results.json` - 评测结果数据
 
 ---
 
 ## 依赖管理
 
-### 后端依赖
+### 后端依赖 (apps/api)
 
 ```bash
-# 安装依赖
-cd backend
+# 安装依赖（requirements.txt 含 -e ../packages/bo-core，会自动安装算法包）
+cd apps/api
 pip install -r requirements.txt
+```
 
-# 添加新依赖后更新
-pip freeze > requirements.txt
+### 算法核心依赖 (packages/bo-core)
+
+```bash
+# bo-core 是独立可安装包，依赖在 pyproject.toml 声明
+cd packages/bo-core
+pip install -e .
 ```
 
 ### 前端依赖
 
 ```bash
 # 安装依赖
-cd frontend
+cd apps/web
 npm install
 
 # 添加新依赖
@@ -138,7 +148,7 @@ npm install <package-name>
 
 ## 数据集配置
 
-项目依赖外部数据集 `PVK-LLM`，配置在 `backend/.env`:
+项目依赖外部数据集 `PVK-LLM`，配置在 `apps/api/.env`:
 
 ```bash
 PVK_LLM_ROOT=../PVK-LLM
@@ -153,19 +163,19 @@ PVK_DATA_ROOT=../PVK-LLM/custom_perovskite_dataset
 
 ```bash
 # 后端测试（快速模式，遇到失败立即停止）
-cd backend && python -m pytest -x -v
+cd apps/api && python -m pytest -x -v
 
 # 后端测试（覆盖率报告）
-cd backend && python -m pytest --cov=. --cov-report=html
+cd apps/api && python -m pytest --cov=. --cov-report=html
 
 # 前端 E2E 测试（仅 Chromium）
-cd frontend && npm run test:e2e:chromium
+cd apps/web && npm run test:e2e:chromium
 
 # 前端 E2E 测试（显示浏览器）
-cd frontend && npm run test:e2e:headed
+cd apps/web && npm run test:e2e:headed
 
 # 查看 E2E 测试报告
-cd frontend && npm run test:e2e:report
+cd apps/web && npm run test:e2e:report
 ```
 
 ---
@@ -174,7 +184,7 @@ cd frontend && npm run test:e2e:report
 
 ### 自动触发的技能
 
-- **scientific-computing**: 修改 `backend/optimization/` 时自动审查科学计算正确性
+- **scientific-computing**: 修改 `packages/bo-core/bo_core/optimization/` 时自动审查科学计算正确性
 - **tdd-workflow**: 添加新功能或修复 bug 时强制 TDD 循环
 
 ### 可调用的 Agent

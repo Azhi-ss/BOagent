@@ -1,0 +1,7 @@
+fastapi
+uvicorn
+python-dotenv
+httpx
+pytest
+# Local algorithm package (editable install from the monorepo)
+-e ../packages/bo-core

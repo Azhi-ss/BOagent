@@ -1,28 +1,34 @@
-# Python
+# Python & Packaging
 __pycache__/
 *.py[cod]
 .pytest_cache/
+.coverage
+htmlcov/
+.mypy_cache/
+.ruff_cache/
 .venv/
 venv/
 *.egg-info/
 dist/
 build/
 
-# Node / Frontend
-frontend/node_modules/
-frontend/dist/
-frontend/test-results/
-frontend/coverage/
+# Node / Frontend / Testing
+node_modules/
+dist/
+**/test-results/
+playwright-report/
+blob-report/
+apps/web/coverage/
 
-# Environment files
+# Environment files (Wildcard for all directories)
 .env
+.env.*
 .env.local
 .env.*.local
-frontend/.env
-frontend/.env.local
-frontend/.env.*.local
+**/.env
+**/.env.*
 
-# IDE / Editor
+# IDE / Editor / System
 .cursor/
 .vscode/
 .idea/
@@ -31,32 +37,41 @@ frontend/.env.*.local
 *.swo
 *~
 
-# Large data files
+# Large data & Binary presentations
 *.xlsx
 *.csv
 *.parquet
 *.feather
+*.pptx
 demo_optimization_table.csv
 perovskite_agent_demo_extracted_data.xlsx
 
-# Generated / build artifacts
+# Generated / Build artifacts & Docs drafts
 boagent_architecture_design.html
 *.log
 npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
 
-# Temporary / scratch files
+# Temporary / Scratch files
 scratch/
 tmp/
 temp/
 *.md.tmp
+insights.jsonl
 
-# Ephemeral Backend Data
-backend/tmp_report/
-backend/tmp_results/
-backend/*.json
+# Ephemeral runtime data
+apps/api/tmp_report/
+apps/api/tmp_results/
+apps/api/*.json
+packages/bo-core/tmp_results/
+packages/bo-core/*.json
 
 # Agent & Infrastructure State
 .superpowers/
 .codegraph/
+
+# External reference repositories
+references/*
+!references/README.md
+
