@@ -7,18 +7,17 @@ from datetime import UTC, datetime
 from pathlib import Path
 from typing import Any
 
+from bo_core.benchmark.comparison import ComparisonRunner
+from bo_core.benchmark.data_loader import DATA_LOADERS, DEFAULT_DATA_ROOT
+from bo_core.benchmark.runner import BenchmarkRunner, run_multi_seed
+from bo_core.optimization.knowledge import KnowledgeEngine
+from bo_core.optimization.optimizer import BayesianOptimizer
+from bo_core.optimization.space import ContinuousSearchSpace
 from dotenv import load_dotenv
 from fastapi import FastAPI, HTTPException, status
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import HTMLResponse, JSONResponse, StreamingResponse
 from pydantic import BaseModel, Field
-
-from bo_core.benchmark.comparison import ComparisonRunner
-from bo_core.benchmark.data_loader import DATA_LOADERS, DEFAULT_DATA_ROOT
-from bo_core.benchmark.runner import BenchmarkRunner, run_multi_seed
-from bo_core.optimization.optimizer import BayesianOptimizer
-from bo_core.optimization.space import ContinuousSearchSpace
-from bo_core.optimization.knowledge import KnowledgeEngine
 
 # Load environment variables from .env (project root, then apps/api fallback)
 load_dotenv(Path(__file__).resolve().parent.parent.parent / ".env")  # project root

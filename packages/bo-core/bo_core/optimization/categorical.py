@@ -10,7 +10,8 @@ cross-product categories absent from a dataset's own ``options.json``).
 
 from __future__ import annotations
 
-from typing import Any, Dict, List, Sequence
+from collections.abc import Sequence
+from typing import Any
 
 import numpy as np
 import pandas as pd
@@ -19,8 +20,8 @@ import pandas as pd
 def union_options(
     feature_cols: Sequence[str],
     *dfs: pd.DataFrame,
-    options_json: Dict[str, Sequence[str]] | None = None,
-) -> Dict[str, List[str]]:
+    options_json: dict[str, Sequence[str]] | None = None,
+) -> dict[str, list[str]]:
     """Build the per-column option list as the sorted union of categories.
 
     Collects unique values from each provided DataFrame (over ``feature_cols``)
@@ -31,7 +32,7 @@ def union_options(
 
     Returns a dict mapping each feature column to its sorted unique values.
     """
-    sets: Dict[str, set] = {col: set() for col in feature_cols}
+    sets: dict[str, set] = {col: set() for col in feature_cols}
     if options_json:
         for col in feature_cols:
             sets[col].update(options_json.get(col, []))
@@ -49,22 +50,22 @@ class OneHotEncoder:
     by concatenating the blocks. Decoding takes the argmax within each block.
     """
 
-    def __init__(self, feature_cols: Sequence[str], options: Dict[str, Sequence[str]]) -> None:
-        self.feature_cols: List[str] = list(feature_cols)
+    def __init__(self, feature_cols: Sequence[str], options: dict[str, Sequence[str]]) -> None:
+        self.feature_cols: list[str] = list(feature_cols)
         # Copy and validate: every declared column must have a non-empty option list.
-        self.options: Dict[str, List[str]] = {
+        self.options: dict[str, list[str]] = {
             col: list(options[col]) for col in self.feature_cols
         }
         for col, vals in self.options.items():
             if not vals:
                 raise ValueError(f"Option list for column {col!r} is empty")
-        self._cat_index: Dict[str, Dict[str, int]] = {
+        self._cat_index: dict[str, dict[str, int]] = {
             col: {v: i for i, v in enumerate(vals)}
             for col, vals in self.options.items()
         }
         # Block offsets and sizes for slicing during decode.
-        self._offsets: List[int] = []
-        self._sizes: List[int] = []
+        self._offsets: list[int] = []
+        self._sizes: list[int] = []
         offset = 0
         for col in self.feature_cols:
             size = len(self.options[col])
@@ -78,7 +79,7 @@ class OneHotEncoder:
         """Total one-hot width D = sum of option counts across columns."""
         return self._dim
 
-    def encode_rows(self, rows: Sequence[Dict[str, Any]]) -> np.ndarray:
+    def encode_rows(self, rows: Sequence[dict[str, Any]]) -> np.ndarray:
         """Encode a sequence of config dicts into an (N, D) float array."""
         n = len(rows)
         X = np.zeros((n, self._dim), dtype=float)
@@ -99,16 +100,16 @@ class OneHotEncoder:
         rows = df[self.feature_cols].to_dict("records")
         return self.encode_rows(rows)
 
-    def decode(self, vec: np.ndarray) -> Dict[str, str]:
+    def decode(self, vec: np.ndarray) -> dict[str, str]:
         """Decode a single one-hot vector (D,) back into a config dict."""
         vec = np.asarray(vec)
-        out: Dict[str, str] = {}
+        out: dict[str, str] = {}
         for j, col in enumerate(self.feature_cols):
             offset, size = self._offsets[j], self._sizes[j]
             block = vec[offset:offset + size]
             out[col] = self.options[col][int(np.argmax(block))]
         return out
 
-    def decode_many(self, X: np.ndarray) -> List[Dict[str, str]]:
+    def decode_many(self, X: np.ndarray) -> list[dict[str, str]]:
         """Decode an (N, D) array into a list of config dicts."""
         return [self.decode(X[i]) for i in range(len(X))]

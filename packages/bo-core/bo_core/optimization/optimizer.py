@@ -1,12 +1,15 @@
 from __future__ import annotations
-from typing import List, Dict, Tuple, Any, Optional
-import pandas as pd
+
 import numpy as np
+import pandas as pd
 from sklearn.gaussian_process import GaussianProcessRegressor
-from sklearn.gaussian_process.kernels import Matern, RBF, ConstantKernel as C
+from sklearn.gaussian_process.kernels import ConstantKernel as C
+from sklearn.gaussian_process.kernels import Matern
 from sklearn.preprocessing import StandardScaler
-from bo_core.optimization.space import SearchSpace
+
 from bo_core.optimization.knowledge import KnowledgeEngine, SuggestionResult
+from bo_core.optimization.space import SearchSpace
+
 
 class BayesianOptimizer:
     """A deep module for Bayesian Optimization cycles.
@@ -19,7 +22,7 @@ class BayesianOptimizer:
         self,
         space: SearchSpace,
         target_name: str = "score",
-        knowledge_engine: Optional[KnowledgeEngine] = None,
+        knowledge_engine: KnowledgeEngine | None = None,
         n_restarts_optimizer: int = 10,
         seed: int = 42
     ):
@@ -27,13 +30,13 @@ class BayesianOptimizer:
         self.target_name = target_name
         self.knowledge_engine = knowledge_engine or KnowledgeEngine()
         self.observed_configs = pd.DataFrame(columns=space.feature_cols)
-        self.observed_scores: List[float] = []
+        self.observed_scores: list[float] = []
         self.best_score_so_far = -float("inf")
         self.scientific_notes = ""
         self.n_restarts_optimizer = n_restarts_optimizer
         self.seed = seed
 
-    def observe(self, config: Dict[str, float], score: float):
+    def observe(self, config: dict[str, float], score: float):
         """Record a new observation."""
         new_row = pd.DataFrame([config], columns=self.space.feature_cols)
         self.observed_configs = pd.concat([self.observed_configs, new_row], ignore_index=True)

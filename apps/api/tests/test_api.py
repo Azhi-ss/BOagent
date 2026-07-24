@@ -1,10 +1,8 @@
-import pytest
-from fastapi.testclient import TestClient
-
 import api
+import pytest
 from api import app
-from bo_core.llm_client import DeepSeekClient, LlmCallResult
-
+from bo_core.llm_client import DeepSeekClient
+from fastapi.testclient import TestClient
 
 client = TestClient(app)
 

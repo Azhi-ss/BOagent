@@ -1,11 +1,11 @@
 from __future__ import annotations
 
-import os
-import sys
 import concurrent.futures
+import os
 import queue
+from collections.abc import Iterator
 from pathlib import Path
-from typing import Any, Iterator
+from typing import Any
 
 import numpy as np
 
@@ -50,10 +50,9 @@ class ComparisonRunner:
     def _build_llm_acq(self, data: dict[str, Any]) -> Any | None:
         """Construct the GP+LLM acquisition for the LLMBO engine."""
         try:
-            from bo_core.benchmark.data_loader import build_task_context
+            from bo_core.optimization.knowledge import KnowledgeEngine
             from bo_core.optimization.optimizer import BayesianOptimizer
             from bo_core.optimization.space import DiscreteSearchSpace
-            from bo_core.optimization.knowledge import KnowledgeEngine
 
             chat_engine = (
                 self.llmbo_cfg.get("chat_engine")

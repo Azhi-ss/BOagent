@@ -147,7 +147,7 @@ def main() -> None:
         runner = BenchmarkRunner(seed=args.seed, **common_kwargs)
         result = runner.run()
         runner.save_results(result)
-        print(f"\nBenchmark complete.")
+        print("\nBenchmark complete.")
         print(f"  seed={result['seed']}")
         print(f"  best_score={result['best_score']:.4f}")
         print(f"  best_generalization_score={result['best_generalization_score']:.4f}")

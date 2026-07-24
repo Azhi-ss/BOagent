@@ -1,16 +1,19 @@
 from __future__ import annotations
+
 import json
-import os
 import re
-from typing import List, Dict, Tuple, Any
 from dataclasses import dataclass
+from typing import Any
+
 import pandas as pd
+
 from bo_core.llm_client import DeepSeekClient, LlmCallResult
-from bo_core.optimization.memory import VectorMemory, Insight
+from bo_core.optimization.memory import Insight, VectorMemory
+
 
 @dataclass
 class SuggestionResult:
-    suggestions: List[Dict[str, float]]
+    suggestions: list[dict[str, float]]
     analysis: str
     prompt: str
 
@@ -71,8 +74,8 @@ class KnowledgeEngine:
         self._iteration = 0
 
     def _get_physical_context_and_hints(
-        self, feature_cols: List[str], include_task_prefix: bool = True
-    ) -> Tuple[str, Dict[str, str]]:
+        self, feature_cols: list[str], include_task_prefix: bool = True
+    ) -> tuple[str, dict[str, str]]:
         physical_context = ""
         feature_hints = {}
         
@@ -113,7 +116,7 @@ class KnowledgeEngine:
             }
         return physical_context, feature_hints
 
-    def _get_cbo_metrics(self, data: Dict[str, float], for_ui: bool = False) -> Tuple[float, str] | None:
+    def _get_cbo_metrics(self, data: dict[str, float], for_ui: bool = False) -> tuple[float, str] | None:
         """Calculate CBO and map to status string."""
         if "CHI_PVK" not in data or "CHI_ETL" not in data:
             return None
@@ -128,7 +131,7 @@ class KnowledgeEngine:
             else: status = "Ideal"
         return cbo, status
 
-    def _get_vbo_metrics(self, data: Dict[str, float]) -> Tuple[float, str] | None:
+    def _get_vbo_metrics(self, data: dict[str, float]) -> tuple[float, str] | None:
         """Calculate VBO and map to status string."""
         if not all(k in data for k in ["CHI_HTL", "Eg_HTL", "CHI_PVK"]):
             return None
@@ -139,9 +142,9 @@ class KnowledgeEngine:
     def build_prompt(
         self,
         target_name: str,
-        feature_cols: List[str],
+        feature_cols: list[str],
         top_candidates: pd.DataFrame,
-        observed_data: List[Tuple[Dict[str, float], float]],
+        observed_data: list[tuple[dict[str, float], float]],
         n_candidates: int = 5,
         scientific_notes: str = ""
     ) -> str:
@@ -304,7 +307,7 @@ Each list should have 1-3 concise bullet strings. Focus on what drives high {tar
             self.memory.add(insight)
             return raw[:200]
 
-    def enrich_suggestions(self, suggestions: List[Dict[str, float]]) -> List[Dict[str, float]]:
+    def enrich_suggestions(self, suggestions: list[dict[str, float]]) -> list[dict[str, float]]:
         """Add calculated physical parameters (CBO, VBO) and status to suggestion dictionaries for UI display."""
         for sug in suggestions:
             # Conduction Band Offset (CBO): Ideal range [-0.1, 0.3] eV
@@ -324,9 +327,9 @@ Each list should have 1-3 concise bullet strings. Focus on what drives high {tar
         self,
         prompt: str,
         top_candidates: pd.DataFrame,
-        feature_cols: List[str],
+        feature_cols: list[str],
         n_candidates: int = 5
-    ) -> Tuple[List[Dict[str, float]], str]:
+    ) -> tuple[list[dict[str, float]], str]:
         """Call LLM and parse the refined suggestions."""
         if not self._client.is_configured():
             # Fallback if no LLM
@@ -353,7 +356,7 @@ Each list should have 1-3 concise bullet strings. Focus on what drives high {tar
             
         return suggestions, analysis
 
-    def _parse_response(self, response: str, num_candidates: int, n_expected: int = 5) -> List[int]:
+    def _parse_response(self, response: str, num_candidates: int, n_expected: int = 5) -> list[int]:
         # 1. Look for Selected Formulations:
         match = re.search(r"Selected\s+Formulations?\s*:\s*(.+)", response, re.IGNORECASE)
         if match:
@@ -386,11 +389,11 @@ Each list should have 1-3 concise bullet strings. Focus on what drives high {tar
 
     def select_initial_points(
         self,
-        candidate_points: List[Dict[str, float]],
-        feature_cols: List[str],
+        candidate_points: list[dict[str, float]],
+        feature_cols: list[str],
         target_name: str,
         n_select: int,
-    ) -> List[int]:
+    ) -> list[int]:
         """Pick the most promising initial points from a candidate pool via LLM.
 
         Mirrors PVK-LLM's warm-start strategy: the LLM sees only feature values
@@ -404,7 +407,7 @@ Each list should have 1-3 concise bullet strings. Focus on what drives high {tar
         if n_select >= n_cand:
             return list(range(n_cand))
 
-        def _fallback() -> List[int]:
+        def _fallback() -> list[int]:
             # Evenly spread across the pool for diversity, deterministic.
             return [round(i * (n_cand - 1) / (n_select - 1)) for i in range(n_select)] if n_select > 1 else [0]
 
@@ -443,8 +446,8 @@ Each list should have 1-3 concise bullet strings. Focus on what drives high {tar
 
     def _build_initialization_prompt(
         self,
-        candidate_points: List[Dict[str, float]],
-        feature_cols: List[str],
+        candidate_points: list[dict[str, float]],
+        feature_cols: list[str],
         target_name: str,
         n_select: int,
     ) -> str:
@@ -486,7 +489,7 @@ Respond with only the point numbers (1-{n_cand}) separated by commas, like: 1,5,
 """
         return prompt
 
-    def _parse_initialization_response(self, response: str, n_cand: int) -> List[int]:
+    def _parse_initialization_response(self, response: str, n_cand: int) -> list[int]:
         clean_response = response.strip()
         lines = [l.strip() for l in clean_response.splitlines() if l.strip()]
         if lines:
@@ -549,8 +552,8 @@ Your goal is to evaluate if a candidate formulation is physically viable and lik
     def generate_physical_heuristic(
         self,
         target_name: str,
-        feature_cols: List[str],
-        observed_data: List[Tuple[Dict[str, float], float]],
+        feature_cols: list[str],
+        observed_data: list[tuple[dict[str, float], float]],
     ) -> str:
         """Generate a Python-executable heuristic function to score candidates.
         
@@ -601,10 +604,10 @@ Return ONLY the Python code for the function, no explanation.
     def score_candidates_direct_batch(
         self,
         target_name: str,
-        feature_cols: List[str],
-        candidates: List[Dict[str, float]],
-        observed_data: List[Tuple[Dict[str, float], float]],
-    ) -> List[float]:
+        feature_cols: list[str],
+        candidates: list[dict[str, float]],
+        observed_data: list[tuple[dict[str, float], float]],
+    ) -> list[float]:
         """Ask the LLM to directly score a batch of candidates.
         
         Useful for smaller batches (e.g. 50-100) or representative samples of a large pool.
@@ -711,7 +714,7 @@ Example: [0.85, 0.12, 0.45, ...]
             user_prompt += f"- Calculated VBO: {vbo_metrics[0]:.4f} eV ({vbo_metrics[1]})\n"
 
         if gp_mean is not None and gp_std is not None:
-            user_prompt += f"\nGP Surrogate Predictions:\n"
+            user_prompt += "\nGP Surrogate Predictions:\n"
             user_prompt += f"- Predicted Score (mean): {gp_mean:.4f}\n"
             user_prompt += f"- Prediction Uncertainty (std): {gp_std:.4f}\n"
 

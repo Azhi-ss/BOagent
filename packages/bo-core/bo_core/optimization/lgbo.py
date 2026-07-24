@@ -21,7 +21,7 @@ identical prior/encoding/GP/acquisition with LGBO, isolating the LLM's effect.
 from __future__ import annotations
 
 import json
-from typing import Any, Dict, List, Optional
+from typing import Any
 
 import numpy as np
 from scipy.stats import norm
@@ -33,7 +33,11 @@ from sklearn.preprocessing import StandardScaler
 from bo_core.benchmark.data_loader import DATA_LOADERS, UNIFIED_DATASET_ROOT
 from bo_core.optimization.categorical import OneHotEncoder, union_options
 from bo_core.optimization.lgbo_parser import parse_llm_response
-from bo_core.optimization.lgbo_prompt import DatasetMeta, build_system_prompt, build_user_prompt
+from bo_core.optimization.lgbo_prompt import (
+    DatasetMeta,
+    build_system_prompt,
+    build_user_prompt,
+)
 
 # Seeds fixed by the competition README.
 COMPETITION_SEEDS = [100, 200, 300, 400, 500, 600, 700, 800, 900, 1000,
@@ -78,14 +82,14 @@ class LGBOEngine:
 
     def _load_data(self) -> None:
         data = DATA_LOADERS[self.dataset]()
-        self.feature_cols: List[str] = list(data["feature_cols"])
+        self.feature_cols: list[str] = list(data["feature_cols"])
         self.target_col: str = str(data["target_col"])
         self.train_df = data["train_df"]            # prior (full train.csv)
         self.test_df = data["test_df"]              # pool + oracle (row-aligned)
 
         # options.json = the dataset's own valid option space (for the LLM prompt).
         opts_path = UNIFIED_DATASET_ROOT / "chemical_reactions" / self.dataset / "options.json"
-        self.options_json: Dict[str, List[str]] = json.loads(opts_path.read_text())
+        self.options_json: dict[str, list[str]] = json.loads(opts_path.read_text())
 
         # Encoder built from the UNION of train+test categories: the merged
         # train.csv carries cross-product reagents absent from options.json.
@@ -111,8 +115,8 @@ class LGBOEngine:
         self.X_obs = self.encoder.encode_df(self.train_df)              # (N, D)
         self.y_obs = self.train_df[self.target_col].to_numpy(dtype=float)
         self.queried: set[int] = set()                                  # pool indices evaluated
-        self.trajectory: List[Dict[str, Any]] = []
-        self.prev_thinking: Optional[str] = None
+        self.trajectory: list[dict[str, Any]] = []
+        self.prev_thinking: str | None = None
         self.iteration = 0
         # LLM client (lazy, only for LGBO). Reuses DeepSeekClient.from_env().
         self._client = None
@@ -193,7 +197,6 @@ class LGBOEngine:
         is computed directly via the fitted kernel + Cholesky, avoiding the
         O(M^2) full-pool posterior covariance that would be prohibitive for suzuki.
         """
-        from scipy.linalg import cho_solve
 
         try:
             if not self._client_is_fit(gp):
@@ -259,12 +262,12 @@ class LGBOEngine:
 
     # -------------------------------------------------------------------- loop
 
-    def step(self) -> Dict[str, Any]:
+    def step(self) -> dict[str, Any]:
         scaler, gp = self._fit_gp()
         mu, sigma = self._predict_pool(scaler, gp)
         best_f = float(np.max(self.y_obs))
 
-        thinking: Optional[str] = None
+        thinking: str | None = None
         if self.use_llm:
             mu, thinking = self._llm_mean_shift(scaler, gp, mu)
 
@@ -299,7 +302,7 @@ class LGBOEngine:
 
     def _llm_mean_shift(
         self, scaler: StandardScaler, gp: GaussianProcessRegressor, mu: np.ndarray
-    ) -> tuple[np.ndarray, Optional[str]]:
+    ) -> tuple[np.ndarray, str | None]:
         """Query the LLM, parse point+confidence, apply mean shift.
 
         Returns (shifted_mu, thinking_text). On any LLM/parse failure, returns
@@ -356,7 +359,7 @@ class LGBOEngine:
         return mu_shifted, thinking
 
     @staticmethod
-    def _extract_thinking(text: str) -> Optional[str]:
+    def _extract_thinking(text: str) -> str | None:
         """Capture the Thinking block (text before the Final Answer JSON line)."""
         lines = text.splitlines()
         fa_idx = None
@@ -369,7 +372,7 @@ class LGBOEngine:
         thinking = "\n".join(lines[:fa_idx]).strip()
         return thinking[:800] or None
 
-    def run(self) -> List[Dict[str, Any]]:
+    def run(self) -> list[dict[str, Any]]:
         for _ in range(self.n_iters):
             self.step()
         return self.trajectory

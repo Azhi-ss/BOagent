@@ -1,9 +1,12 @@
 from __future__ import annotations
+
 from abc import ABC, abstractmethod
-from typing import List, Dict, Any
-import pandas as pd
+from typing import Any
+
 import numpy as np
+import pandas as pd
 from scipy.stats import qmc
+
 
 class SearchSpace(ABC):
     """Abstract interface for the search space of an optimization task."""
@@ -11,23 +14,22 @@ class SearchSpace(ABC):
     @abstractmethod
     def get_unobserved(self, observed_configs: pd.DataFrame) -> pd.DataFrame:
         """Return a pool of candidate points that have not been observed yet."""
-        pass
 
     @property
     @abstractmethod
-    def feature_cols(self) -> List[str]:
+    def feature_cols(self) -> list[str]:
         pass
 
 class DiscreteSearchSpace(SearchSpace):
     """A search space defined by a fixed pool of candidates (e.g. from a CSV/Excel)."""
     
-    def __init__(self, df: pd.DataFrame, feature_cols: List[str]):
+    def __init__(self, df: pd.DataFrame, feature_cols: list[str]):
         self.df = df
         self._feature_cols = feature_cols
         self.all_x = df[feature_cols].values.astype(float)
 
     @property
-    def feature_cols(self) -> List[str]:
+    def feature_cols(self) -> list[str]:
         return self._feature_cols
 
     def get_unobserved(self, observed_configs: pd.DataFrame) -> pd.DataFrame:
@@ -52,14 +54,14 @@ class DiscreteSearchSpace(SearchSpace):
 class ContinuousSearchSpace(SearchSpace):
     """A search space defined by continuous variable bounds."""
     
-    def __init__(self, variables: List[Dict[str, Any]], n_samples: int = 2000, seed: int = 42):
+    def __init__(self, variables: list[dict[str, Any]], n_samples: int = 2000, seed: int = 42):
         self.variables = variables
         self.n_samples = n_samples
         self.seed = seed
         self._feature_cols = [v["name"] for v in variables]
 
     @property
-    def feature_cols(self) -> List[str]:
+    def feature_cols(self) -> list[str]:
         return self._feature_cols
 
     def get_unobserved(self, observed_configs: pd.DataFrame) -> pd.DataFrame:

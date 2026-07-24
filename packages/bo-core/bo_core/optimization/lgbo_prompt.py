@@ -13,12 +13,12 @@ Objective direction is flipped from the paper's "Minimize f(x)" to
 
 from __future__ import annotations
 
-from dataclasses import dataclass, field
-from typing import Dict, List, Sequence, Tuple
+from collections.abc import Sequence
+from dataclasses import dataclass
 
 # Reaction-specific context injected into the system + user prompt background.
 # Values follow the dataset READMEs (reaction type, fixed components, mechanism).
-_REACTION_CONTEXT: Dict[str, Dict[str, str]] = {
+_REACTION_CONTEXT: dict[str, dict[str, str]] = {
     "buchwald_sub4": {
         "name": "Buchwald-Hartwig C-N coupling",
         "mechanism": (
@@ -51,8 +51,8 @@ class DatasetMeta:
     """Static, dataset-level prompt context."""
 
     dataset: str  # "buchwald_sub4" | "suzuki"
-    feature_cols: List[str]
-    options: Dict[str, List[str]]  # sub4 options.json: the valid pool space
+    feature_cols: list[str]
+    options: dict[str, list[str]]  # sub4 options.json: the valid pool space
     target_name: str = "Yield"
     objective: str = "Maximize"  # chemical reactions maximize Yield (%)
 
@@ -125,7 +125,7 @@ def build_system_prompt(meta: DatasetMeta) -> str:
 
 def build_user_prompt(
     meta: DatasetMeta,
-    history: Sequence[Tuple[Dict[str, str], float]],
+    history: Sequence[tuple[dict[str, str], float]],
     prev_thinking: str | None = None,
     max_history: int = 10,
 ) -> str:
@@ -138,7 +138,7 @@ def build_user_prompt(
     d = len(meta.feature_cols)
     order_str = ", ".join(meta.feature_cols)
 
-    lines: List[str] = ["[Background]"]
+    lines: list[str] = ["[Background]"]
     lines.append(f"- Experiment type & purpose: {meta.reaction_name} reaction-condition "
                  f"optimization to maximize {meta.target_name} (%).")
     lines.append(f"- Mechanism: {meta.mechanism}")

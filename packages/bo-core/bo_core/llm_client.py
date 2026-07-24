@@ -7,7 +7,6 @@ from typing import Any
 
 import requests
 
-
 DEFAULT_ENV_PATH = Path(__file__).resolve().parent / ".env"
 PROTECTED_CHAT_PAYLOAD_KEYS = {"model", "messages", "max_tokens", "stream"}
 
@@ -37,7 +36,7 @@ class DeepSeekClient:
         self.timeout_s = timeout_s
 
     @classmethod
-    def from_env(cls, env_path: Path = DEFAULT_ENV_PATH) -> "DeepSeekClient":
+    def from_env(cls, env_path: Path = DEFAULT_ENV_PATH) -> DeepSeekClient:
         load_env_file(env_path)
         api_key = os.environ.get("DEEPSEEK_API_KEY", "").strip()
         base_url = os.environ.get("DEEPSEEK_BASE_URL", "https://api.deepseek.com")

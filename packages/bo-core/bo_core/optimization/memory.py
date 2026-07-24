@@ -9,9 +9,8 @@ from __future__ import annotations
 
 import json
 import os
-from dataclasses import dataclass, field, asdict
+from dataclasses import asdict, dataclass, field
 from pathlib import Path
-from typing import Any
 
 import numpy as np
 
@@ -51,7 +50,8 @@ class EmbeddingClient:
         if not self.is_available():
             return None
         try:
-            import urllib.request, json as _json
+            import json as _json
+            import urllib.request
             payload = _json.dumps({"model": self._model, "input": texts}).encode()
             req = urllib.request.Request(
                 url=f"{self._ark_base}/embeddings",

@@ -30,9 +30,9 @@ def _install_langchain_prompt_compat() -> None:
     except ImportError:
         return
     if not hasattr(langchain, "FewShotPromptTemplate"):
-        setattr(langchain, "FewShotPromptTemplate", FewShotPromptTemplate)
+        langchain.FewShotPromptTemplate = FewShotPromptTemplate
     if not hasattr(langchain, "PromptTemplate"):
-        setattr(langchain, "PromptTemplate", PromptTemplate)
+        langchain.PromptTemplate = PromptTemplate
 
 
 def _install_pandas_series_int_position_compat() -> None:

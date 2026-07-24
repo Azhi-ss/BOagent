@@ -3,7 +3,6 @@ from __future__ import annotations
 import json
 import os
 import sys
-import time
 from pathlib import Path
 from typing import Any
 
@@ -11,9 +10,9 @@ import numpy as np
 import pandas as pd
 
 from bo_core.benchmark.data_loader import DATA_LOADERS
+from bo_core.optimization.knowledge import KnowledgeEngine
 from bo_core.optimization.optimizer import BayesianOptimizer
 from bo_core.optimization.space import DiscreteSearchSpace
-from bo_core.optimization.knowledge import KnowledgeEngine
 
 
 class BenchmarkRunner:

@@ -18,12 +18,12 @@ back to a pure-GP step with lambda=0).
 from __future__ import annotations
 
 import json
-from typing import Dict, List, Optional, Sequence, Tuple
+from collections.abc import Sequence
 
-ParsedProposal = Tuple[str, List[str], float]
+ParsedProposal = tuple[str, list[str], float]
 
 
-def _extract_last_json_object(text: str) -> Optional[dict]:
+def _extract_last_json_object(text: str) -> dict | None:
     """Return the last valid JSON object occurring in ``text``, or None.
 
     Scans right-to-left for ``{`` and uses ``JSONDecoder.raw_decode`` so that a
@@ -45,8 +45,8 @@ def _extract_last_json_object(text: str) -> Optional[dict]:
 def parse_llm_response(
     text: str,
     feature_cols: Sequence[str],
-    options: Dict[str, Sequence[str]],
-) -> Optional[ParsedProposal]:
+    options: dict[str, Sequence[str]],
+) -> ParsedProposal | None:
     """Parse + validate the LLM Final Answer.
 
     Args:

@@ -17,6 +17,7 @@ from __future__ import annotations
 
 import argparse
 import os
+
 # Restrict BLAS to 1 thread before importing numpy/sklearn to avoid
 # CPU oversubscription when the ThreadPoolExecutor runs multiple GP fits in
 # parallel (otherwise 4 workers × 16 BLAS threads = thread thrashing).
@@ -25,14 +26,15 @@ for _v in ("OMP_NUM_THREADS", "OPENBLAS_NUM_THREADS", "MKL_NUM_THREADS",
     os.environ.setdefault(_v, "1")
 
 import warnings
+
 warnings.filterwarnings("ignore", category=UserWarning)
 warnings.filterwarnings("ignore", category=RuntimeWarning)
 from sklearn.exceptions import ConvergenceWarning
+
 warnings.filterwarnings("ignore", category=ConvergenceWarning)
 import json
 import math
 import pickle
-import sys
 import time
 from concurrent.futures import ThreadPoolExecutor, as_completed
 from pathlib import Path
@@ -41,7 +43,6 @@ from typing import Any
 import numpy as np
 import pandas as pd
 
-from bo_core.benchmark.data_loader import DATA_LOADERS
 from bo_core.optimization.lgbo import LGBOEngine
 
 # Per-dataset global best (max Yield in test.csv), from the dataset READMEs.

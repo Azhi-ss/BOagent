@@ -1,10 +1,12 @@
 from __future__ import annotations
+
 from typing import Any, Literal
+
 import numpy as np
-import pandas as pd
+
+from bo_core.optimization.knowledge import KnowledgeEngine
 from bo_core.optimization.optimizer import BayesianOptimizer
 from bo_core.optimization.space import DiscreteSearchSpace
-from bo_core.optimization.knowledge import KnowledgeEngine
 
 AcquisitionType = Literal["ei", "ucb", "pi"]
 
