@@ -1,6 +1,6 @@
 # Hardware Adaptation & Acceleration Specs
 
-This directory contains technical documentation, API guides, and official code patterns for deploying BOagent on specialized hardware accelerators (CPUs, GPUs, and NPUs) and deep learning frameworks (PyTorch, BoTorch, GPyTorch).
+This directory contains technical documentation, API guides, official code patterns, and defensive programming specs for deploying BOagent on specialized hardware accelerators (CPUs, GPUs, and NPUs) and deep learning frameworks (PyTorch, BoTorch, GPyTorch).
 
 ## Documents
 
@@ -17,3 +17,10 @@ This directory contains technical documentation, API guides, and official code p
    - Thread tuning (OpenMP / MKL / `OMP_NUM_THREADS`).
    - AVX-512 vectorization and AMD ZenDNN (`zentorch`) integration.
    - `torch.compile` and FP64 precision rules for Gaussian Processes.
+
+4. [Critical Pitfalls & Defensive Rules](file:///home/dministrator/project/BOagent/docs/hardware/gotchas_and_pitfalls.md)
+   - Handling `NotPSDError` with `cholesky_jitter` context managers.
+   - Avoiding CPU denormal float slowdown with `torch.set_flush_denormal(True)`.
+   - Outcome unscaling parity for hybrid LLM+GP scoring (`lambda_t`).
+   - Multi-feature ARD lengthscales (`ard_num_dims`).
+   - PyTorch memory leak prevention in FastAPI/SSE threads.
