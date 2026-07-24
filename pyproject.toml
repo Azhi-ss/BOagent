@@ -32,5 +32,8 @@ dev = [
     "pandera>=0.20.0",
     "hypothesis>=6.100.0",
     "evidently>=0.4.0",
-    "matplotlib>=3.8.0"
+    "matplotlib>=3.8.0",
+    "seaborn>=0.13.0",
+    "scienceplots>=2.1.0",
+    "adjusttext>=1.0.0"
 ]
