@@ -191,13 +191,15 @@ Before marking a task as complete, execute this checklist:
 
 ---
 
-## 8. Real-Time Hardware & Deep Learning Framework Specifications (`docs/hardware/`)
+## 8. Authoritative Specifications & Reference Knowledge (`docs/`)
 
-The repository maintains authoritative, version-locked API specifications, hardware acceleration guidelines, and defensive programming contracts in `docs/hardware/`:
+The `docs/` directory serves as the repository's single source of truth for external API contracts, hardware adaptation guidelines, real-time framework specifications, and defensive programming rules.
 
-*   **[AMD Hardware Adaptation Guide](file:///home/dministrator/project/BOagent/docs/hardware/amd_adaptation.md)**: Hardware workload mapping for AMD Ryzen AI 9 / Zen 5 (AVX-512), Radeon 880M (ROCm 7.2+ WSL2 via `ROCDXG` & DirectML), and XDNA 2 NPU (50 TOPS).
-*   **[Context7 Official BoTorch 0.18.x API Reference](file:///home/dministrator/project/BOagent/docs/hardware/context7_botorch_docs.md)**: Context7-retrieved API contracts for `SingleTaskGP`, `optimize_acqf`, `fit_gpytorch_mll`, and data transforms.
-*   **[Official BoTorch & GPyTorch Integration Guide](file:///home/dministrator/project/BOagent/docs/hardware/botorch_official_guide.md)**: Warm-start (`state_dict`) hyperparameter refitting and discrete candidate pool scoring patterns.
-*   **[PyTorch CPU & Zen 5 Optimization Guide](file:///home/dministrator/project/BOagent/docs/hardware/pytorch_cpu_optimization.md)**: Physical thread allocation (`OMP_NUM_THREADS=10`), AMD `ZenDNN` (`zentorch`) integration, and `torch.compile` settings.
-*   **[Critical Pitfalls & Defensive Rules](file:///home/dministrator/project/BOagent/docs/hardware/gotchas_and_pitfalls.md)**: Numerical guards for GPyTorch `NotPSDError` (`cholesky_jitter`), CPU denormal float flush (`torch.set_flush_denormal(True)`), scale unscaling parity for hybrid LLM+GP scoring, multi-feature ARD lengthscales, and FastAPI thread-safety.
+Before implementing features or modifying core modules, agents **MUST** consult the corresponding specification documents under `docs/`:
 
+*   **API & Framework Specifications (`docs/hardware/`, `docs/api_specs/`, etc.)**: Real-time Context7-retrieved API contracts, constructor signatures, parameter tables, and version-locked library usage rules.
+*   **Hardware Adaptation & Performance Guides**: Workload mapping across compute units (CPU, GPU, NPU), thread allocation, vectorization flags, and hardware-specific runtime configurations.
+*   **Defensive Rules & Failure Modes**: Documented edge cases, numerical stability guards, precision requirements, and thread-safety invariants.
+
+> [!NOTE]
+> **Extensibility Protocol**: When fetching or adding new API specs, hardware benchmarks, or domain research, save the normalized Markdown files under `docs/<category>/` and register them in the category index (`docs/<category>/README.md`). Reference these documents in task planning artifacts before writing code.
