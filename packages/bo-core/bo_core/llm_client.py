@@ -127,14 +127,18 @@ class DeepSeekClient:
 
 
 def load_env_file(path: Path = DEFAULT_ENV_PATH) -> None:
-    # Try current path first, then parent
     if not path.exists():
-        parent_env = path.parent.parent / ".env"
-        if parent_env.exists():
-            path = parent_env
+        root_env = Path(__file__).resolve().parent.parent.parent.parent / ".env"
+        if root_env.exists():
+            path = root_env
         else:
             return
+
             
+    # Default high-performance CPU threading for AMD 20-thread CPU if not set
+    for thread_var in ("OMP_NUM_THREADS", "MKL_NUM_THREADS", "OPENBLAS_NUM_THREADS", "NUMEXPR_NUM_THREADS"):
+        os.environ.setdefault(thread_var, "20")
+
     for raw_line in path.read_text(encoding="utf-8").splitlines():
         line = raw_line.strip()
         if not line or line.startswith("#") or "=" not in line:

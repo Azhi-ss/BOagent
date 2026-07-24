@@ -66,12 +66,29 @@ apps/api/tmp_results/
 apps/api/*.json
 packages/bo-core/tmp_results/
 packages/bo-core/*.json
+results/
+packages/bo-core/results/
 
 # Agent & Infrastructure State
 .superpowers/
 .codegraph/
+.gemini/
+.trellis/workspace/
+.claude/*.local.json
+
 
 # External reference repositories
 references/*
 !references/README.md
 
+
+# Agent framework state (trellis-generated skills/workflows; project configs under .claude/ stay tracked)
+.agent/skills/trellis-*/
+.agent/workflows/
+.agents/skills/trellis-*/
+.claude/agents/trellis-*
+.claude/commands/
+.claude/hooks/
+.claude/skills/trellis-*/
+.gemini/
+.trellis/

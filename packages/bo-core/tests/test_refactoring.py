@@ -94,16 +94,13 @@ def test_optimizer_viability_timeout():
     optimizer.observe({"A": 4.0}, 15.0)
     optimizer._score_candidates = MagicMock(return_value=df)
     
-    # Patch f.result(timeout=30.0) inside suggest to use timeout=0.01 to force timeout
+    # Patch f.result(timeout=30.0) inside suggest to force timeout and verify strict RuntimeError
     with patch("concurrent.futures.Future.result", side_effect=TimeoutError("Forced timeout")):
-        result = optimizer.suggest(
-            top_k=1,
-            n_candidates=1,
-            use_llm=True,
-            gamma=0.5,
-            use_logprobs=True
-        )
-        
-        # Verify it fallback to using default log_prob -2.0
-        assert len(result.suggestions) == 1
-        assert "LLM Log-prob=-2.0000" in result.analysis
+        with pytest.raises(RuntimeError, match="Candidate viability evaluation timed out"):
+            optimizer.suggest(
+                top_k=1,
+                n_candidates=1,
+                use_llm=True,
+                gamma=0.5,
+                use_logprobs=True
+            )

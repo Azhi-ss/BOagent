@@ -113,7 +113,7 @@ def emit_backend_log(
 # ---------------------------------------------------------------------------
 
 class CreateBenchmarkBody(BaseModel):
-    task_id: str = Field(default="band_alignment", pattern="^(band_alignment|defects_doping)$")
+    task_id: str = Field(default="band_alignment", pattern="^(band_alignment|defects_doping|buchwald_sub4|suzuki|battery_cathode)$")
     n_initial: int = Field(default=5, ge=1, le=50)
     n_trials: int = Field(default=20, ge=1, le=200)
     seed: int = Field(default=42, ge=0)
@@ -148,7 +148,7 @@ class LLMBOConfig(BaseModel):
 
 
 class CompareBenchmarkBody(BaseModel):
-    task_id: str = Field(default="band_alignment", pattern="^(band_alignment|defects_doping)$")
+    task_id: str = Field(default="band_alignment", pattern="^(band_alignment|defects_doping|buchwald_sub4|suzuki|battery_cathode)$")
     n_initial: int = Field(default=5, ge=1, le=50)
     n_trials: int = Field(default=20, ge=1, le=200)
     seeds: list[int] = Field(default=[42, 7, 100, 1, 21])

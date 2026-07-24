@@ -129,102 +129,105 @@ class BayesianOptimizer:
         
         # 5. Domain Refinement (LLM Pointwise Log-probs)
 
-        if use_llm and use_logprobs and self.knowledge_engine._client.is_configured() and not top_candidates.empty:
-            # Pointwise Log-probs based evaluation
-            system_prompt = self.knowledge_engine.build_system_prompt_for_viability(
-                self.target_name,
-                self.space.feature_cols,
-                observed_data
-            )
-            prompt = system_prompt # Store system prompt for audit / logs
-            
-            candidates_list = [row[self.space.feature_cols].to_dict() for _, row in top_candidates.iterrows()]
-            gp_means = top_candidates["mean"].values if "mean" in top_candidates.columns else [None] * len(candidates_list)
-            gp_stds = top_candidates["std"].values if "std" in top_candidates.columns else [None] * len(candidates_list)
-            
-            import concurrent.futures
-            with concurrent.futures.ThreadPoolExecutor(max_workers=len(candidates_list)) as executor:
-                futures = [
-                    executor.submit(
-                        self.knowledge_engine.evaluate_candidate_viability,
-                        cand,
-                        system_prompt,
-                        self.space.feature_cols,
-                        gp_mean=float(gp_mean) if gp_mean is not None else None,
-                        gp_std=float(gp_std) if gp_std is not None else None,
-                    )
-                    for cand, gp_mean, gp_std in zip(candidates_list, gp_means, gp_stds)
-                ]
-                log_probs = []
-                for f in futures:
-                    try:
-                        log_probs.append(f.result(timeout=30.0))
-                    except concurrent.futures.TimeoutError:
-                        print("[BO] Candidate viability evaluation timed out. Using default log_prob.")
-                        log_probs.append(-2.0)
-                    except Exception as e:
-                        print(f"[BO] Candidate viability evaluation failed: {e}. Using default log_prob.")
-                        log_probs.append(-2.0)
-            
-            # Adaptive scaling weight: lambda_t = gamma * std(GP_scores)
-            gp_scores = top_candidates["score"].values
-            gp_std = float(np.std(gp_scores)) if len(gp_scores) > 1 else 1.0
-            if gp_std == 0:
-                gp_std = 1.0
-            lambda_t = gamma * gp_std
-            
-            # Compute hybrid score
-            hybrid_scores = gp_scores + lambda_t * np.array(log_probs)
-            
-            top_candidates_copy = top_candidates.copy()
-            top_candidates_copy["hybrid_score"] = hybrid_scores
-            top_candidates_copy["log_prob"] = log_probs
-            sorted_candidates = top_candidates_copy.sort_values("hybrid_score", ascending=False)
-            
-            suggestions = [
-                row[self.space.feature_cols].to_dict()
-                for _, row in sorted_candidates.head(n_candidates).iterrows()
-            ]
-            suggestions = self.knowledge_engine.enrich_suggestions(suggestions)
-            
-            analysis_lines = ["Log-probs Hybrid Selection Analysis:"]
-            for idx, (_, row) in enumerate(sorted_candidates.head(n_candidates).iterrows()):
-                cbo_str = ""
-                if "CHI_PVK" in row and "CHI_ETL" in row:
-                    cbo = row["CHI_PVK"] - row["CHI_ETL"]
-                    cbo_str = f", CBO={cbo:.3f}eV"
-                analysis_lines.append(
-                    f"Selected Candidate {idx+1}: GP Score={row['score']:.4f}, LLM Log-prob={row['log_prob']:.4f}, Hybrid Score={row['hybrid_score']:.4f}{cbo_str}"
+        # 5. Domain Refinement (LLM Pointwise Log-probs)
+        if use_llm:
+            if not self.knowledge_engine._client.is_configured():
+                raise RuntimeError("LLM refinement requested (use_llm=True) but LLM client is not configured (missing API Key).")
+
+            if use_logprobs and not top_candidates.empty:
+                # Pointwise Log-probs based evaluation
+                system_prompt = self.knowledge_engine.build_system_prompt_for_viability(
+                    self.target_name,
+                    self.space.feature_cols,
+                    observed_data
                 )
-            analysis = "\n".join(analysis_lines)
-            
-        else:
-            # Fallback to legacy/baseline prompt list selection or pure GP
-            prompt = self.knowledge_engine.build_prompt(
-                self.target_name,
-                self.space.feature_cols,
-                top_candidates,
-                observed_data,
-                n_candidates=n_candidates,
-                scientific_notes=self.scientific_notes
-            )
-            
-            if use_llm:
+                prompt = system_prompt # Store system prompt for audit / logs
+                
+                candidates_list = [row[self.space.feature_cols].to_dict() for _, row in top_candidates.iterrows()]
+                gp_means = top_candidates["mean"].values if "mean" in top_candidates.columns else [None] * len(candidates_list)
+                gp_stds = top_candidates["std"].values if "std" in top_candidates.columns else [None] * len(candidates_list)
+                
+                import concurrent.futures
+                with concurrent.futures.ThreadPoolExecutor(max_workers=len(candidates_list)) as executor:
+                    futures = [
+                        executor.submit(
+                            self.knowledge_engine.evaluate_candidate_viability,
+                            cand,
+                            system_prompt,
+                            self.space.feature_cols,
+                            gp_mean=float(gp_mean) if gp_mean is not None else None,
+                            gp_std=float(gp_std) if gp_std is not None else None,
+                        )
+                        for cand, gp_mean, gp_std in zip(candidates_list, gp_means, gp_stds)
+                    ]
+                    log_probs = []
+                    for f in futures:
+                        try:
+                            log_probs.append(f.result(timeout=30.0))
+                        except concurrent.futures.TimeoutError as e:
+                            raise RuntimeError(f"[BO] Candidate viability evaluation timed out: {e}") from e
+                        except Exception as e:
+                            raise RuntimeError(f"[BO] Candidate viability evaluation failed: {e}") from e
+                
+                # Adaptive scaling weight: lambda_t = gamma * std(GP_scores)
+                gp_scores = top_candidates["score"].values
+                gp_std = float(np.std(gp_scores)) if len(gp_scores) > 1 else 1.0
+                if gp_std == 0:
+                    gp_std = 1.0
+                lambda_t = gamma * gp_std
+                
+                # Compute hybrid score
+                hybrid_scores = gp_scores + lambda_t * np.array(log_probs)
+                
+                top_candidates_copy = top_candidates.copy()
+                top_candidates_copy["hybrid_score"] = hybrid_scores
+                top_candidates_copy["log_prob"] = log_probs
+                sorted_candidates = top_candidates_copy.sort_values("hybrid_score", ascending=False)
+                
+                suggestions = [
+                    row[self.space.feature_cols].to_dict()
+                    for _, row in sorted_candidates.head(n_candidates).iterrows()
+                ]
+                suggestions = self.knowledge_engine.enrich_suggestions(suggestions)
+                
+                analysis_lines = ["Log-probs Hybrid Selection Analysis:"]
+                for idx, (_, row) in enumerate(sorted_candidates.head(n_candidates).iterrows()):
+                    cbo_str = ""
+                    if "CHI_PVK" in row and "CHI_ETL" in row:
+                        cbo = row["CHI_PVK"] - row["CHI_ETL"]
+                        cbo_str = f", CBO={cbo:.3f}eV"
+                    analysis_lines.append(
+                        f"Selected Candidate {idx+1}: GP Score={row['score']:.4f}, LLM Log-prob={row['log_prob']:.4f}, Hybrid Score={row['hybrid_score']:.4f}{cbo_str}"
+                    )
+                analysis = "\n".join(analysis_lines)
+                
+            else:
+                prompt = self.knowledge_engine.build_prompt(
+                    self.target_name,
+                    self.space.feature_cols,
+                    top_candidates,
+                    observed_data,
+                    n_candidates=n_candidates,
+                    scientific_notes=self.scientific_notes
+                )
                 suggestions, analysis = self.knowledge_engine.refine_suggestions(
                     prompt, top_candidates, self.space.feature_cols, n_candidates=n_candidates
                 )
-            else:
-                suggestions = [row[self.space.feature_cols].to_dict() for _, row in top_candidates.head(n_candidates).iterrows()]
-                suggestions = self.knowledge_engine.enrich_suggestions(suggestions)
-                analysis = "LLM refinement skipped. Using GP top candidates."
-
-        # Guarantee at least one suggestion: fall back to GP-ranked top candidates.
-        if not suggestions and not top_candidates.empty:
-            suggestions = [
-                row[self.space.feature_cols].to_dict()
-                for _, row in top_candidates.head(n_candidates).iterrows()
-            ]
+        else:
+            prompt = ""
+            suggestions = [row[self.space.feature_cols].to_dict() for _, row in top_candidates.head(n_candidates).iterrows()]
             suggestions = self.knowledge_engine.enrich_suggestions(suggestions)
+            analysis = "LLM refinement skipped. Using GP top candidates."
+
+        if not suggestions and not top_candidates.empty:
+            if use_llm:
+                raise RuntimeError("LLM returned empty suggestions for candidate pool.")
+            else:
+                suggestions = [
+                    row[self.space.feature_cols].to_dict()
+                    for _, row in top_candidates.head(n_candidates).iterrows()
+                ]
+                suggestions = self.knowledge_engine.enrich_suggestions(suggestions)
 
         return SuggestionResult(
             suggestions=suggestions,

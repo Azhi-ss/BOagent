@@ -49,9 +49,10 @@ def test_list_tasks_returns_benchmark_tasks():
     tasks = response.json()["data"]
 
     assert isinstance(tasks, list)
-    assert len(tasks) == 2
+    assert len(tasks) == 5
     task_ids = {t["task_id"] for t in tasks}
-    assert task_ids == {"band_alignment", "defects_doping"}
+    assert task_ids == {"band_alignment", "defects_doping", "buchwald_sub4", "suzuki", "battery_cathode"}
+
 
     for task in tasks:
         assert "name" in task

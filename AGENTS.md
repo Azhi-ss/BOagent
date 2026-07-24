@@ -12,7 +12,7 @@ BOagent is an LLM-driven Bayesian Optimization (BO) workflow orchestrator and sc
 *   **Backend**: FastAPI, Python 3.10+, Uvicorn, Scikit-learn (Gaussian Process Regressor), NumPy, Pandas, SciPy, pytest.
 *   **Frontend**: React 19, Vite 6, TypeScript 6, Recharts 3.8, Tailwind CSS 4.x.
 *   **AI/LLM**: DeepSeek API (`deepseek-v4-flash` / `deepseek-v4-pro`), Doubao Embedding API (Volcengine/Ark) utilizing the default `doubao-embedding-vision-250615` model (configured via `DOUBAO_EMBEDDING_MODEL`) for semantic memory retrieval.
-*   **Dataset Integration**: Sibling repository `PVK-LLM` containing Excel-based experimental datasets.
+*   **Dataset Integration**: Uses unified dataset schema located in the local `datasets/` directory (e.g., `datasets/perovskite`, `datasets/battery`). No `.env` configuration is required.
 
 ---
 
@@ -24,7 +24,7 @@ BOagent/
 │   ├── api/                       # FastAPI Backend Service
 │   │   ├── api.py                 # FastAPI server, SSE stream controller, rest endpoints
 │   │   ├── conftest.py            # pytest path configuration
-│   │   ├── requirements.txt       # Python dependencies (incl. editable bo-core)
+│   │   ├── pyproject.toml         # Python dependencies (incl. bo-core workspace link)
 │   │   └── tests/                 # API automated tests
 │   └── web/                       # React Frontend Application
 │       ├── src/
@@ -101,7 +101,7 @@ The optimizer combines GP surrogate scores with LLM viability judgments via a hy
 > The backend server must be started inside the `apps/api/` directory to resolve relative imports correctly.
 ```bash
 cd apps/api
-python -m uvicorn api:app --reload --port 8000
+uv run uvicorn api:app --reload --port 8000
 ```
 
 #### Frontend Web Application (Vite on Port 5173)
@@ -116,14 +116,21 @@ npm run dev
 #### API Backend Unit/Integration Tests
 ```bash
 cd apps/api
-python -m pytest
+uv run pytest
 ```
 
 #### Algorithm Core Unit Tests (`bo-core`)
+*Note: We enforce TDD for algorithm logic. You MUST use `--cov` to ensure your new logic is covered. Minimum coverage requirement is 80% overall, and ≥90% for `bo_core/optimization/`.*
 ```bash
 cd packages/bo-core
-python -m pytest
+uv run pytest --cov=bo_core --cov-report=term-missing
 ```
+
+#### ML Data & Algorithm Inspection Tools
+*   **Linting & Static Type Checks**: `uv run ruff check .` and `uv run mypy packages/bo-core/bo_core`
+*   **Data Validation (`pandera`)**: Schema verification for search spaces & dataset DataFrames.
+*   **Property-Based Testing (`hypothesis`)**: Boundary and matrix stability verification for GP operations.
+*   **ML Health & Data Drift (`evidently`)**: Model drift detection and automated data quality checks for surrogate models.
 
 #### Frontend Playwright E2E Tests
 *Note: Make sure the backend server is running on port 8000 before executing E2E tests.*
@@ -152,6 +159,9 @@ npx playwright test --ui     # Interactive UI Mode
 
 > [!CAUTION]
 > **Local RNG State**: Always use locally seeded instances of `np.random.RandomState` in data loaders and optimization loops. Avoid using the global `np.random` to prevent random state leakage across parallel benchmark threads.
+
+> [!CAUTION]
+> **Sensitive Files Protection**: Do not arbitrarily modify `**/.env*` files or `**/*_results.json` files without explicit user confirmation.
 
 ---
 
