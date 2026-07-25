@@ -2,13 +2,10 @@ from __future__ import annotations
 
 import numpy as np
 import pandas as pd
-from sklearn.gaussian_process import GaussianProcessRegressor
-from sklearn.gaussian_process.kernels import ConstantKernel as C
-from sklearn.gaussian_process.kernels import Matern
-from sklearn.preprocessing import StandardScaler
 
 from bo_core.optimization.knowledge import KnowledgeEngine, SuggestionResult
 from bo_core.optimization.space import SearchSpace
+from bo_core.optimization.surrogate import BackendName, create_surrogate
 
 
 class BayesianOptimizer:
@@ -24,7 +21,8 @@ class BayesianOptimizer:
         target_name: str = "score",
         knowledge_engine: KnowledgeEngine | None = None,
         n_restarts_optimizer: int = 10,
-        seed: int = 42
+        seed: int = 42,
+        backend: BackendName = "botorch",
     ):
         self.space = space
         self.target_name = target_name
@@ -35,6 +33,13 @@ class BayesianOptimizer:
         self.scientific_notes = ""
         self.n_restarts_optimizer = n_restarts_optimizer
         self.seed = seed
+        self.backend = backend
+        self._surrogate = create_surrogate(
+            backend,
+            seed=seed,
+            n_restarts=n_restarts_optimizer,
+            alpha=1e-6,
+        )
 
     def observe(self, config: dict[str, float], score: float):
         """Record a new observation."""
@@ -301,26 +306,12 @@ class BayesianOptimizer:
             from scipy.stats import norm
             X_train = self.observed_configs[self.space.feature_cols].values
             y_train = np.array(self.observed_scores)
-            
-            scaler = StandardScaler()
-            X_train_scaled = scaler.fit_transform(X_train)
-            
-            kernel = C(1.0, (1e-3, 1e3)) * Matern([1.0] * len(self.space.feature_cols), (1e-2, 1e2), nu=2.5)
-            gp = GaussianProcessRegressor(
-                kernel=kernel, 
-                n_restarts_optimizer=self.n_restarts_optimizer, 
-                alpha=1e-6, 
-                normalize_y=True,
-                random_state=self.seed
-            )
-            gp.fit(X_train_scaled, y_train)
-            
+
+            self._surrogate.fit(X_train, y_train)
+
             X_pool = pool_df[self.space.feature_cols].values
-            X_pool_scaled = scaler.transform(X_pool)
-            
-            mu, sigma = gp.predict(X_pool_scaled, return_std=True)
-            sigma = np.maximum(sigma, 1e-9)
-            
+            mu, sigma = self._surrogate.predict(X_pool)
+
             best_f = np.max(y_train)
             
             if acquisition == "ucb":

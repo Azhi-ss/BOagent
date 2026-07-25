@@ -9,7 +9,7 @@ Welcome to the **BOagent** codebase! This guide serves as your primary context d
 BOagent is an LLM-driven Bayesian Optimization (BO) workflow orchestrator and scientific dashboard designed for perovskite solar cell material formulation optimization. It leverages high-context domain reasoning to augment traditional Gaussian Process (GP) statistical modeling.
 
 ### Core Tech Stack
-*   **Backend**: FastAPI, Python 3.10+, Uvicorn, Scikit-learn (Gaussian Process Regressor), NumPy, Pandas, SciPy, pytest.
+*   **Backend**: FastAPI, Python 3.11+, Uvicorn, BoTorch/GPyTorch (primary GP backend), scikit-learn (optional compatibility backend), NumPy, Pandas, SciPy, pytest.
 *   **Frontend**: React 19, Vite 6, TypeScript 6, Recharts 3.8, Tailwind CSS 4.x.
 *   **AI/LLM**: DeepSeek API (`deepseek-v4-flash` / `deepseek-v4-pro`), Doubao Embedding API (Volcengine/Ark) utilizing the default `doubao-embedding-vision-250615` model (configured via `DOUBAO_EMBEDDING_MODEL`) for semantic memory retrieval.
 *   **Dataset Integration**: Uses unified dataset schema located in the local `datasets/` directory (e.g., `datasets/perovskite`, `datasets/battery`). No `.env` configuration is required.

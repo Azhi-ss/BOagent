@@ -11,6 +11,7 @@ import numpy as np
 
 from bo_core.benchmark.bo_step import BOStepEngine
 from bo_core.benchmark.data_loader import DATA_LOADERS
+from bo_core.optimization.surrogate import BackendName
 
 
 class ComparisonRunner:
@@ -32,6 +33,7 @@ class ComparisonRunner:
         traditional: dict[str, Any],
         llmbo: dict[str, Any],
         data_path: str | Path | None = None,
+        backend: BackendName = "botorch",
     ) -> None:
         if task_id not in DATA_LOADERS:
             raise ValueError(
@@ -46,6 +48,7 @@ class ComparisonRunner:
         self.traditional_cfg = traditional
         self.llmbo_cfg = llmbo
         self.data_path = Path(data_path) if data_path else None
+        self.backend = backend
 
     def _build_llm_acq(self, data: dict[str, Any]) -> Any | None:
         """Construct the GP+LLM acquisition for the LLMBO engine."""
@@ -67,7 +70,8 @@ class ComparisonRunner:
                 target_name=data["target_col"],
                 knowledge_engine=knowledge,
                 n_restarts_optimizer=10,
-                seed=self.seeds[0] if self.seeds else 42
+                seed=self.seeds[0] if self.seeds else 42,
+                backend=self.backend,
             )
             # Tag the optimizer with properties expected by BOStepEngine's bridging logic
             optimizer.chat_engine = chat_engine
@@ -106,6 +110,7 @@ class ComparisonRunner:
             acquisition=self.traditional_cfg.get("acquisition", "ei"),
             xi=float(self.traditional_cfg.get("xi", 0.01)),
             kappa=float(self.traditional_cfg.get("kappa", 2.576)),
+            backend=self.backend,
         )
         
         llmbo = BOStepEngine(
@@ -119,6 +124,7 @@ class ComparisonRunner:
             kappa=float(self.llmbo_cfg.get("kappa", 2.576)),
             chat_engine=self.llmbo_cfg.get("chat_engine") or os.environ.get("DEEPSEEK_FLASH_MODEL") or "deepseek-v4-flash",
             n_candidates=int(self.llmbo_cfg.get("n_candidates", 5)),
+            backend=self.backend,
         )
 
         # Trajectories indexed by iteration (0 = post-init baseline).

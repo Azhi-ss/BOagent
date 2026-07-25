@@ -2,9 +2,13 @@ from __future__ import annotations
 
 import numpy as np
 import pandas as pd
-from hypothesis import given, strategies as st, settings, HealthCheck
-from bo_core.optimization.space import ContinuousSearchSpace, DiscreteSearchSpace
+from hypothesis import HealthCheck, given, settings
+from hypothesis import strategies as st
+
 from bo_core.optimization.optimizer import BayesianOptimizer
+from bo_core.optimization.space import ContinuousSearchSpace, DiscreteSearchSpace
+from bo_core.optimization.surrogate import BoTorchSurrogate
+
 
 @settings(suppress_health_check=[HealthCheck.too_slow], max_examples=10)
 @given(
@@ -58,3 +62,34 @@ def test_optimizer_gp_scoring_stability_hypothesis(obs_count: int, seed: int):
     assert not scored["std"].isnull().any()
     assert np.all(np.isfinite(scored["score"].values))
     assert np.all(scored["std"].values >= 0)
+
+
+def test_optimizer_botorch_backend_preserves_scoring_contract():
+    feature_cols = ["x1", "x2"]
+    rng = np.random.RandomState(42)
+    pool = pd.DataFrame(
+        rng.uniform(0.1, 10.0, size=(20, 2)), columns=feature_cols
+    )
+    space = DiscreteSearchSpace(pool, feature_cols)
+    optimizer = BayesianOptimizer(space, seed=42, backend="botorch")
+
+    for row in pool.iloc[:6].to_dict("records"):
+        score = 20.0 + 3.0 * row["x1"] - row["x2"]
+        optimizer.observe(row, score)
+
+    scored = optimizer._score_candidates(
+        pool.iloc[6:], acquisition="ei", kappa=2.576, xi=0.01
+    )
+
+    assert list(scored.columns) == ["x1", "x2", "score", "mean", "std"]
+    assert np.all(np.isfinite(scored[["score", "mean", "std"]].to_numpy()))
+    assert np.all(scored["std"].to_numpy() >= 1e-9)
+    assert float(scored["mean"].mean()) > 10.0
+
+
+def test_default_backend_is_botorch():
+    feature_cols = ["x1", "x2"]
+    pool = pd.DataFrame(np.random.RandomState(42).uniform(0.1, 10.0, size=(10, 2)), columns=feature_cols)
+    space = DiscreteSearchSpace(pool, feature_cols)
+    optimizer = BayesianOptimizer(space, seed=42)
+    assert isinstance(optimizer._surrogate, BoTorchSurrogate)

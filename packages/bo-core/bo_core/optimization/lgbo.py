@@ -21,14 +21,11 @@ identical prior/encoding/GP/acquisition with LGBO, isolating the LLM's effect.
 from __future__ import annotations
 
 import json
+from pathlib import Path
 from typing import Any
 
 import numpy as np
 from scipy.stats import norm
-from sklearn.gaussian_process import GaussianProcessRegressor
-from sklearn.gaussian_process.kernels import ConstantKernel as C
-from sklearn.gaussian_process.kernels import Matern
-from sklearn.preprocessing import StandardScaler
 
 from bo_core.benchmark.data_loader import DATA_LOADERS, UNIFIED_DATASET_ROOT
 from bo_core.optimization.categorical import OneHotEncoder, union_options
@@ -37,6 +34,11 @@ from bo_core.optimization.lgbo_prompt import (
     DatasetMeta,
     build_system_prompt,
     build_user_prompt,
+)
+from bo_core.optimization.surrogate import (
+    BackendName,
+    SurrogateModel,
+    create_surrogate,
 )
 
 # Seeds fixed by the competition README.
@@ -61,6 +63,7 @@ class LGBOEngine:
         llm_max_tokens: int = 8192,
         reasoning_effort: str = "low",
         failure_log: str | Path | None = "lgbo_llm_failures.log",
+        backend: BackendName = "botorch",
     ) -> None:
         if dataset not in DATA_LOADERS:
             raise ValueError(f"Unknown dataset: {dataset}. Available: {list(DATA_LOADERS)}")
@@ -76,6 +79,14 @@ class LGBOEngine:
         self.llm_max_tokens = llm_max_tokens
         self.reasoning_effort = reasoning_effort
         self.failure_log = Path(failure_log) if failure_log else None
+        self.backend = backend
+        self._surrogate = create_surrogate(
+            backend,
+            seed=seed,
+            n_restarts=n_restarts,
+            alpha=alpha,
+            jitter_levels=(alpha, alpha * 10.0, 1.0),
+        )
 
         self._load_data()
         self._init_state()
@@ -131,45 +142,25 @@ class LGBOEngine:
 
     # ----------------------------------------------------------------- GP + EI
 
-    def _fit_gp(self) -> tuple[StandardScaler, GaussianProcessRegressor]:
-        """Fit Matern-5/2 GP on observed one-hot data, with alpha-jitter fallback."""
-        scaler = StandardScaler()
-        X_scaled = scaler.fit_transform(self.X_obs)
-        D = self.encoder.dim
-        kernel = C(1.0, (1e-3, 1e3)) * Matern([1.0] * D, (1e-2, 1e2), nu=2.5)
-        for jitter in (self.alpha, self.alpha * 10.0, 1.0):
-            gp = GaussianProcessRegressor(
-                kernel=kernel,
-                n_restarts_optimizer=self.n_restarts,
-                alpha=jitter,
-                normalize_y=True,
-                random_state=self.seed,
-            )
-            try:
-                gp.fit(X_scaled, self.y_obs)
-                return scaler, gp
-            except Exception as exc:  # noqa: BLE001 - GP instability fallback
-                last_exc = exc
-                continue
-        # Last resort: degenerate GP that predicts the observed mean everywhere.
-        print(f"[LGBO] GP fit failed at all alpha levels ({last_exc}); using mean predictor.")
-        gp = GaussianProcessRegressor(kernel=kernel, alpha=1.0, normalize_y=True, random_state=self.seed)
+    def _fit_gp(self) -> SurrogateModel:
+        """Fit the configured Matern-5/2 surrogate on observed one-hot data."""
         try:
-            gp.fit(X_scaled, self.y_obs)
-        except Exception:
-            pass  # _predict_pool handles a non-fitted GP via the mean fallback
-        return scaler, gp
+            self._surrogate.fit(self.X_obs, self.y_obs)
+        except Exception as exc:  # noqa: BLE001 - step has a mean fallback
+            print(f"[LGBO] GP fit failed ({exc}); using mean predictor.")
+        return self._surrogate
 
-    def _predict_pool(self, scaler: StandardScaler, gp: GaussianProcessRegressor) -> tuple[np.ndarray, np.ndarray]:
-        X_pool_scaled = scaler.transform(self.pool_X)
+    def _predict_pool(
+        self, surrogate: SurrogateModel
+    ) -> tuple[np.ndarray, np.ndarray]:
         try:
-            mu, sigma = gp.predict(X_pool_scaled, return_std=True)
+            return surrogate.predict(self.pool_X)
         except Exception:
             # Non-fitted GP fallback: constant mean = observed mean, unit std.
-            mu = np.full(self.M, float(np.mean(self.y_obs)))
-            sigma = np.ones(self.M)
-        sigma = np.maximum(np.asarray(sigma, dtype=float), 1e-9)
-        return np.asarray(mu, dtype=float), sigma
+            return (
+                np.full(self.M, float(np.mean(self.y_obs))),
+                np.ones(self.M),
+            )
 
     def _expected_improvement(self, mu: np.ndarray, sigma: np.ndarray, best_f: float) -> np.ndarray:
         imp = mu - best_f - self.xi
@@ -180,8 +171,7 @@ class LGBOEngine:
 
     def _mean_shift(
         self,
-        scaler: StandardScaler,
-        gp: GaussianProcessRegressor,
+        surrogate: SurrogateModel,
         mu: np.ndarray,
         x_proposed: np.ndarray,
         confidence: float,
@@ -201,10 +191,9 @@ class LGBOEngine:
         """
 
         try:
-            if not self._client_is_fit(gp):
+            if not surrogate.is_fit:
                 return mu
             x_p = np.asarray(x_proposed, dtype=float).reshape(1, -1)
-            x_p_s = scaler.transform(x_p)                       # (1, D)
 
             # Grid G = K nearest pool points to x_p by Hamming distance
             # (number of mismatched categories = d - pool . x_p on one-hot).
@@ -212,66 +201,43 @@ class LGBOEngine:
             hamming = d - self.pool_X @ x_proposed              # (M,)
             K = min(self.K, self.M)
             grid_idx = np.argpartition(hamming, K - 1)[:K]
-            X_grid_s = scaler.transform(self.pool_X[grid_idx])  # (K, D)
+            X_grid = self.pool_X[grid_idx]                       # (K, D)
 
             # Weights a_g = k(x_p, x_g), clipped non-negative, normalized.
-            a = np.maximum(gp.kernel_(x_p_s, X_grid_s).ravel(), 0.0)
+            a = np.maximum(
+                surrogate.prior_cross_covariance(x_p, X_grid).ravel(),
+                0.0,
+            )
             if a.sum() <= 0:
                 return mu
             a = a / a.sum()
 
             # Sigma_GG = posterior covariance on the grid (K x K).
-            Sigma_GG = self._posterior_cov(gp, X_grid_s)
+            Sigma_GG = surrogate.posterior_covariance(X_grid)
             denom = float(a @ Sigma_GG @ a)
             if not np.isfinite(denom) or denom <= 0:
                 return mu
             lam = float(confidence) / float(np.sqrt(denom))
 
             # Shift = lam * K_post(pool, grid) @ a  (M,).
-            X_pool_s = scaler.transform(self.pool_X)
-            K_post_pool_grid = self._posterior_cross_cov(gp, X_pool_s, X_grid_s)
+            K_post_pool_grid = surrogate.posterior_cross_covariance(
+                self.pool_X, X_grid
+            )
             return mu + lam * (K_post_pool_grid @ a)
         except Exception as exc:  # noqa: BLE001 - mean-shift is best-effort
             print(f"[LGBO] mean-shift failed ({exc}); using pure GP this iter.")
             return mu
 
-    @staticmethod
-    def _client_is_fit(gp: GaussianProcessRegressor) -> bool:
-        return getattr(gp, "X_train_", None) is not None and getattr(gp, "L_", None) is not None
-
-    @staticmethod
-    def _posterior_cross_cov(
-        gp: GaussianProcessRegressor, XA_s: np.ndarray, XB_s: np.ndarray
-    ) -> np.ndarray:
-        """Posterior covariance between two point sets: K(A,B) - K(A,Xtr) K^-1 K(Xtr,B)."""
-        from scipy.linalg import cho_solve
-        y_scale = float(getattr(gp, "_y_train_std", 1.0)) ** 2
-        K_AB = gp.kernel_(XA_s, XB_s)
-        K_A_tr = gp.kernel_(XA_s, gp.X_train_)
-        K_tr_B = gp.kernel_(gp.X_train_, XB_s)
-        V = cho_solve((gp.L_, True), K_tr_B)            # (n_tr, nB)
-        return (K_AB - K_A_tr @ V) * y_scale
-
-    @staticmethod
-    def _posterior_cov(gp: GaussianProcessRegressor, X_s: np.ndarray) -> np.ndarray:
-        """Posterior covariance of a point set: K(X,X) - K(X,Xtr) K^-1 K(Xtr,X)."""
-        from scipy.linalg import cho_solve
-        y_scale = float(getattr(gp, "_y_train_std", 1.0)) ** 2
-        K_XX = gp.kernel_(X_s)
-        K_X_tr = gp.kernel_(X_s, gp.X_train_)
-        V = cho_solve((gp.L_, True), K_X_tr.T)          # (n_tr, n)
-        return (K_XX - K_X_tr @ V) * y_scale
-
     # -------------------------------------------------------------------- loop
 
     def step(self) -> dict[str, Any]:
-        scaler, gp = self._fit_gp()
-        mu, sigma = self._predict_pool(scaler, gp)
+        surrogate = self._fit_gp()
+        mu, sigma = self._predict_pool(surrogate)
         best_f = float(np.max(self.y_obs))
 
         thinking: str | None = None
         if self.use_llm:
-            mu, thinking = self._llm_mean_shift(scaler, gp, mu)
+            mu, thinking = self._llm_mean_shift(surrogate, mu)
 
         ei = self._expected_improvement(mu, sigma, best_f)
         # Mask already-queried pool points.
@@ -303,7 +269,7 @@ class LGBOEngine:
         return self.trajectory[-1]
 
     def _llm_mean_shift(
-        self, scaler: StandardScaler, gp: GaussianProcessRegressor, mu: np.ndarray
+        self, surrogate: SurrogateModel, mu: np.ndarray
     ) -> tuple[np.ndarray, str | None]:
         """Query the LLM, parse point+confidence, apply mean shift.
 
@@ -339,13 +305,16 @@ class LGBOEngine:
             return mu, None
 
         if getattr(result, "status", None) != "success" or not result.content:
-            print(f"[LGBO] LLM status={getattr(result,'status',None)} "
+            reason = "EMPTY_CONTENT" if getattr(result, "status", None) == "success" else "STATUS_ERROR"
+            print(f"[LGBO] LLM {reason}: status={getattr(result,'status',None)} "
                   f"error={getattr(result,'error',None)}; pure GP this iter.")
+            self._log_failure(reason, result)
             return mu, None
 
         parsed = parse_llm_response(result.content, self.feature_cols, self.options_json)
         if parsed is None:
             print("[LGBO] LLM output unparseable or invalid; pure GP this iter.")
+            self._log_failure("PARSE_FAIL", result)
             return mu, None
 
         _mode, values, confidence = parsed
@@ -357,8 +326,25 @@ class LGBOEngine:
             return mu, None
 
         thinking = self._extract_thinking(result.content)
-        mu_shifted = self._mean_shift(scaler, gp, mu, x_proposed, confidence)
+        mu_shifted = self._mean_shift(
+            surrogate, mu, x_proposed, confidence
+        )
         return mu_shifted, thinking
+
+    def _log_failure(self, reason: str, result: Any) -> None:
+        """Append failed LLM responses to failure_log for post-hoc diagnosis."""
+        if not self.failure_log:
+            return
+        try:
+            with open(self.failure_log, "a", encoding="utf-8") as f:
+                f.write(f"=== dataset={self.dataset} seed={self.seed} iter={self.iteration} reason={reason} ===\n")
+                f.write(f"status={getattr(result, 'status', None)} error={getattr(result, 'error', None)}\n")
+                usage = getattr(result, "usage", None) or {}
+                f.write(f"usage={usage}\n")
+                f.write(f"--- content (len={len(getattr(result, 'content', '') or '')}) ---\n")
+                f.write((getattr(result, "content", None) or "<EMPTY>") + "\n\n")
+        except OSError as exc:
+            print(f"[LGBO] failure_log write failed: {exc}")
 
     @staticmethod
     def _extract_thinking(text: str) -> str | None:

@@ -17,26 +17,20 @@ from __future__ import annotations
 
 import argparse
 import os
-
-# Restrict BLAS to 1 thread before importing numpy/sklearn to avoid
-# CPU oversubscription when the ThreadPoolExecutor runs multiple GP fits in
-# parallel (otherwise 4 workers × 16 BLAS threads = thread thrashing).
-for _v in ("OMP_NUM_THREADS", "OPENBLAS_NUM_THREADS", "MKL_NUM_THREADS",
-           "NUMEXPR_NUM_THREADS", "VECLIB_MAXIMUM_THREADS"):
-    os.environ.setdefault(_v, "1")
-
 import warnings
 
 warnings.filterwarnings("ignore", category=UserWarning)
 warnings.filterwarnings("ignore", category=RuntimeWarning)
-from sklearn.exceptions import ConvergenceWarning
-
-warnings.filterwarnings("ignore", category=ConvergenceWarning)
+try:
+    from sklearn.exceptions import ConvergenceWarning
+    warnings.filterwarnings("ignore", category=ConvergenceWarning)
+except ImportError:
+    pass
 import json
 import math
 import pickle
 import time
-from concurrent.futures import ThreadPoolExecutor, as_completed
+from concurrent.futures import ProcessPoolExecutor, as_completed
 from pathlib import Path
 from typing import Any
 
@@ -44,9 +38,33 @@ import numpy as np
 import pandas as pd
 
 from bo_core.optimization.lgbo import LGBOEngine
+from bo_core.optimization.surrogate import BackendName
 
 # Per-dataset global best (max Yield in test.csv), from the dataset READMEs.
 GLOBAL_BEST = {"buchwald_sub4": 86.60, "suzuki": 99.90}
+THREAD_ENV_VARS = (
+    "OMP_NUM_THREADS",
+    "OPENBLAS_NUM_THREADS",
+    "MKL_NUM_THREADS",
+    "NUMEXPR_NUM_THREADS",
+    "VECLIB_MAXIMUM_THREADS",
+)
+
+
+def _configure_numerical_threads(n_threads: int) -> None:
+    """Apply the H365 thread budget at the benchmark process boundary."""
+    for name in THREAD_ENV_VARS:
+        os.environ[name] = str(n_threads)
+
+    from threadpoolctl import threadpool_limits
+
+    threadpool_limits(limits=n_threads)
+    try:
+        import torch
+
+        torch.set_num_threads(n_threads)
+    except ImportError:
+        pass
 
 
 def compute_metrics(engine: LGBOEngine, global_best: float) -> dict[str, float | int]:
@@ -96,23 +114,26 @@ def run_one(
     n_iters: int,
     output_dir: Path,
     n_restarts: int = 10,
+    backend: BackendName = "botorch",
 ) -> dict[str, Any]:
     """Run one (dataset, method, seed) configuration; save CSV+.pt; return metrics."""
     use_llm = method == "lgbo"
+    save_dir = output_dir / backend / dataset / method
+    save_dir.mkdir(parents=True, exist_ok=True)
     engine = LGBOEngine(
         dataset=dataset,
         seed=seed,
         use_llm=use_llm,
         n_iters=n_iters,
         n_restarts=n_restarts,
+        failure_log=str(save_dir / f"seed_{seed}_llm_failures.log"),
+        backend=backend,
     )
     t0 = time.time()
     engine.run()
     elapsed = time.time() - t0
     metrics = compute_metrics(engine, GLOBAL_BEST[dataset])
 
-    save_dir = output_dir / dataset / method
-    save_dir.mkdir(parents=True, exist_ok=True)
     # CSV: human-readable trajectory.
     pd.DataFrame(engine.trajectory).to_csv(save_dir / f"seed_{seed}.csv", index=False)
     # .pt: competition submission format.
@@ -120,18 +141,31 @@ def run_one(
         "seed": seed,
         "dataset": dataset,
         "method": method,
+        "backend": backend,
         "trajectory": engine.trajectory,
     }
     _save_pt(save_dir / f"seed_{seed}.pt", pt_obj)
 
-    result = {"dataset": dataset, "method": method, "seed": seed, "elapsed_s": elapsed, **metrics}
-    print(f"[runner] {dataset}/{method}/seed_{seed}: best={metrics['best_found']:.2f} "
+    result = {
+        "dataset": dataset,
+        "method": method,
+        "backend": backend,
+        "seed": seed,
+        "elapsed_s": elapsed,
+        **metrics,
+    }
+    print(f"[runner] {backend}/{dataset}/{method}/seed_{seed}: "
+          f"best={metrics['best_found']:.2f} "
           f"t95={metrics['t95']} AUC={metrics['AUC_best_so_far']:.2f} ({elapsed:.0f}s)")
     return result
 
 
 def _aggregate(results: list[dict[str, Any]]) -> dict[str, Any]:
     """Mean ± std + 95% CI per (dataset, method) across seeds."""
+    backends = {r["backend"] for r in results}
+    if len(backends) > 1:
+        raise ValueError("Cannot aggregate results from more than a single backend")
+
     summary: dict[str, Any] = {}
     for dataset in sorted({r["dataset"] for r in results}):
         summary[dataset] = {}
@@ -174,6 +208,7 @@ def main() -> None:
     parser.add_argument("--n_iters", type=int, default=40)
     parser.add_argument("--workers", type=int, default=4)
     parser.add_argument("--n_restarts", type=int, default=10)
+    parser.add_argument("--backend", choices=("botorch", "sklearn"), default="botorch")
     parser.add_argument("--output_dir", default="results/lgbo")
     args = parser.parse_args()
 
@@ -183,14 +218,31 @@ def main() -> None:
     output_dir = Path(args.output_dir)
 
     configs = [(d, m, s) for d in datasets for m in methods for s in seeds]
+    numerical_threads = 10 if args.workers == 1 else 1
+    _configure_numerical_threads(numerical_threads)
     print(f"Running {len(configs)} configs: {len(datasets)} datasets x "
-          f"{len(methods)} methods x {len(seeds)} seeds, workers={args.workers}")
+          f"{len(methods)} methods x {len(seeds)} seeds, workers={args.workers}, "
+          f"backend={args.backend}, numerical_threads={numerical_threads}")
 
     results: list[dict[str, Any]] = []
     t0 = time.time()
-    with ThreadPoolExecutor(max_workers=args.workers) as pool:
+    with ProcessPoolExecutor(
+        max_workers=args.workers,
+        initializer=_configure_numerical_threads,
+        initargs=(numerical_threads,),
+        max_tasks_per_child=1,
+    ) as pool:
         futures = {
-            pool.submit(run_one, d, m, s, args.n_iters, output_dir, args.n_restarts): (d, m, s)
+            pool.submit(
+                run_one,
+                d,
+                m,
+                s,
+                args.n_iters,
+                output_dir,
+                args.n_restarts,
+                args.backend,
+            ): (d, m, s)
             for (d, m, s) in configs
         }
         for fut in as_completed(futures):
@@ -198,14 +250,16 @@ def main() -> None:
                 results.append(fut.result())
             except Exception as exc:  # noqa: BLE001
                 d, m, s = futures[fut]
-                print(f"[runner] FAILED {d}/{m}/seed_{s}: {exc}")
+                print(f"[runner] FAILED {args.backend}/{d}/{m}/seed_{s}: {exc}")
     print(f"\nAll configs done in {time.time() - t0:.0f}s")
 
     summary = _aggregate(results)
     _print_comparison(summary)
-    with open(output_dir / "summary.json", "w") as f:
+    summary_path = output_dir / args.backend / "summary.json"
+    summary_path.parent.mkdir(parents=True, exist_ok=True)
+    with open(summary_path, "w") as f:
         json.dump(summary, f, indent=2)
-    print(f"\nSummary written to {output_dir / 'summary.json'}")
+    print(f"\nSummary written to {summary_path}")
 
 
 if __name__ == "__main__":

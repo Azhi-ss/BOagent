@@ -103,6 +103,12 @@ def main() -> None:
         help="Top-k GP candidates to send to LLM (default: 20)",
     )
     parser.add_argument(
+        "--backend",
+        choices=("botorch", "sklearn"),
+        default="botorch",
+        help="GP surrogate backend (default: botorch)",
+    )
+    parser.add_argument(
         "--output_dir",
         type=str,
         default="results",
@@ -130,6 +136,7 @@ def main() -> None:
         "n_gens": args.n_gens,
         "alpha": args.alpha,
         "top_k": args.top_k,
+        "backend": args.backend,
         "output_dir": args.output_dir,
         "data_path": args.data_path,
     }

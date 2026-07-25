@@ -105,16 +105,19 @@ class TestBenchmarkRunner:
                     seed=42,
                     output_dir=tmp_dir,
                     data_path=path,
+                    backend="botorch",
                 )
 
                 result = runner.run()
 
                 assert result["task_id"] == "band_alignment"
                 assert result["seed"] == 42
+                assert result["backend"] == "botorch"
                 assert "best_score" in result
                 assert "best_generalization_score" in result
                 assert isinstance(result["search_history"], pd.DataFrame)
                 assert isinstance(result["best_config"], dict)
+                assert mock_opt_class.call_args.kwargs["backend"] == "botorch"
         finally:
             path.unlink(missing_ok=True)
             import shutil
@@ -139,6 +142,7 @@ class TestBenchmarkRunner:
             result = {
                 "task_id": "band_alignment",
                 "seed": 42,
+                "backend": "sklearn",
                 "search_history": pd.DataFrame({"score": [22.0, 23.0]}),
                 "best_config": {"CHI_PVK": 4.0},
                 "best_score": 23.0,
@@ -163,6 +167,7 @@ class TestBenchmarkRunner:
             with open(save_dir / "42_summary.json") as f:
                 summary = json.load(f)
             assert summary["best_score"] == 23.0
+            assert summary["backend"] == "sklearn"
             assert summary["n_trials"] == 3
             assert summary["convergence_curve"] == [22.0, 23.0]
         finally:

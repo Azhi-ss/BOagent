@@ -13,6 +13,7 @@ from bo_core.benchmark.data_loader import DATA_LOADERS
 from bo_core.optimization.knowledge import KnowledgeEngine
 from bo_core.optimization.optimizer import BayesianOptimizer
 from bo_core.optimization.space import DiscreteSearchSpace
+from bo_core.optimization.surrogate import BackendName
 
 
 class BenchmarkRunner:
@@ -33,6 +34,7 @@ class BenchmarkRunner:
         top_k: int = 20,
         output_dir: str | Path = "results",
         data_path: str | Path | None = None,
+        backend: BackendName = "botorch",
     ) -> None:
         self.task_id = task_id
         self.n_initial = n_initial
@@ -47,6 +49,7 @@ class BenchmarkRunner:
         self.top_k = top_k
         self.output_dir = Path(output_dir)
         self.data_path = Path(data_path) if data_path else None
+        self.backend = backend
 
         if task_id not in DATA_LOADERS:
             raise ValueError(
@@ -139,7 +142,8 @@ class BenchmarkRunner:
             target_name=data["target_col"],
             knowledge_engine=knowledge,
             n_restarts_optimizer=10,
-            seed=self.seed
+            seed=self.seed,
+            backend=self.backend,
         )
         
         # Configure optimizer parameters for this run
@@ -205,6 +209,7 @@ class BenchmarkRunner:
         return {
             "task_id": self.task_id,
             "seed": self.seed,
+            "backend": self.backend,
             "configs": configs,
             "fvals": fvals,
             "search_history": search_history,
@@ -243,6 +248,7 @@ class BenchmarkRunner:
         summary = {
             "task_id": result["task_id"],
             "seed": result["seed"],
+            "backend": result["backend"],
             "best_config": result["best_config"],
             "best_score": result["best_score"],
             "best_generalization_score": result["best_generalization_score"],

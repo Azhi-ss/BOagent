@@ -7,6 +7,7 @@ import numpy as np
 from bo_core.optimization.knowledge import KnowledgeEngine
 from bo_core.optimization.optimizer import BayesianOptimizer
 from bo_core.optimization.space import DiscreteSearchSpace
+from bo_core.optimization.surrogate import BackendName
 
 AcquisitionType = Literal["ei", "ucb", "pi"]
 
@@ -28,6 +29,7 @@ class BOStepEngine:
         kappa: float = 2.576,
         chat_engine: str | None = None,
         n_candidates: int = 1,
+        backend: BackendName = "botorch",
     ) -> None:
         self.method = method
         self.data = data
@@ -38,6 +40,7 @@ class BOStepEngine:
         self.xi = xi
         self.kappa = kappa
         self.n_candidates_per_step = n_candidates
+        self.backend = backend
         
         self.feature_cols = list(data["feature_cols"])
         self.target_col = str(data["target_col"])
@@ -61,7 +64,8 @@ class BOStepEngine:
             space=space,
             target_name=self.target_col,
             knowledge_engine=knowledge,
-            seed=self.seed
+            seed=self.seed,
+            backend=self.backend,
         )
         
         self.iteration = 0

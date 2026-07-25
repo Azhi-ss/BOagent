@@ -1,123 +1,76 @@
 # Official BoTorch & GPyTorch Integration Guide
 
-This guide documents the official API patterns, code examples, and best practices for integrating **BoTorch** and **GPyTorch** into BOagent.
+This guide records the version-locked BoTorch 0.18.x patterns used by BOagent.
 
----
+## 1. Surrogate Model
 
-## 1. SingleTaskGP Model Fitting
-
-BoTorch provides `SingleTaskGP` for standard Gaussian Process surrogate modeling.
-
-### Basic Code Pattern
+BOagent uses a CPU FP64 `SingleTaskGP` with a Matern-5/2 ARD kernel and explicit transforms:
 
 ```python
 import torch
 from botorch.models import SingleTaskGP
 from botorch.models.transforms import Normalize, Standardize
-from botorch.fit import fit_gpytorch_mll
-from gpytorch.mlls import ExactMarginalLogLikelihood
+from gpytorch.kernels import MaternKernel, ScaleKernel
 
-# 1. Prepare training tensors (FP64 precision recommended)
-# train_X shape: (N, d), train_Y shape: (N, 1)
-train_X = torch.tensor(X_numpy, dtype=torch.float64)
-train_Y = torch.tensor(y_numpy, dtype=torch.float64).unsqueeze(-1)
+train_X = torch.as_tensor(X_numpy, dtype=torch.float64)
+train_Y = torch.as_tensor(y_numpy, dtype=torch.float64).unsqueeze(-1)
 
-# 2. Instantiate SingleTaskGP with data transforms
-gp = SingleTaskGP(
-    train_X=train_X,
-    train_Y=train_Y,
+model = SingleTaskGP(
+    train_X,
+    train_Y,
+    covar_module=ScaleKernel(
+        MaternKernel(nu=2.5, ard_num_dims=train_X.shape[-1])
+    ),
     input_transform=Normalize(d=train_X.shape[-1]),
-    outcome_transform=Standardize(m=1)
+    outcome_transform=Standardize(m=1),
 )
-
-# 3. Define Marginal Log Likelihood (MLL)
-mll = ExactMarginalLogLikelihood(gp.likelihood, gp)
-
-# 4. Optimize hyperparameters
-fit_gpytorch_mll(mll)
 ```
 
----
+Fit with `ExactMarginalLogLikelihood` and `fit_gpytorch_mll_scipy`. The BOagent implementation bounds the SciPy iterations, allows up to 80 L-BFGS-B line-search steps per iteration, and retries only `NotPSDError` with configured Cholesky jitter levels. The expanded line-search budget avoids the reproducible SciPy `ABNORMAL` termination caused by its default budget of 20. Its BoTorch path performs one deterministic SciPy fit; the shared `n_restarts` setting applies only to sklearn's kernel optimizer and is not a cross-backend equivalent. The successful fit jitter must also wrap posterior prediction and covariance extraction because GPyTorch otherwise restores its lower default inference jitter and can fail Cholesky decomposition on the same fitted model.
 
-## 2. Hyperparameter Warm-Start (`state_dict`)
+Do not equate sklearn `GaussianProcessRegressor(alpha=...)` with BoTorch Cholesky jitter. sklearn `alpha` is fixed model noise that changes the posterior; GPyTorch jitter only stabilizes matrix factorization, while `SingleTaskGP` learns likelihood noise. Cross-backend predictions are therefore not expected to be numerically identical.
 
-When adding new observations in sequential Bayesian Optimization loops, re-fitting hyperparameters from scratch with L-BFGS-B is computationally expensive.
+## 2. Posterior Scale Contract
 
-### Recommended Warm-Start Pattern
+`model.posterior(X)` applies `Standardize.untransform_posterior` in BoTorch 0.18.1. Its mean, variance, covariance, and lazy covariance are already in the original target units. Do not multiply them by the training target standard deviation again.
 
-To avoid issues with input/output transforms updating internal statistics, BoTorch recommends re-instantiating `SingleTaskGP` and loading the previous `state_dict`:
-
-```python
-# 1. Save state_dict from previous BO step
-old_state = gp_model.state_dict()
-
-# 2. Instantiate new model with updated observation dataset
-new_gp_model = SingleTaskGP(new_train_X, new_train_Y)
-
-# 3. Load previous hyperparameters (warm start)
-new_gp_model.load_state_dict(old_state, strict=False)
-
-# 4. Refit hyperparameters (converges in significantly fewer steps)
-mll = ExactMarginalLogLikelihood(new_gp_model.likelihood, new_gp_model)
-fit_gpytorch_mll(mll)
-```
-
----
-
-## 3. Acquisition Function Scoring
-
-BoTorch supports both analytic and Monte Carlo (MC) acquisition functions.
-
-### 3.1 Discrete Candidate Pool Scoring (BOagent Scenario)
-In chemistry formulation optimization, candidates are drawn from a discrete search space (`pool_df`). Evaluating posterior mean and variance directly over the candidate tensor `X_pool` is faster than continuous multi-start optimization:
+`model(X)` is a lower-level latent distribution and does not provide this public transformed-output contract. BOagent surrogate callers must use `model.posterior(X)`.
 
 ```python
-gp_model.eval()
-test_X = torch.tensor(X_pool_numpy, dtype=torch.float64)
-
 with torch.no_grad():
-    posterior = gp_model.posterior(test_X)
-    mu = posterior.mean.squeeze(-1).numpy()
-    variance = posterior.variance.squeeze(-1).numpy()
-    sigma = np.sqrt(np.maximum(variance, 1e-9))
-
-# Upper Confidence Bound (UCB)
-scores_ucb = mu + kappa * sigma
-
-# Expected Improvement (EI)
-best_f = y_numpy.max()
-imp = mu - best_f - xi
-z = imp / sigma
-scores_ei = imp * norm.cdf(z) + sigma * norm.pdf(z)
+    posterior = model.posterior(test_X)
+    mu = posterior.mean.squeeze(-1).cpu().numpy()
+    variance = posterior.variance.squeeze(-1).cpu().numpy()
 ```
 
-### 3.2 Continuous Acquisition Optimization (`optimize_acqf`)
-For continuous parameter spaces, use `botorch.optim.optimize_acqf`:
+## 3. Filtered Warm Start
+
+Each BO iteration constructs a new model so input and outcome transform statistics are computed from the growing training set. Warm starts copy only learned model hyperparameters:
 
 ```python
-from botorch.acquisition import ExpectedImprovement, UpperConfidenceBound
-from botorch.optim import optimize_acqf
-
-# Define bounds: 2 x d tensor [[lower_bounds], [upper_bounds]]
-bounds = torch.tensor([[0.0, 0.0], [1.0, 1.0]], dtype=torch.float64)
-
-# Instantiate acquisition function
-EI = ExpectedImprovement(model=gp_model, best_f=best_f)
-
-# Multi-start acquisition optimization
-candidate, acq_value = optimize_acqf(
-    acq_function=EI,
-    bounds=bounds,
-    q=1,               # Batch size
-    num_restarts=20,   # Multistart restarts
-    raw_samples=512    # Initial samples
+WARM_START_PREFIXES = (
+    "covar_module.",
+    "likelihood.",
+    "mean_module.",
 )
 ```
 
----
+Do not load `input_transform.*` or `outcome_transform.*`. `strict=False` does not protect against stale transform buffers when matching keys exist.
 
-## 4. Key Performance Checklist for BOagent
+The current SciPy fit path is deterministic and does not require `torch.manual_seed`. Do not mutate global Torch RNG state inside concurrent benchmark workers.
 
-1. **Precision**: Always enforce `dtype=torch.float64` for GPyTorch matrices to prevent non-positive-definite errors.
-2. **CPU Threading**: Set `torch.set_num_threads(10)` matching physical Zen 5 cores.
-3. **No-Grad Inference**: Wrap all candidate pool predictions in `with torch.no_grad():` to avoid memory growth.
+## 4. Discrete Candidate Scoring
+
+Both current BOagent optimizers score an existing discrete pool. UCB, EI, and PI are computed from posterior mean and standard deviation over that pool. `optimize_acqf` is intentionally out of scope: continuous optimization can generate invalid categorical one-hot combinations.
+
+Large BoTorch pool predictions are evaluated in batches of at most 512 rows. This preserves each point's public posterior mean and marginal variance while avoiding the large joint covariance allocation that `posterior(pool).variance` can trigger for Suzuki's 5,731 candidates.
+
+For LGBO posterior cross-covariance, process the pool side in batches of at most 512 rows. Each batch concatenates only that pool block with the K=50 grid, materializes the public joint posterior covariance for at most 562 points, and retains only the requested at-most `512 x 50` cross block. Never request the full Suzuki pool covariance matrix.
+
+## 5. Runtime Checklist
+
+1. Construct every GP tensor with `torch.float64`; do not change the process-wide default dtype.
+2. Use `torch.no_grad()` for posterior prediction and covariance extraction.
+3. Use 10 numerical threads for a single H365 worker and 1 thread per process for multi-worker runs.
+4. BoTorch/GPyTorch is the default backend; sklearn is available as an opt-in compatibility backend. Always record the selected backend in benchmark outputs.
+5. Measure fit, prediction, covariance, wall time, and memory before claiming a speedup.
