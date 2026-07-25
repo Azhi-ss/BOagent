@@ -11,21 +11,26 @@
     <!-- Tailwind CSS v4 CDN -->
     <script src="https://cdn.tailwindcss.com"></script>
     <script>
-        tailwind.config = {
-            darkMode: 'class',
-            theme: {
-                extend: {
-                    fontFamily: {
-                        sans: ['"Plus Jakarta Sans"', 'sans-serif'],
-                        display: ['Outfit', 'sans-serif'],
-                        mono: ['"JetBrains Mono"', 'monospace'],
-                    },
-                    animation: {
-                        'pulse-slow': 'pulse 3s cubic-bezier(0.4, 0, 0.6, 1) infinite',
-                        'flow': 'flow 20s linear infinite',
+        if (typeof tailwind !== 'undefined') {
+            tailwind.config = {
+                darkMode: 'class',
+                theme: {
+                    extend: {
+                        fontFamily: {
+                            sans: ['"Plus Jakarta Sans"', 'sans-serif'],
+                            display: ['Outfit', 'sans-serif'],
+                            mono: ['"JetBrains Mono"', 'monospace'],
+                        },
+                        animation: {
+                            'pulse-slow': 'pulse 3s cubic-bezier(0.4, 0, 0.6, 1) infinite',
+                            'flow': 'flow 20s linear infinite',
+                        }
                     }
                 }
             }
+        } else {
+            console.warn("Tailwind CDN not loaded, creating fallback tailwind config object");
+            window.tailwind = { config: {} };
         }
     </script>
     <!-- MathJax for rendering math formulas -->
@@ -548,7 +553,7 @@ hybrid_scores = gp_scores + lambda_t * log_probs</pre>
                 icon: "fa-solid fa-laptop-code",
                 tag: "Frontend UI",
                 desc: "双仪表板界面：<strong>BenchMode</strong> 用于实时多 Seed 对比基准测试（收敛曲线+方差带），<strong>OperationalMode</strong> 用于科研人员手动调参与配方可行性检查。通过 <strong>Server-Sent Events (SSE)</strong> 接收后端增量流数据，实现低延迟的实时进度展示。组件包括 ConvergenceChart、MetricReadout、LandscapeCanvas 等。",
-                file: "frontend/src/BenchMode.tsx",
+                file: "apps/web/src/BenchMode.tsx",
                 code: `// SSE 流式传输连接 (lib/api.ts)
 export async function streamComparison(
   payload: BenchmarkRequest,
@@ -574,7 +579,7 @@ export async function streamComparison(
                 icon: "fa-solid fa-server",
                 tag: "Backend Host",
                 desc: "Python 3.10+ FastAPI 服务器。提供 <code>/api/benchmark/compare</code> (SSE 流式对比) 和 <code>/api/optimize</code> (单次优化) 等 REST 端点。通过 <code>ComparisonRunner</code> 在多线程中驱动多 Seed 并行评估，并将每步结果以 SSE 事件流式推送到前端。Pydantic 模型进行请求校验，CORS 中间件管理跨域。",
-                file: "backend/api.py",
+                file: "apps/api/api.py",
                 code: `@app.post("/api/benchmark/compare")
 async def run_comparison(req: CompareRequest):
     runner = ComparisonRunner(
@@ -602,7 +607,7 @@ async def run_comparison(req: CompareRequest):
                 icon: "fa-solid fa-database",
                 tag: "Data Pipeline",
                 desc: "从 PVK-LLM 兄弟仓库的 Excel 数据集 (<code>bandAlignment.xlsx</code>, <code>defectsAndDoping.xlsx</code>) 加载实验数据。使用<strong>局部 RNG (np.random.RandomState)</strong> 按 Seed 进行确定性训练/测试分割，确保多线程并行基准测试中无全局随机状态污染。每个 task_id 映射到专属加载函数。",
-                file: "backend/benchmark/data_loader.py",
+                file: "packages/bo-core/bo_core/benchmark/data_loader.py",
                 code: `def _split_data(df, feature_cols, target_col, n_train, seed):
     rng = np.random.RandomState(seed)  # 局部 RNG，不污染全局状态
     idx = rng.permutation(len(df))
@@ -632,7 +637,7 @@ DATA_LOADERS = {
                 icon: "fa-solid fa-arrows-spin",
                 tag: "Orchestration",
                 desc: "步进式 BO 执行引擎，桥接 <code>BayesianOptimizer</code> 和 <code>DataLoader</code>。职责：<strong>1)</strong> 用 LLM 暖启动选择物理最优的初始观测点；<strong>2)</strong> 每步调用 <code>optimizer.suggest()</code> 获取候选并从数据集中查找最近邻进行评估；<strong>3)</strong> 通过 <code>observe()</code> 将评估结果反馈给优化器。<code>ComparisonRunner</code> 在其上并行运行 Traditional BO 和 LLMBO 对比实验。",
-                file: "backend/benchmark/bo_step.py",
+                file: "packages/bo-core/bo_core/benchmark/bo_step.py",
                 code: `class BOStepEngine:
     def __init__(self, method, data, n_initial, ...):
         space = DiscreteSearchSpace(self.df, self.feature_cols)
@@ -658,7 +663,7 @@ DATA_LOADERS = {
                 icon: "fa-solid fa-chart-line",
                 tag: "Statistical Filter",
                 desc: "对全部未观测候选池（DiscreteSearchSpace）执行 GP 回归预测。用 <strong>StandardScaler</strong> 归一化特征后，拟合 <strong>Matérn (ν=2.5)</strong> 核的 GaussianProcessRegressor，计算 <strong>UCB/EI/PI</strong> 采集分数并提取 Top-20 候选。此步将 LLM 查询范围从数千缩小到 20，避免 Token 预算爆炸。",
-                file: "backend/optimization/optimizer.py",
+                file: "packages/bo-core/bo_core/optimization/optimizer.py",
                 code: `def _score_candidates(self, pool_df, acquisition, kappa, xi):
     scaler = StandardScaler()
     X_train_scaled = scaler.fit_transform(X_train)
@@ -685,7 +690,7 @@ DATA_LOADERS = {
                 icon: "fa-solid fa-brain",
                 tag: "Physical Logic Prior",
                 desc: "对 Top-20 候选使用 <strong>ThreadPoolExecutor</strong> 并发查询 DeepSeek API。每个查询发送包含半导体物理规则（CBO/VBO/电子阻挡）的 System Prompt 和单个候选参数的 User Prompt，请求 Yes/No 判断，设置 <code>max_tokens=1</code> + <code>logprobs=true</code> + <code>top_logprobs=5</code>，提取 <strong>log P(Yes)</strong> 作为定量物理可行性分数。相同的 System Prompt 前缀利用 <strong>DeepSeek Prefix Caching</strong> 实现 ~90% 输入 Token 复用。",
-                file: "backend/optimization/knowledge.py",
+                file: "packages/bo-core/bo_core/optimization/knowledge.py",
                 code: `def evaluate_candidate_viability(self, candidate, sys_prompt, cols):
     user_msg = "Is this formulation viable? ...\\n"
     for col in cols:
@@ -719,7 +724,7 @@ def extract_yes_logprob(logprobs_payload):
                 icon: "fa-solid fa-brain-circuit",
                 tag: "Semantic Retrieval",
                 desc: "持久化的实验洞察存储与检索系统。将历史实验结论（如'高 PCE 配方的共性规律'）写入 <code>insights.jsonl</code>，通过 <strong>豆包嵌入模型 API (doubao-embedding-vision-250615)</strong> 将当前候选转换为向量表示，执行 Cosine 相似度检索，将 Top-3 最相关的历史洞察注入 DeepSeek 的 Prompt 上下文。API 不可用时降级为<strong>基于时间的最近 K 条回退</strong>。",
-                file: "backend/optimization/memory.py",
+                file: "packages/bo-core/bo_core/optimization/memory.py",
                 code: `class VectorMemory:
     def retrieve_similar(self, query_text, top_k=3):
         # 将查询文本转为向量
@@ -745,7 +750,7 @@ def extract_yes_logprob(logprobs_payload):
                 icon: "fa-solid fa-sliders",
                 tag: "Prior Balance",
                 desc: "防止 LLM 先验压倒统计探索的关键机制。每次迭代动态计算 <strong>λ_t = γ × std(GP_scores)</strong>：当 GP 不确定性高（std 大）时，λ_t 扩大，让 LLM 物理法则强力引导选择；随着 GP 收敛（std 收缩），λ_t 下降，让 scikit-learn 统计细节主导精调。<strong>γ = 0.1</strong> 经 E2E 基准验证为最优值，在稳定收敛与性能增益间取得平衡。",
-                file: "backend/optimization/optimizer.py",
+                file: "packages/bo-core/bo_core/optimization/optimizer.py",
                 code: `# 自适应先验权重逻辑 (optimizer.py:104-112)
 gp_scores = top_candidates["score"].values
 gp_std = float(np.std(gp_scores))
@@ -768,7 +773,7 @@ hybrid_scores = gp_scores + lambda_t * np.array(log_probs)`,
                 icon: "fa-solid fa-code-merge",
                 tag: "Hybrid Selector",
                 desc: "最终候选评分引擎。将 GP UCB 分数与 LLM log P(Yes) 通过自适应 λ_t 加权求和，得出混合分数。按混合分数降序排列后选取最优候选作为下一次实验建议。E2E 验证表明此组合可避免物理不合理的界面配置（如 CBO 超出范围），同时保持统计搜索效率。<strong>较 Traditional BO 提升 +5.5% PCE</strong>（LLMBO: 26.96 vs Trad: 21.46）。",
-                file: "backend/optimization/optimizer.py",
+                file: "packages/bo-core/bo_core/optimization/optimizer.py",
                 code: `# 混合分数融合与排序 (optimizer.py:111-122)
 hybrid_scores = gp_scores + lambda_t * np.array(log_probs)
 
@@ -796,7 +801,7 @@ suggestions = [
                 icon: "fa-solid fa-rotate",
                 tag: "Feedback Loop",
                 desc: "每当发现新的最优分数（best_score_so_far 被刷新），触发 <code>KnowledgeEngine.summarize_lessons()</code> 让 LLM 总结当前最佳配方的物理规律。这些总结作为 <code>scientific_notes</code> 注入后续 Prompt 中，形成'越优化越聪明'的自我强化反馈闭环。仅在观测 ≥ 10 个点后启动，确保有足够数据支撑有意义的物理趋势。",
-                file: "backend/optimization/optimizer.py",
+                file: "packages/bo-core/bo_core/optimization/optimizer.py",
                 code: `# DSM 反馈触发 (optimizer.py:40-52)
 def observe(self, config, score):
     self.observed_configs = pd.concat(...)

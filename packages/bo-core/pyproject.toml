@@ -1,0 +1,28 @@
+[build-system]
+requires = ["setuptools>=68", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "bo-core"
+version = "0.1.0"
+description = "BOagent core: LLM-driven Bayesian optimization for perovskite solar cells."
+requires-python = ">=3.11"
+dependencies = [
+    "numpy",
+    "scipy",
+    "threadpoolctl",
+    "pandas",
+    "requests",
+    "openpyxl",
+    "torch",
+    "gpytorch",
+    "botorch>=0.18,<0.19"
+]
+
+[project.optional-dependencies]
+sklearn = ["scikit-learn"]
+
+[tool.setuptools.packages.find]
+where = ["."]
+include = ["bo_core*"]
+exclude = ["tests*"]

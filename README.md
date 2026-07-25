@@ -41,26 +41,37 @@
 
 ```
 BOagent/
-├── backend/                       # Python 后端工程
-│   ├── api.py                    # FastAPI 接口层，提供实时流日志与实操推荐 API
-│   ├── llm_client.py             # 统一的 DeepSeek API 大模型调用客户端
-│   ├── benchmark_agent_team.py   # 自动化测试与指标分析多代理协调器
-│   ├── optimization/             # 贝叶斯优化与智能决策核心
-│   │   ├── optimizer.py          # 封装高斯过程代理模型与 UCB/EI/PI 采集计算
-│   │   ├── knowledge.py          # 负责物理公式组装、结构化 Prompt 生成与 LLM 交互
-│   │   └── memory.py             # DSM 向量记忆存储，内置豆包文本嵌入表示与 recency 兜底
-│   ├── benchmark/                # 评测环境与数据装载
-│   │   ├── comparison.py         # 多种子对比曲线生成与数据持久化
-│   │   ├── bo_step.py            # 分步步进式传统与 LLM 优化对比引擎
-│   │   └── data_loader.py        # 钙钛矿能带/掺杂 Excel 实验数据的安全划分与加载
-│   └── tests/                    # 系统自动化单元测试集
-├── frontend/                      # React 前端工程
-│   ├── src/
-│   │   ├── App.tsx               // 性能评测面板、实验控制及 Recharts 可视化折线图
-│   │   ├── OperationalMode.tsx   // 人机实操面板，支持自定义输入空间及 Agent 推理详情卡
-│   │   ├── components/           // 包含三维曲面图、采集设置与日志流组件
-│   │   └── lib/api.ts            // Axios 请求封装与 SSE (Server-Sent Events) 事件流接收
-└── README.md                      # 系统使用说明书
+├── apps/
+│   ├── api/                        # FastAPI 后端服务
+│   │   ├── api.py                  # 接口层：实时流日志与实操推荐 API
+│   │   ├── conftest.py             # pytest 路径配置
+│   │   ├── tests/                  # API 单元测试
+│   │   └── requirements.txt        # 后端依赖（含 bo-core editable 安装）
+│   └── web/                        # React 前端工程
+│       ├── src/
+│       │   ├── App.tsx             // 性能评测面板、实验控制及 Recharts 可视化折线图
+│       │   ├── OperationalMode.tsx // 人机实操面板，支持自定义输入空间及 Agent 推理详情卡
+│       │   ├── components/         // 包含三维曲面图、采集设置与日志流组件
+│       │   └── lib/api.ts          // 请求封装与 SSE (Server-Sent Events) 事件流接收
+│       └── tests/e2e/              // Playwright E2E 测试
+├── packages/
+│   └── bo-core/                    # 算法核心包（可独立 pip install -e）
+│       ├── bo_core/
+│       │   ├── optimization/       # 贝叶斯优化与智能决策核心
+│       │   │   ├── optimizer.py    # 高斯过程代理模型与 UCB/EI/PI 采集计算
+│       │   │   ├── knowledge.py    # 物理公式组装、结构化 Prompt 生成与 LLM 交互
+│       │   │   └── memory.py       # DSM 向量记忆存储，内置豆包文本嵌入与 recency 兜底
+│       │   ├── benchmark/          # 评测环境与数据装载
+│       │   │   ├── comparison.py   # 多种子对比曲线生成与数据持久化
+│       │   │   ├── bo_step.py      # 分步步进式传统与 LLM 优化对比引擎
+│       │   │   └── data_loader.py  # 钙钛矿能带/掺杂 Excel 实验数据的安全划分与加载
+│       │   ├── llm_client.py       # 统一 DeepSeek API 大模型调用客户端
+│       │   └── pvk_llm_compat.py   # PVK-LLM 兼容层
+│       ├── tests/                  # 算法单元测试集
+│       ├── benchmark_agent_team.py # 自动化测试与指标分析多代理协调器
+│       ├── run_prompt_ablation.py  # Prompt 消融实验脚本
+│       └── pyproject.toml          # bo-core 包定义与依赖
+└── README.md                       # 系统使用说明书
 ```
 
 ---
@@ -69,7 +80,7 @@ BOagent/
 
 ### 1. 配置环境变量
 
-在 `backend/` 下创建 `.env` 文件（或修改 `.env.example`）：
+在 `apps/api/` 下创建 `.env` 文件（或修改 `.env.example`）：
 
 ```bash
 # 大模型服务配置
@@ -91,11 +102,11 @@ PVK_DATA_ROOT=../PVK-LLM/custom_perovskite_dataset
 ### 2. 启动后端
 
 ```bash
-cd backend
+cd apps/api
 # 创建并激活虚拟环境
 python -m venv .venv
 source .venv/bin/activate
-pip install -r requirements.txt
+pip install -r requirements.txt   # 会自动 editable 安装 ../packages/bo-core
 
 # 启动 FastAPI (端口 8000)
 python -m uvicorn api:app --reload --port 8000
@@ -104,7 +115,7 @@ python -m uvicorn api:app --reload --port 8000
 ### 3. 启动前端
 
 ```bash
-cd frontend
+cd apps/web
 npm install
 
 # 启动 Vite 开发服务器 (端口 5173)
@@ -119,7 +130,7 @@ npm run dev
 要验证后端所有改动的正确性，可在虚拟环境中运行：
 
 ```bash
-cd backend
+cd apps/api
 python -m pytest
 ```
 系统包含完善的测试，覆盖了 API 路由响应、高斯过程拟合、数据边界解析及能带物理逻辑校验。

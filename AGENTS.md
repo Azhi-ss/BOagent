@@ -9,10 +9,10 @@ Welcome to the **BOagent** codebase! This guide serves as your primary context d
 BOagent is an LLM-driven Bayesian Optimization (BO) workflow orchestrator and scientific dashboard designed for perovskite solar cell material formulation optimization. It leverages high-context domain reasoning to augment traditional Gaussian Process (GP) statistical modeling.
 
 ### Core Tech Stack
-*   **Backend**: FastAPI, Python 3.10+, Uvicorn, Scikit-learn (Gaussian Process Regressor), NumPy, Pandas, SciPy, pytest.
+*   **Backend**: FastAPI, Python 3.11+, Uvicorn, BoTorch/GPyTorch (primary GP backend), scikit-learn (optional compatibility backend), NumPy, Pandas, SciPy, pytest.
 *   **Frontend**: React 19, Vite 6, TypeScript 6, Recharts 3.8, Tailwind CSS 4.x.
 *   **AI/LLM**: DeepSeek API (`deepseek-v4-flash` / `deepseek-v4-pro`), Doubao Embedding API (Volcengine/Ark) utilizing the default `doubao-embedding-vision-250615` model (configured via `DOUBAO_EMBEDDING_MODEL`) for semantic memory retrieval.
-*   **Dataset Integration**: Sibling repository `PVK-LLM` containing Excel-based experimental datasets.
+*   **Dataset Integration**: Uses unified dataset schema located in the local `datasets/` directory (e.g., `datasets/perovskite`, `datasets/battery`). No `.env` configuration is required.
 
 ---
 
@@ -20,34 +20,42 @@ BOagent is an LLM-driven Bayesian Optimization (BO) workflow orchestrator and sc
 
 ```
 BOagent/
-├── backend/                       # Python Backend Service
-│   ├── api.py                    # FastAPI server, SSE stream controller, rest endpoints
-│   ├── requirements.txt          # Python dependencies
-│   ├── llm_client.py             # Unified DeepSeek API client wrapper
-│   ├── pvk_llm_compat.py         # Legacy patches bridging pandas, langchain, OpenAI
-│   ├── optimization/             # Core Bayesian Optimization Engine
-│   │   ├── optimizer.py          # BayesianOptimizer orchestrator, GP training, acquisition scoring
-│   │   ├── knowledge.py          # KnowledgeEngine, semiconductor physics rules & prompting
-│   │   ├── memory.py             # VectorMemory, Doubao Ark embedding and numpy retrieval
-│   │   └── space.py              # SearchSpace definitions (Continuous & Discrete)
-│   ├── benchmark/                # Performance Evaluation Engine
-│   │   ├── data_loader.py        # Dataset loading & deterministic seed-based splitting
-│   │   ├── runner.py             # Single seed benchmark coordinator
-│   │   ├── comparison.py         # Multi-seed parallel benchmark comparison
-│   │   └── bo_step.py            # Step-by-step benchmark runner bridging BO components
-│   ├── run_prompt_ablation.py    # A/B/C prompt variant benchmark experiment
-│   └── tests/                    # Backend automated tests
-├── frontend/                      # React Frontend Application
-│   ├── src/
-│   │   ├── App.tsx               # Root view container & mode manager
-│   │   ├── BenchMode.tsx         # Benchmark execution & dual-curve visualization panel
-│   │   ├── OperationalMode.tsx   # Human-in-the-loop experimental suggestion interface
-│   │   ├── types.ts              # Global TypeScript declarations
-│   │   ├── components/           # UI elements (ConvergenceChart, LandscapeCanvas, etc.)
-│   │   └── lib/api.ts            # Typed Axios/SSE client configurations
-│   ├── tests/                    # Playwright E2E functional test cases
-│   ├── package.json              # Frontend npm dependencies
-│   └── vite.config.ts            # Vite compile settings (with Tailwind 4.x integration)
+├── apps/
+│   ├── api/                       # FastAPI Backend Service
+│   │   ├── api.py                 # FastAPI server, SSE stream controller, rest endpoints
+│   │   ├── conftest.py            # pytest path configuration
+│   │   ├── pyproject.toml         # Python dependencies (incl. bo-core workspace link)
+│   │   └── tests/                 # API automated tests
+│   └── web/                       # React Frontend Application
+│       ├── src/
+│       │   ├── App.tsx            # Root view container & mode manager
+│       │   ├── BenchMode.tsx      # Benchmark execution & dual-curve visualization panel
+│       │   ├── OperationalMode.tsx # Human-in-the-loop experimental suggestion interface
+│       │   ├── types.ts           # Global TypeScript declarations
+│       │   ├── components/        # UI elements (ConvergenceChart, LandscapeCanvas, etc.)
+│       │   └── lib/api.ts         # Typed fetch/SSE client configurations
+│       ├── tests/                 # Playwright E2E functional test cases
+│       ├── package.json           # Frontend npm dependencies
+│       └── vite.config.ts         # Vite compile settings (with Tailwind 4.x integration)
+├── packages/
+│   └── bo-core/                   # Algorithm core package (pip install -e)
+│       ├── bo_core/
+│       │   ├── optimization/      # Core Bayesian Optimization Engine
+│       │   │   ├── optimizer.py   # BayesianOptimizer orchestrator, GP training, acquisition scoring
+│       │   │   ├── knowledge.py   # KnowledgeEngine, semiconductor physics rules & prompting
+│       │   │   ├── memory.py      # VectorMemory, Doubao Ark embedding and numpy retrieval
+│       │   │   └── space.py       # SearchSpace definitions (Continuous & Discrete)
+│       │   ├── benchmark/         # Performance Evaluation Engine
+│       │   │   ├── data_loader.py # Dataset loading & deterministic seed-based splitting
+│       │   │   ├── runner.py      # Single seed benchmark coordinator
+│       │   │   ├── comparison.py  # Multi-seed parallel benchmark comparison
+│       │   │   └── bo_step.py     # Step-by-step benchmark runner bridging BO components
+│       │   ├── llm_client.py      # Unified DeepSeek API client wrapper
+│       │   └── pvk_llm_compat.py  # Legacy patches bridging pandas, langchain, OpenAI
+│       ├── tests/                 # Core algorithm automated tests
+│       ├── benchmark_agent_team.py # Multi-agent benchmark coordinator
+│       ├── run_prompt_ablation.py # A/B/C prompt variant benchmark experiment
+│       └── pyproject.toml         # bo-core package definition & dependencies
 ├── scripts/                       # Orchestration & Evaluation Scripts
 │   ├── smart_gemini.sh           # Gemini CLI Smart Routing runner with fallback
 │   ├── run_parallel_subagents.sh # Multi-agent concurrent analysis coordinator
@@ -88,37 +96,51 @@ The optimizer combines GP surrogate scores with LLM viability judgments via a hy
 
 ### 4.1 Local Development Commands
 
-#### Backend (FastAPI on Port 8000)
+#### Backend Service (FastAPI on Port 8000)
 > [!NOTE]
-> The backend server must be started inside the `backend/` directory to resolve python relative imports correctly. The system environment utilizing miniconda3 is pre-configured with the required packages.
+> The backend server must be started inside the `apps/api/` directory to resolve relative imports correctly.
 ```bash
-cd backend
-python -m uvicorn api:app --reload --port 8000
+cd apps/api
+uv run uvicorn api:app --reload --port 8000
 ```
 
-#### Frontend (Vite on Port 5173)
+#### Frontend Web Application (Vite on Port 5173)
 ```bash
-cd frontend
+cd apps/web
 npm install
 npm run dev
 ```
 
 ### 4.2 Automated Testing Commands
 
-#### Backend Unit/Integration Tests
+#### API Backend Unit/Integration Tests
 ```bash
-cd backend
-python -m pytest
+cd apps/api
+uv run pytest
 ```
+
+#### Algorithm Core Unit Tests (`bo-core`)
+*Note: We enforce TDD for algorithm logic. You MUST use `--cov` to ensure your new logic is covered. Minimum coverage requirement is 80% overall, and ≥90% for `bo_core/optimization/`.*
+```bash
+cd packages/bo-core
+uv run pytest --cov=bo_core --cov-report=term-missing
+```
+
+#### ML Data & Algorithm Inspection Tools
+*   **Linting & Static Type Checks**: `uv run ruff check .` and `uv run mypy packages/bo-core/bo_core`
+*   **Data Validation (`pandera`)**: Schema verification for search spaces & dataset DataFrames.
+*   **Property-Based Testing (`hypothesis`)**: Boundary and matrix stability verification for GP operations.
+*   **ML Health & Data Drift (`evidently`)**: Model drift detection and automated data quality checks for surrogate models.
 
 #### Frontend Playwright E2E Tests
 *Note: Make sure the backend server is running on port 8000 before executing E2E tests.*
 ```bash
-cd frontend
+cd apps/web
 npm run test:e2e             # Headless E2E (Playwright)
 npm run test:e2e:chromium    # Run E2E tests exclusively on Chromium
 npx playwright test --ui     # Interactive UI Mode
 ```
+
 
 ---
 
@@ -138,15 +160,18 @@ npx playwright test --ui     # Interactive UI Mode
 > [!CAUTION]
 > **Local RNG State**: Always use locally seeded instances of `np.random.RandomState` in data loaders and optimization loops. Avoid using the global `np.random` to prevent random state leakage across parallel benchmark threads.
 
+> [!CAUTION]
+> **Sensitive Files Protection**: Do not arbitrarily modify `**/.env*` files or `**/*_results.json` files without explicit user confirmation.
+
 ---
 
 ## 6. Existing Capabilities & Reuse Guide
 
 Before writing new utility helpers or components, check if they already exist:
-*   **API SSE client**: `frontend/src/lib/api.ts` contains `streamComparison` which implements POST-based SSE stream chunk decoding. SSE event types: `meta`, `seed_start`, `step_start`, `aggregate`, `done`. Use this for any long-running API streaming.
-*   **Tailwind 4.x Theme & Fonts**: All custom colors are defined in `frontend/src/index.css` via the `@theme` block. Key palettes: `--color-graphite-*` (slate/dark), `--color-signal-*` (emerald/LLMBO), `--color-amber-*` (Traditional BO). Typography: `Space Grotesk` (display), `Plus Jakarta Sans` (body), `JetBrains Mono` (code). Custom animations: `pulse-ring` (live status), `value-flash` (data updates). **Avoid hardcoded hex values** — use CSS variables.
-*   **Physics Formulas Prompt Builder**: `backend/optimization/knowledge.py` maps task feature columns to formulas and hints. If you add new parameters, add them to `build_prompt` mapping instead of copying the builder logic.
-*   **Insight Persistence & RAG**: `backend/optimization/memory.py` handles writing insights to `insights.jsonl` and calculating embeddings using Doubao API. If the embedding client is missing keys or unreachable, it falls back to recency-based retrieval (returning the last `top_k` insights) instead of raising an error.
+*   **API SSE client**: `apps/web/src/lib/api.ts` contains `streamComparison` which implements POST-based SSE stream chunk decoding. SSE event types: `meta`, `seed_start`, `step_start`, `aggregate`, `done`. Use this for any long-running API streaming.
+*   **Tailwind 4.x Theme & Fonts**: All custom colors are defined in `apps/web/src/index.css` via the `@theme` block. Key palettes: `--color-graphite-*` (slate/dark), `--color-signal-*` (emerald/LLMBO), `--color-amber-*` (Traditional BO). Typography: `Space Grotesk` (display), `Plus Jakarta Sans` (body), `JetBrains Mono` (code). Custom animations: `pulse-ring` (live status), `value-flash` (data updates). **Avoid hardcoded hex values** — use CSS variables.
+*   **Physics Formulas Prompt Builder**: `packages/bo-core/bo_core/optimization/knowledge.py` maps task feature columns to formulas and hints. If you add new parameters, add them to `build_prompt` mapping instead of copying the builder logic.
+*   **Insight Persistence & RAG**: `packages/bo-core/bo_core/optimization/memory.py` handles writing insights to `insights.jsonl` and calculating embeddings using Doubao API. If the embedding client is missing keys or unreachable, it falls back to recency-based retrieval (returning the last `top_k` insights) instead of raising an error.
 *   **Flat API Response Helpers**: Use `success(data)` and `error_response(msg, code)` in `api.py` for consistent response shapes. Avoid deeply nested response structures.
 *   **Declarative Color Maps**: Frontend components use lookup maps (e.g., `typeColorMap` in `LandscapeCanvas.tsx`) instead of nested ternaries for conditional styling.
 
@@ -155,12 +180,27 @@ Before writing new utility helpers or components, check if they already exist:
 ## 7. Change Verification Checklist
 
 Before marking a task as complete, execute this checklist:
-- [ ] **Backend Test Verification**: Run `python -m pytest` inside `backend/` to verify all unit/integration tests pass.
-- [ ] **Frontend E2E Verification**: Run `npm run test:e2e:chromium` inside `frontend/` to confirm React renders. Ensure Playwright locators use `:visible` filters (e.g., `page.locator("button:has-text('Run'):visible")`) to avoid ambiguous locator failures due to co-rendering of modes via display toggles.
+- [ ] **Backend Test Verification**: Run `python -m pytest` inside `apps/api/` to verify all unit/integration tests pass.
+- [ ] **Frontend E2E Verification**: Run `npm run test:e2e:chromium` inside `apps/web/` to confirm React renders. Ensure Playwright locators use `:visible` filters (e.g., `page.locator("button:has-text('Run'):visible")`) to avoid ambiguous locator failures due to co-rendering of modes via display toggles.
 - [ ] **E2E Timeout Settings**: Ensure testing specs override defaults using `test.setTimeout(180000)` or `240000` for benchmark specs to prevent timeouts during long-running LLM analysis.
 - [ ] **Typescript Compiler Build**: Ensure `npm run build` runs clean without type compiler warnings.
 - [ ] **Security Boundaries**: Validate that `output_dir` prevents path traversal (`..` and absolute paths validation). No API secrets should be hardcoded (always load via environment variables).
 - [ ] **Scientific Memory Fallback**: Confirm that VectorMemory retrieves insights via recency-based fallback safely without throwing exceptions when `ARK_API_KEY` is missing or unreachable.
 - [ ] **UI Animation Restraints**: Ensure Recharts Line elements in `ConvergenceChart.tsx` set `isAnimationActive={false}` to avoid bouncing glitches during SSE streaming.
 - [ ] **Local RNG Isolation**: Verify no global `np.random` usage in optimization or benchmark paths; all randomness via locally seeded `RandomState`.
+
+---
+
+## 8. Authoritative Specifications & Reference Knowledge (`docs/`)
+
+The `docs/` directory serves as the repository's single source of truth for external API contracts, hardware adaptation guidelines, real-time framework specifications, and defensive programming rules.
+
+Before implementing features or modifying core modules, agents **MUST** consult the corresponding specification documents under `docs/`:
+
+*   **API & Framework Specifications (`docs/hardware/`, `docs/api_specs/`, etc.)**: Real-time Context7-retrieved API contracts, constructor signatures, parameter tables, and version-locked library usage rules.
+*   **Hardware Adaptation & Performance Guides**: Workload mapping across compute units (CPU, GPU, NPU), thread allocation, vectorization flags, and hardware-specific runtime configurations.
+*   **Defensive Rules & Failure Modes**: Documented edge cases, numerical stability guards, precision requirements, and thread-safety invariants.
+
+> [!NOTE]
+> **Extensibility Protocol**: When fetching or adding new API specs, hardware benchmarks, or domain research, save the normalized Markdown files under `docs/<category>/` and register them in the category index (`docs/<category>/README.md`). Reference these documents in task planning artifacts before writing code.
 

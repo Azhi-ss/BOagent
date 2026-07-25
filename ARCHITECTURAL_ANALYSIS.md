@@ -3,21 +3,21 @@
 ## 1. Analysis Range
 This analysis covers the core BOagent codebase, focusing on:
 - **Project Structure & Layering**: Frontend (React/TS) and Backend (FastAPI).
-- **Optimization Engine**: `backend/optimization/` including Bayesian Optimization logic and LLM-informed refinement.
+- **Optimization Engine**: `packages/bo-core/bo_core/optimization/` including Bayesian Optimization logic and LLM-informed refinement.
 - **LLM Integration**: `KnowledgeEngine` and compatibility patches for legacy LLM tools.
-- **Data Layer**: Excel-based data loading and splitting in `backend/benchmark/data_loader.py`.
-- **API Boundary**: REST and SSE interfaces in `backend/api.py`.
+- **Data Layer**: Excel-based data loading and splitting in `packages/bo-core/bo_core/benchmark/data_loader.py`.
+- **API Boundary**: REST and SSE interfaces in `apps/api/api.py`.
 
 ## 2. Key Facts and Design Patterns
 
 ### 2.1 Layered Architecture
-- **Frontend (React/TS)**: Located in `frontend/`, providing visualization for benchmarks and an "Operational Mode" for human-in-the-loop experiments.
-- **API Layer (FastAPI)**: `backend/api.py` acts as the orchestrator, exposing endpoints for benchmark execution, comparison streaming (SSE), and operational suggestions.
+- **Frontend (React/TS)**: Located in `apps/web/`, providing visualization for benchmarks and an "Operational Mode" for human-in-the-loop experiments.
+- **API Layer (FastAPI)**: `apps/api/api.py` acts as the orchestrator, exposing endpoints for benchmark execution, comparison streaming (SSE), and operational suggestions.
 - **Optimization Engine**: A modular core consisting of:
     - `BayesianOptimizer`: Traditional GP-based surrogate modeling.
     - `KnowledgeEngine`: LLM-based reasoning that injects materials science domain knowledge into the acquisition process.
     - `SearchSpace`: Abstracted handling of discrete and continuous parameter spaces.
-- **Benchmark Layer**: `backend/benchmark/` provides tools to compare traditional BO against LLM-enhanced BO across multiple seeds.
+- **Benchmark Layer**: `packages/bo-core/bo_core/benchmark/` provides tools to compare traditional BO against LLM-enhanced BO across multiple seeds.
 
 ### 2.2 Design Patterns
 - **Strategy Pattern**: Acquisition functions (EI, UCB, PI) are swappable strategies within the optimizer.
@@ -70,10 +70,10 @@ Add the following to `AGENTS.md` to guide future agents:
 - Prioritize `GaussianProcessRegressor` for surrogate modeling.
 - LLM calls in `KnowledgeEngine` must use the `deepseek-v4-flash` or similar high-context models.
 - Domain rules for Band Alignment (CBO/VBO) and Defect/Doping are hardcoded in `KnowledgeEngine.build_prompt` and must be maintained.
-- Data loading always goes through `backend/benchmark/data_loader.py` to ensure train/test split consistency.
+- Data loading always goes through `packages/bo-core/bo_core/benchmark/data_loader.py` to ensure train/test split consistency.
 ```
 
 ### Skill Input for `bo-code-expert`
 - **Context**: Materials science Bayesian Optimization, FastAPI backend, React frontend.
-- **Key Files**: `backend/optimization/optimizer.py`, `backend/optimization/knowledge.py`, `backend/api.py`.
+- **Key Files**: `packages/bo-core/bo_core/optimization/optimizer.py`, `packages/bo-core/bo_core/optimization/knowledge.py`, `apps/api/api.py`.
 - **Target Models**: DeepSeek-v4-flash, GPT-4o.
