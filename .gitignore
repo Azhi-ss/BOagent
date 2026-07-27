@@ -101,4 +101,16 @@ Compitetion/submission/results/
 Compitetion/submission/code/logs/
 Compitetion/auto_research/reports/
 
+# Scratch scripts & temporary check files
+scratch_*.py
+
+# Agent skills & local lock files
+.agents/
+skills.json
+skills-lock.json
+
+# Local editor settings
+.claude/settings.json
+
+
 
