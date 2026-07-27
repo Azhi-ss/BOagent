@@ -78,8 +78,8 @@ packages/bo-core/results/
 
 
 # External reference repositories
-references/*
-!references/README.md
+references/
+
 
 
 # Agent framework state (trellis-generated skills/workflows; project configs under .claude/ stay tracked)
