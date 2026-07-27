@@ -92,3 +92,13 @@ references/*
 .claude/skills/trellis-*/
 .gemini/
 .trellis/
+
+# Competition files filtering: exclude documentation & results, keep algorithm code & history logs
+Compitetion/**/*.md
+Compitetion/*.md
+Compitetion/submission/doc/
+Compitetion/submission/results/
+Compitetion/submission/code/logs/
+Compitetion/auto_research/reports/
+
+

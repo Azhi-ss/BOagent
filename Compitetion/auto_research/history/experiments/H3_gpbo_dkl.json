@@ -1,0 +1,802 @@
+[
+  {
+    "composition": "gpbo_dkl",
+    "dataset": "buchwald_sub4",
+    "seed": 100,
+    "metrics": {
+      "best_found": 84.89551287,
+      "initial_round_found_best": 71.55294754,
+      "t95": 2,
+      "AUC_best_so_far": 83.60126804275001
+    },
+    "analysis": {
+      "n_iters": 40,
+      "n_improvements": 2,
+      "improvement_rate": 0.05,
+      "llm_action_count": 0,
+      "llm_action_types": [],
+      "acq_switches": 0,
+      "final_best": 84.89551287
+    }
+  },
+  {
+    "composition": "gpbo_dkl",
+    "dataset": "buchwald_sub4",
+    "seed": 200,
+    "metrics": {
+      "best_found": 84.89551287,
+      "initial_round_found_best": 71.55294754,
+      "t95": 2,
+      "AUC_best_so_far": 83.60126804275001
+    },
+    "analysis": {
+      "n_iters": 40,
+      "n_improvements": 2,
+      "improvement_rate": 0.05,
+      "llm_action_count": 0,
+      "llm_action_types": [],
+      "acq_switches": 0,
+      "final_best": 84.89551287
+    }
+  },
+  {
+    "composition": "gpbo_dkl",
+    "dataset": "buchwald_sub4",
+    "seed": 300,
+    "metrics": {
+      "best_found": 84.89551287,
+      "initial_round_found_best": 71.55294754,
+      "t95": 2,
+      "AUC_best_so_far": 83.60126804275001
+    },
+    "analysis": {
+      "n_iters": 40,
+      "n_improvements": 2,
+      "improvement_rate": 0.05,
+      "llm_action_count": 0,
+      "llm_action_types": [],
+      "acq_switches": 0,
+      "final_best": 84.89551287
+    }
+  },
+  {
+    "composition": "gpbo_dkl",
+    "dataset": "buchwald_sub4",
+    "seed": 400,
+    "metrics": {
+      "best_found": 84.89551287,
+      "initial_round_found_best": 71.55294754,
+      "t95": 2,
+      "AUC_best_so_far": 83.60126804275001
+    },
+    "analysis": {
+      "n_iters": 40,
+      "n_improvements": 2,
+      "improvement_rate": 0.05,
+      "llm_action_count": 0,
+      "llm_action_types": [],
+      "acq_switches": 0,
+      "final_best": 84.89551287
+    }
+  },
+  {
+    "composition": "gpbo_dkl",
+    "dataset": "buchwald_sub4",
+    "seed": 500,
+    "metrics": {
+      "best_found": 84.89551287,
+      "initial_round_found_best": 71.55294754,
+      "t95": 2,
+      "AUC_best_so_far": 83.60126804275001
+    },
+    "analysis": {
+      "n_iters": 40,
+      "n_improvements": 2,
+      "improvement_rate": 0.05,
+      "llm_action_count": 0,
+      "llm_action_types": [],
+      "acq_switches": 0,
+      "final_best": 84.89551287
+    }
+  },
+  {
+    "composition": "gpbo_dkl",
+    "dataset": "buchwald_sub4",
+    "seed": 600,
+    "metrics": {
+      "best_found": 84.89551287,
+      "initial_round_found_best": 71.55294754,
+      "t95": 2,
+      "AUC_best_so_far": 83.60126804275001
+    },
+    "analysis": {
+      "n_iters": 40,
+      "n_improvements": 2,
+      "improvement_rate": 0.05,
+      "llm_action_count": 0,
+      "llm_action_types": [],
+      "acq_switches": 0,
+      "final_best": 84.89551287
+    }
+  },
+  {
+    "composition": "gpbo_dkl",
+    "dataset": "buchwald_sub4",
+    "seed": 700,
+    "metrics": {
+      "best_found": 84.89551287,
+      "initial_round_found_best": 71.55294754,
+      "t95": 2,
+      "AUC_best_so_far": 83.60126804275001
+    },
+    "analysis": {
+      "n_iters": 40,
+      "n_improvements": 2,
+      "improvement_rate": 0.05,
+      "llm_action_count": 0,
+      "llm_action_types": [],
+      "acq_switches": 0,
+      "final_best": 84.89551287
+    }
+  },
+  {
+    "composition": "gpbo_dkl",
+    "dataset": "buchwald_sub4",
+    "seed": 800,
+    "metrics": {
+      "best_found": 84.89551287,
+      "initial_round_found_best": 71.55294754,
+      "t95": 2,
+      "AUC_best_so_far": 83.60126804275001
+    },
+    "analysis": {
+      "n_iters": 40,
+      "n_improvements": 2,
+      "improvement_rate": 0.05,
+      "llm_action_count": 0,
+      "llm_action_types": [],
+      "acq_switches": 0,
+      "final_best": 84.89551287
+    }
+  },
+  {
+    "composition": "gpbo_dkl",
+    "dataset": "buchwald_sub4",
+    "seed": 900,
+    "metrics": {
+      "best_found": 84.89551287,
+      "initial_round_found_best": 71.55294754,
+      "t95": 2,
+      "AUC_best_so_far": 83.60126804275001
+    },
+    "analysis": {
+      "n_iters": 40,
+      "n_improvements": 2,
+      "improvement_rate": 0.05,
+      "llm_action_count": 0,
+      "llm_action_types": [],
+      "acq_switches": 0,
+      "final_best": 84.89551287
+    }
+  },
+  {
+    "composition": "gpbo_dkl",
+    "dataset": "buchwald_sub4",
+    "seed": 1000,
+    "metrics": {
+      "best_found": 84.89551287,
+      "initial_round_found_best": 71.55294754,
+      "t95": 2,
+      "AUC_best_so_far": 83.60126804275001
+    },
+    "analysis": {
+      "n_iters": 40,
+      "n_improvements": 2,
+      "improvement_rate": 0.05,
+      "llm_action_count": 0,
+      "llm_action_types": [],
+      "acq_switches": 0,
+      "final_best": 84.89551287
+    }
+  },
+  {
+    "composition": "gpbo_dkl",
+    "dataset": "buchwald_sub4",
+    "seed": 1100,
+    "metrics": {
+      "best_found": 84.89551287,
+      "initial_round_found_best": 71.55294754,
+      "t95": 2,
+      "AUC_best_so_far": 83.60126804275001
+    },
+    "analysis": {
+      "n_iters": 40,
+      "n_improvements": 2,
+      "improvement_rate": 0.05,
+      "llm_action_count": 0,
+      "llm_action_types": [],
+      "acq_switches": 0,
+      "final_best": 84.89551287
+    }
+  },
+  {
+    "composition": "gpbo_dkl",
+    "dataset": "buchwald_sub4",
+    "seed": 1200,
+    "metrics": {
+      "best_found": 84.89551287,
+      "initial_round_found_best": 71.55294754,
+      "t95": 2,
+      "AUC_best_so_far": 83.60126804275001
+    },
+    "analysis": {
+      "n_iters": 40,
+      "n_improvements": 2,
+      "improvement_rate": 0.05,
+      "llm_action_count": 0,
+      "llm_action_types": [],
+      "acq_switches": 0,
+      "final_best": 84.89551287
+    }
+  },
+  {
+    "composition": "gpbo_dkl",
+    "dataset": "buchwald_sub4",
+    "seed": 1300,
+    "metrics": {
+      "best_found": 84.89551287,
+      "initial_round_found_best": 71.55294754,
+      "t95": 2,
+      "AUC_best_so_far": 83.60126804275001
+    },
+    "analysis": {
+      "n_iters": 40,
+      "n_improvements": 2,
+      "improvement_rate": 0.05,
+      "llm_action_count": 0,
+      "llm_action_types": [],
+      "acq_switches": 0,
+      "final_best": 84.89551287
+    }
+  },
+  {
+    "composition": "gpbo_dkl",
+    "dataset": "buchwald_sub4",
+    "seed": 1400,
+    "metrics": {
+      "best_found": 84.89551287,
+      "initial_round_found_best": 71.55294754,
+      "t95": 2,
+      "AUC_best_so_far": 83.60126804275001
+    },
+    "analysis": {
+      "n_iters": 40,
+      "n_improvements": 2,
+      "improvement_rate": 0.05,
+      "llm_action_count": 0,
+      "llm_action_types": [],
+      "acq_switches": 0,
+      "final_best": 84.89551287
+    }
+  },
+  {
+    "composition": "gpbo_dkl",
+    "dataset": "buchwald_sub4",
+    "seed": 1500,
+    "metrics": {
+      "best_found": 84.89551287,
+      "initial_round_found_best": 71.55294754,
+      "t95": 2,
+      "AUC_best_so_far": 83.60126804275001
+    },
+    "analysis": {
+      "n_iters": 40,
+      "n_improvements": 2,
+      "improvement_rate": 0.05,
+      "llm_action_count": 0,
+      "llm_action_types": [],
+      "acq_switches": 0,
+      "final_best": 84.89551287
+    }
+  },
+  {
+    "composition": "gpbo_dkl",
+    "dataset": "buchwald_sub4",
+    "seed": 1600,
+    "metrics": {
+      "best_found": 84.89551287,
+      "initial_round_found_best": 71.55294754,
+      "t95": 2,
+      "AUC_best_so_far": 83.60126804275001
+    },
+    "analysis": {
+      "n_iters": 40,
+      "n_improvements": 2,
+      "improvement_rate": 0.05,
+      "llm_action_count": 0,
+      "llm_action_types": [],
+      "acq_switches": 0,
+      "final_best": 84.89551287
+    }
+  },
+  {
+    "composition": "gpbo_dkl",
+    "dataset": "buchwald_sub4",
+    "seed": 1700,
+    "metrics": {
+      "best_found": 84.89551287,
+      "initial_round_found_best": 71.55294754,
+      "t95": 2,
+      "AUC_best_so_far": 83.60126804275001
+    },
+    "analysis": {
+      "n_iters": 40,
+      "n_improvements": 2,
+      "improvement_rate": 0.05,
+      "llm_action_count": 0,
+      "llm_action_types": [],
+      "acq_switches": 0,
+      "final_best": 84.89551287
+    }
+  },
+  {
+    "composition": "gpbo_dkl",
+    "dataset": "buchwald_sub4",
+    "seed": 1800,
+    "metrics": {
+      "best_found": 84.89551287,
+      "initial_round_found_best": 71.55294754,
+      "t95": 2,
+      "AUC_best_so_far": 83.60126804275001
+    },
+    "analysis": {
+      "n_iters": 40,
+      "n_improvements": 2,
+      "improvement_rate": 0.05,
+      "llm_action_count": 0,
+      "llm_action_types": [],
+      "acq_switches": 0,
+      "final_best": 84.89551287
+    }
+  },
+  {
+    "composition": "gpbo_dkl",
+    "dataset": "buchwald_sub4",
+    "seed": 1900,
+    "metrics": {
+      "best_found": 84.89551287,
+      "initial_round_found_best": 71.55294754,
+      "t95": 2,
+      "AUC_best_so_far": 83.60126804275001
+    },
+    "analysis": {
+      "n_iters": 40,
+      "n_improvements": 2,
+      "improvement_rate": 0.05,
+      "llm_action_count": 0,
+      "llm_action_types": [],
+      "acq_switches": 0,
+      "final_best": 84.89551287
+    }
+  },
+  {
+    "composition": "gpbo_dkl",
+    "dataset": "buchwald_sub4",
+    "seed": 2000,
+    "metrics": {
+      "best_found": 84.89551287,
+      "initial_round_found_best": 71.55294754,
+      "t95": 2,
+      "AUC_best_so_far": 83.60126804275001
+    },
+    "analysis": {
+      "n_iters": 40,
+      "n_improvements": 2,
+      "improvement_rate": 0.05,
+      "llm_action_count": 0,
+      "llm_action_types": [],
+      "acq_switches": 0,
+      "final_best": 84.89551287
+    }
+  },
+  {
+    "composition": "gpbo_dkl",
+    "dataset": "suzuki",
+    "seed": 100,
+    "metrics": {
+      "best_found": 96.97,
+      "initial_round_found_best": 33.67,
+      "t95": 10,
+      "AUC_best_so_far": 93.30425000000001
+    },
+    "analysis": {
+      "n_iters": 40,
+      "n_improvements": 7,
+      "improvement_rate": 0.175,
+      "llm_action_count": 0,
+      "llm_action_types": [],
+      "acq_switches": 0,
+      "final_best": 96.97
+    }
+  },
+  {
+    "composition": "gpbo_dkl",
+    "dataset": "suzuki",
+    "seed": 200,
+    "metrics": {
+      "best_found": 96.97,
+      "initial_round_found_best": 33.67,
+      "t95": 10,
+      "AUC_best_so_far": 93.30425000000001
+    },
+    "analysis": {
+      "n_iters": 40,
+      "n_improvements": 7,
+      "improvement_rate": 0.175,
+      "llm_action_count": 0,
+      "llm_action_types": [],
+      "acq_switches": 0,
+      "final_best": 96.97
+    }
+  },
+  {
+    "composition": "gpbo_dkl",
+    "dataset": "suzuki",
+    "seed": 300,
+    "metrics": {
+      "best_found": 96.97,
+      "initial_round_found_best": 33.67,
+      "t95": 10,
+      "AUC_best_so_far": 93.30425000000001
+    },
+    "analysis": {
+      "n_iters": 40,
+      "n_improvements": 7,
+      "improvement_rate": 0.175,
+      "llm_action_count": 0,
+      "llm_action_types": [],
+      "acq_switches": 0,
+      "final_best": 96.97
+    }
+  },
+  {
+    "composition": "gpbo_dkl",
+    "dataset": "suzuki",
+    "seed": 400,
+    "metrics": {
+      "best_found": 96.97,
+      "initial_round_found_best": 33.67,
+      "t95": 10,
+      "AUC_best_so_far": 93.30425000000001
+    },
+    "analysis": {
+      "n_iters": 40,
+      "n_improvements": 7,
+      "improvement_rate": 0.175,
+      "llm_action_count": 0,
+      "llm_action_types": [],
+      "acq_switches": 0,
+      "final_best": 96.97
+    }
+  },
+  {
+    "composition": "gpbo_dkl",
+    "dataset": "suzuki",
+    "seed": 500,
+    "metrics": {
+      "best_found": 96.97,
+      "initial_round_found_best": 33.67,
+      "t95": 10,
+      "AUC_best_so_far": 93.30425000000001
+    },
+    "analysis": {
+      "n_iters": 40,
+      "n_improvements": 7,
+      "improvement_rate": 0.175,
+      "llm_action_count": 0,
+      "llm_action_types": [],
+      "acq_switches": 0,
+      "final_best": 96.97
+    }
+  },
+  {
+    "composition": "gpbo_dkl",
+    "dataset": "suzuki",
+    "seed": 600,
+    "metrics": {
+      "best_found": 96.97,
+      "initial_round_found_best": 33.67,
+      "t95": 10,
+      "AUC_best_so_far": 93.30425000000001
+    },
+    "analysis": {
+      "n_iters": 40,
+      "n_improvements": 7,
+      "improvement_rate": 0.175,
+      "llm_action_count": 0,
+      "llm_action_types": [],
+      "acq_switches": 0,
+      "final_best": 96.97
+    }
+  },
+  {
+    "composition": "gpbo_dkl",
+    "dataset": "suzuki",
+    "seed": 700,
+    "metrics": {
+      "best_found": 96.97,
+      "initial_round_found_best": 33.67,
+      "t95": 10,
+      "AUC_best_so_far": 93.30425000000001
+    },
+    "analysis": {
+      "n_iters": 40,
+      "n_improvements": 7,
+      "improvement_rate": 0.175,
+      "llm_action_count": 0,
+      "llm_action_types": [],
+      "acq_switches": 0,
+      "final_best": 96.97
+    }
+  },
+  {
+    "composition": "gpbo_dkl",
+    "dataset": "suzuki",
+    "seed": 800,
+    "metrics": {
+      "best_found": 96.97,
+      "initial_round_found_best": 33.67,
+      "t95": 10,
+      "AUC_best_so_far": 93.30425000000001
+    },
+    "analysis": {
+      "n_iters": 40,
+      "n_improvements": 7,
+      "improvement_rate": 0.175,
+      "llm_action_count": 0,
+      "llm_action_types": [],
+      "acq_switches": 0,
+      "final_best": 96.97
+    }
+  },
+  {
+    "composition": "gpbo_dkl",
+    "dataset": "suzuki",
+    "seed": 900,
+    "metrics": {
+      "best_found": 96.97,
+      "initial_round_found_best": 33.67,
+      "t95": 10,
+      "AUC_best_so_far": 93.30425000000001
+    },
+    "analysis": {
+      "n_iters": 40,
+      "n_improvements": 7,
+      "improvement_rate": 0.175,
+      "llm_action_count": 0,
+      "llm_action_types": [],
+      "acq_switches": 0,
+      "final_best": 96.97
+    }
+  },
+  {
+    "composition": "gpbo_dkl",
+    "dataset": "suzuki",
+    "seed": 1000,
+    "metrics": {
+      "best_found": 96.97,
+      "initial_round_found_best": 33.67,
+      "t95": 10,
+      "AUC_best_so_far": 93.30425000000001
+    },
+    "analysis": {
+      "n_iters": 40,
+      "n_improvements": 7,
+      "improvement_rate": 0.175,
+      "llm_action_count": 0,
+      "llm_action_types": [],
+      "acq_switches": 0,
+      "final_best": 96.97
+    }
+  },
+  {
+    "composition": "gpbo_dkl",
+    "dataset": "suzuki",
+    "seed": 1100,
+    "metrics": {
+      "best_found": 96.97,
+      "initial_round_found_best": 33.67,
+      "t95": 10,
+      "AUC_best_so_far": 93.30425000000001
+    },
+    "analysis": {
+      "n_iters": 40,
+      "n_improvements": 7,
+      "improvement_rate": 0.175,
+      "llm_action_count": 0,
+      "llm_action_types": [],
+      "acq_switches": 0,
+      "final_best": 96.97
+    }
+  },
+  {
+    "composition": "gpbo_dkl",
+    "dataset": "suzuki",
+    "seed": 1200,
+    "metrics": {
+      "best_found": 96.97,
+      "initial_round_found_best": 33.67,
+      "t95": 10,
+      "AUC_best_so_far": 93.30425000000001
+    },
+    "analysis": {
+      "n_iters": 40,
+      "n_improvements": 7,
+      "improvement_rate": 0.175,
+      "llm_action_count": 0,
+      "llm_action_types": [],
+      "acq_switches": 0,
+      "final_best": 96.97
+    }
+  },
+  {
+    "composition": "gpbo_dkl",
+    "dataset": "suzuki",
+    "seed": 1300,
+    "metrics": {
+      "best_found": 96.97,
+      "initial_round_found_best": 33.67,
+      "t95": 10,
+      "AUC_best_so_far": 93.30425000000001
+    },
+    "analysis": {
+      "n_iters": 40,
+      "n_improvements": 7,
+      "improvement_rate": 0.175,
+      "llm_action_count": 0,
+      "llm_action_types": [],
+      "acq_switches": 0,
+      "final_best": 96.97
+    }
+  },
+  {
+    "composition": "gpbo_dkl",
+    "dataset": "suzuki",
+    "seed": 1400,
+    "metrics": {
+      "best_found": 96.97,
+      "initial_round_found_best": 33.67,
+      "t95": 10,
+      "AUC_best_so_far": 93.30425000000001
+    },
+    "analysis": {
+      "n_iters": 40,
+      "n_improvements": 7,
+      "improvement_rate": 0.175,
+      "llm_action_count": 0,
+      "llm_action_types": [],
+      "acq_switches": 0,
+      "final_best": 96.97
+    }
+  },
+  {
+    "composition": "gpbo_dkl",
+    "dataset": "suzuki",
+    "seed": 1500,
+    "metrics": {
+      "best_found": 96.97,
+      "initial_round_found_best": 33.67,
+      "t95": 10,
+      "AUC_best_so_far": 93.30425000000001
+    },
+    "analysis": {
+      "n_iters": 40,
+      "n_improvements": 7,
+      "improvement_rate": 0.175,
+      "llm_action_count": 0,
+      "llm_action_types": [],
+      "acq_switches": 0,
+      "final_best": 96.97
+    }
+  },
+  {
+    "composition": "gpbo_dkl",
+    "dataset": "suzuki",
+    "seed": 1600,
+    "metrics": {
+      "best_found": 96.97,
+      "initial_round_found_best": 33.67,
+      "t95": 10,
+      "AUC_best_so_far": 93.30425000000001
+    },
+    "analysis": {
+      "n_iters": 40,
+      "n_improvements": 7,
+      "improvement_rate": 0.175,
+      "llm_action_count": 0,
+      "llm_action_types": [],
+      "acq_switches": 0,
+      "final_best": 96.97
+    }
+  },
+  {
+    "composition": "gpbo_dkl",
+    "dataset": "suzuki",
+    "seed": 1700,
+    "metrics": {
+      "best_found": 96.97,
+      "initial_round_found_best": 33.67,
+      "t95": 10,
+      "AUC_best_so_far": 93.30425000000001
+    },
+    "analysis": {
+      "n_iters": 40,
+      "n_improvements": 7,
+      "improvement_rate": 0.175,
+      "llm_action_count": 0,
+      "llm_action_types": [],
+      "acq_switches": 0,
+      "final_best": 96.97
+    }
+  },
+  {
+    "composition": "gpbo_dkl",
+    "dataset": "suzuki",
+    "seed": 1800,
+    "metrics": {
+      "best_found": 96.97,
+      "initial_round_found_best": 33.67,
+      "t95": 10,
+      "AUC_best_so_far": 93.30425000000001
+    },
+    "analysis": {
+      "n_iters": 40,
+      "n_improvements": 7,
+      "improvement_rate": 0.175,
+      "llm_action_count": 0,
+      "llm_action_types": [],
+      "acq_switches": 0,
+      "final_best": 96.97
+    }
+  },
+  {
+    "composition": "gpbo_dkl",
+    "dataset": "suzuki",
+    "seed": 1900,
+    "metrics": {
+      "best_found": 96.97,
+      "initial_round_found_best": 33.67,
+      "t95": 10,
+      "AUC_best_so_far": 93.30425000000001
+    },
+    "analysis": {
+      "n_iters": 40,
+      "n_improvements": 7,
+      "improvement_rate": 0.175,
+      "llm_action_count": 0,
+      "llm_action_types": [],
+      "acq_switches": 0,
+      "final_best": 96.97
+    }
+  },
+  {
+    "composition": "gpbo_dkl",
+    "dataset": "suzuki",
+    "seed": 2000,
+    "metrics": {
+      "best_found": 96.97,
+      "initial_round_found_best": 33.67,
+      "t95": 10,
+      "AUC_best_so_far": 93.30425000000001
+    },
+    "analysis": {
+      "n_iters": 40,
+      "n_improvements": 7,
+      "improvement_rate": 0.175,
+      "llm_action_count": 0,
+      "llm_action_types": [],
+      "acq_switches": 0,
+      "final_best": 96.97
+    }
+  }
+]

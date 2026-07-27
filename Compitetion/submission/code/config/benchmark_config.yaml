@@ -1,0 +1,21 @@
+benchmark:
+  n_initial: 5
+  n_trials: 40
+  seeds: [100, 200, 300, 400, 500, 600, 700, 800, 900, 1000, 1100, 1200, 1300, 1400, 1500, 1600, 1700, 1800, 1900, 2000]
+
+datasets:
+  buchwald:
+    task_id: "buchwald_sub4"
+    global_max: 86.60
+  suzuki:
+    task_id: "suzuki"
+    global_max: 99.90
+
+lgbo:
+  backend: "botorch"
+  kernel_type: "matern"
+  nu: 2.5
+  gamma: 0.1
+  top_k: 20
+  acquisition: "ucb"
+  kappa: 2.576

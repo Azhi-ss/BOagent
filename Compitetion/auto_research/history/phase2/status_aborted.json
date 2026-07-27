@@ -1,0 +1,43 @@
+{
+  "state": "running",
+  "phase": "smoke",
+  "stop_reason": null,
+  "champion": {
+    "composition": "gpbo_ei",
+    "score": 0.9119539843799078,
+    "source": "phase1",
+    "tier": "full",
+    "note": "phase 1 champion retained as phase 2 reference"
+  },
+  "phase1_champion_ref": {
+    "composition": "gpbo_ei",
+    "score": 0.9119539843799078,
+    "scoring_version": "v2"
+  },
+  "evaluated": [],
+  "queue": [
+    "bora_adaptive",
+    "lgbo_mean_shift",
+    "lmabo_adaptive",
+    "lgbo_softmax",
+    "lmabo_ucb",
+    "llm_in_loop"
+  ],
+  "queue_skipped_llm_budget": [],
+  "budget": {
+    "wall_hours_used": 0.0,
+    "compositions_evaluated": 0,
+    "llm_calls": 0,
+    "full_runs": 0,
+    "max_wall_hours": 6,
+    "max_compositions_evaluated": 6,
+    "max_llm_calls": 500,
+    "max_full_runs": 1
+  },
+  "smoke_scores": {},
+  "confirm_scores": {},
+  "full_scores": {},
+  "scoring_version": "v2",
+  "last_event": "phase2_init: archived phase1 to history/phase1/, queue=[bora_adaptive, lgbo_mean_shift, lmabo_adaptive, lgbo_softmax, lmabo_ucb, llm_in_loop]",
+  "updated_at": "2026-07-25T09:15:00.000000+00:00"
+}

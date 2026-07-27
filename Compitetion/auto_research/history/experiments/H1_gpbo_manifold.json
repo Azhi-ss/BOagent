@@ -1,0 +1,2562 @@
+[
+  {
+    "composition": "gpbo_manifold",
+    "dataset": "buchwald_sub4",
+    "seed": 100,
+    "elapsed_s": 0,
+    "metrics": {
+      "best_found": 85.89473594,
+      "initial_round_found_best": 71.55294754,
+      "t95": 8,
+      "AUC_best_so_far": 82.96448852450001
+    },
+    "analysis": {
+      "n_iters": 40,
+      "n_improvements": 3,
+      "improvement_rate": 0.075,
+      "llm_action_count": 0,
+      "llm_action_types": [],
+      "acq_switches": 0,
+      "final_best": 85.89473594
+    },
+    "final_kernel": "SE*RQ",
+    "kernel_history": [
+      [
+        1,
+        "M5+LIN",
+        -291.69627396559343
+      ],
+      [
+        6,
+        "M5+LIN",
+        -366.25221265432975
+      ],
+      [
+        11,
+        "RQ",
+        -466.27850673071396
+      ],
+      [
+        16,
+        "M5+LIN",
+        -538.4038811068654
+      ],
+      [
+        21,
+        "M3",
+        -549.1871031417854
+      ],
+      [
+        26,
+        "RQ",
+        -439.60969296157685
+      ],
+      [
+        31,
+        "M1",
+        -358.416721902618
+      ],
+      [
+        36,
+        "SE*RQ",
+        -294.89933883304667
+      ]
+    ]
+  },
+  {
+    "composition": "gpbo_manifold",
+    "dataset": "buchwald_sub4",
+    "seed": 200,
+    "elapsed_s": 0,
+    "metrics": {
+      "best_found": 85.89473594,
+      "initial_round_found_best": 71.55294754,
+      "t95": 8,
+      "AUC_best_so_far": 82.96448852450001
+    },
+    "analysis": {
+      "n_iters": 40,
+      "n_improvements": 3,
+      "improvement_rate": 0.075,
+      "llm_action_count": 0,
+      "llm_action_types": [],
+      "acq_switches": 0,
+      "final_best": 85.89473594
+    },
+    "final_kernel": "SE*RQ",
+    "kernel_history": [
+      [
+        1,
+        "M5+LIN",
+        -291.69627396559343
+      ],
+      [
+        6,
+        "M5+LIN",
+        -366.25221265432975
+      ],
+      [
+        11,
+        "RQ",
+        -466.27850673071396
+      ],
+      [
+        16,
+        "M5+LIN",
+        -538.4038811068654
+      ],
+      [
+        21,
+        "M3",
+        -549.1871031417854
+      ],
+      [
+        26,
+        "RQ",
+        -439.60969296157685
+      ],
+      [
+        31,
+        "M1",
+        -358.416721902618
+      ],
+      [
+        36,
+        "SE*RQ",
+        -294.89933883304667
+      ]
+    ]
+  },
+  {
+    "composition": "gpbo_manifold",
+    "dataset": "buchwald_sub4",
+    "seed": 300,
+    "elapsed_s": 0,
+    "metrics": {
+      "best_found": 85.89473594,
+      "initial_round_found_best": 71.55294754,
+      "t95": 8,
+      "AUC_best_so_far": 82.96448852450001
+    },
+    "analysis": {
+      "n_iters": 40,
+      "n_improvements": 3,
+      "improvement_rate": 0.075,
+      "llm_action_count": 0,
+      "llm_action_types": [],
+      "acq_switches": 0,
+      "final_best": 85.89473594
+    },
+    "final_kernel": "SE*RQ",
+    "kernel_history": [
+      [
+        1,
+        "M5+LIN",
+        -291.69627396559343
+      ],
+      [
+        6,
+        "M5+LIN",
+        -366.25221265432975
+      ],
+      [
+        11,
+        "RQ",
+        -466.27850673071396
+      ],
+      [
+        16,
+        "M5+LIN",
+        -538.4038811068654
+      ],
+      [
+        21,
+        "M3",
+        -549.1871031417854
+      ],
+      [
+        26,
+        "RQ",
+        -439.60969296157685
+      ],
+      [
+        31,
+        "M1",
+        -358.416721902618
+      ],
+      [
+        36,
+        "SE*RQ",
+        -294.89933883304667
+      ]
+    ]
+  },
+  {
+    "composition": "gpbo_manifold",
+    "dataset": "buchwald_sub4",
+    "seed": 400,
+    "elapsed_s": 0,
+    "metrics": {
+      "best_found": 85.89473594,
+      "initial_round_found_best": 71.55294754,
+      "t95": 8,
+      "AUC_best_so_far": 82.96448852450001
+    },
+    "analysis": {
+      "n_iters": 40,
+      "n_improvements": 3,
+      "improvement_rate": 0.075,
+      "llm_action_count": 0,
+      "llm_action_types": [],
+      "acq_switches": 0,
+      "final_best": 85.89473594
+    },
+    "final_kernel": "SE*RQ",
+    "kernel_history": [
+      [
+        1,
+        "M5+LIN",
+        -291.69627396559343
+      ],
+      [
+        6,
+        "M5+LIN",
+        -366.25221265432975
+      ],
+      [
+        11,
+        "RQ",
+        -466.27850673071396
+      ],
+      [
+        16,
+        "M5+LIN",
+        -538.4038811068654
+      ],
+      [
+        21,
+        "M3",
+        -549.1871031417854
+      ],
+      [
+        26,
+        "RQ",
+        -439.60969296157685
+      ],
+      [
+        31,
+        "M1",
+        -358.416721902618
+      ],
+      [
+        36,
+        "SE*RQ",
+        -294.89933883304667
+      ]
+    ]
+  },
+  {
+    "composition": "gpbo_manifold",
+    "dataset": "buchwald_sub4",
+    "seed": 500,
+    "elapsed_s": 0,
+    "metrics": {
+      "best_found": 85.89473594,
+      "initial_round_found_best": 71.55294754,
+      "t95": 8,
+      "AUC_best_so_far": 82.96448852450001
+    },
+    "analysis": {
+      "n_iters": 40,
+      "n_improvements": 3,
+      "improvement_rate": 0.075,
+      "llm_action_count": 0,
+      "llm_action_types": [],
+      "acq_switches": 0,
+      "final_best": 85.89473594
+    },
+    "final_kernel": "SE*RQ",
+    "kernel_history": [
+      [
+        1,
+        "M5+LIN",
+        -291.69627396559343
+      ],
+      [
+        6,
+        "M5+LIN",
+        -366.25221265432975
+      ],
+      [
+        11,
+        "RQ",
+        -466.27850673071396
+      ],
+      [
+        16,
+        "M5+LIN",
+        -538.4038811068654
+      ],
+      [
+        21,
+        "M3",
+        -549.1871031417854
+      ],
+      [
+        26,
+        "RQ",
+        -439.60969296157685
+      ],
+      [
+        31,
+        "M1",
+        -358.416721902618
+      ],
+      [
+        36,
+        "SE*RQ",
+        -294.89933883304667
+      ]
+    ]
+  },
+  {
+    "composition": "gpbo_manifold",
+    "dataset": "buchwald_sub4",
+    "seed": 600,
+    "elapsed_s": 0,
+    "metrics": {
+      "best_found": 85.89473594,
+      "initial_round_found_best": 71.55294754,
+      "t95": 8,
+      "AUC_best_so_far": 82.96448852450001
+    },
+    "analysis": {
+      "n_iters": 40,
+      "n_improvements": 3,
+      "improvement_rate": 0.075,
+      "llm_action_count": 0,
+      "llm_action_types": [],
+      "acq_switches": 0,
+      "final_best": 85.89473594
+    },
+    "final_kernel": "SE*RQ",
+    "kernel_history": [
+      [
+        1,
+        "M5+LIN",
+        -291.69627396559343
+      ],
+      [
+        6,
+        "M5+LIN",
+        -366.25221265432975
+      ],
+      [
+        11,
+        "RQ",
+        -466.27850673071396
+      ],
+      [
+        16,
+        "M5+LIN",
+        -538.4038811068654
+      ],
+      [
+        21,
+        "M3",
+        -549.1871031417854
+      ],
+      [
+        26,
+        "RQ",
+        -439.60969296157685
+      ],
+      [
+        31,
+        "M1",
+        -358.416721902618
+      ],
+      [
+        36,
+        "SE*RQ",
+        -294.89933883304667
+      ]
+    ]
+  },
+  {
+    "composition": "gpbo_manifold",
+    "dataset": "buchwald_sub4",
+    "seed": 700,
+    "elapsed_s": 0,
+    "metrics": {
+      "best_found": 85.89473594,
+      "initial_round_found_best": 71.55294754,
+      "t95": 8,
+      "AUC_best_so_far": 82.96448852450001
+    },
+    "analysis": {
+      "n_iters": 40,
+      "n_improvements": 3,
+      "improvement_rate": 0.075,
+      "llm_action_count": 0,
+      "llm_action_types": [],
+      "acq_switches": 0,
+      "final_best": 85.89473594
+    },
+    "final_kernel": "SE*RQ",
+    "kernel_history": [
+      [
+        1,
+        "M5+LIN",
+        -291.69627396559343
+      ],
+      [
+        6,
+        "M5+LIN",
+        -366.25221265432975
+      ],
+      [
+        11,
+        "RQ",
+        -466.27850673071396
+      ],
+      [
+        16,
+        "M5+LIN",
+        -538.4038811068654
+      ],
+      [
+        21,
+        "M3",
+        -549.1871031417854
+      ],
+      [
+        26,
+        "RQ",
+        -439.60969296157685
+      ],
+      [
+        31,
+        "M1",
+        -358.416721902618
+      ],
+      [
+        36,
+        "SE*RQ",
+        -294.89933883304667
+      ]
+    ]
+  },
+  {
+    "composition": "gpbo_manifold",
+    "dataset": "buchwald_sub4",
+    "seed": 800,
+    "elapsed_s": 0,
+    "metrics": {
+      "best_found": 85.89473594,
+      "initial_round_found_best": 71.55294754,
+      "t95": 8,
+      "AUC_best_so_far": 82.96448852450001
+    },
+    "analysis": {
+      "n_iters": 40,
+      "n_improvements": 3,
+      "improvement_rate": 0.075,
+      "llm_action_count": 0,
+      "llm_action_types": [],
+      "acq_switches": 0,
+      "final_best": 85.89473594
+    },
+    "final_kernel": "SE*RQ",
+    "kernel_history": [
+      [
+        1,
+        "M5+LIN",
+        -291.69627396559343
+      ],
+      [
+        6,
+        "M5+LIN",
+        -366.25221265432975
+      ],
+      [
+        11,
+        "RQ",
+        -466.27850673071396
+      ],
+      [
+        16,
+        "M5+LIN",
+        -538.4038811068654
+      ],
+      [
+        21,
+        "M3",
+        -549.1871031417854
+      ],
+      [
+        26,
+        "RQ",
+        -439.60969296157685
+      ],
+      [
+        31,
+        "M1",
+        -358.416721902618
+      ],
+      [
+        36,
+        "SE*RQ",
+        -294.89933883304667
+      ]
+    ]
+  },
+  {
+    "composition": "gpbo_manifold",
+    "dataset": "buchwald_sub4",
+    "seed": 900,
+    "elapsed_s": 0,
+    "metrics": {
+      "best_found": 85.89473594,
+      "initial_round_found_best": 71.55294754,
+      "t95": 8,
+      "AUC_best_so_far": 82.96448852450001
+    },
+    "analysis": {
+      "n_iters": 40,
+      "n_improvements": 3,
+      "improvement_rate": 0.075,
+      "llm_action_count": 0,
+      "llm_action_types": [],
+      "acq_switches": 0,
+      "final_best": 85.89473594
+    },
+    "final_kernel": "SE*RQ",
+    "kernel_history": [
+      [
+        1,
+        "M5+LIN",
+        -291.69627396559343
+      ],
+      [
+        6,
+        "M5+LIN",
+        -366.25221265432975
+      ],
+      [
+        11,
+        "RQ",
+        -466.27850673071396
+      ],
+      [
+        16,
+        "M5+LIN",
+        -538.4038811068654
+      ],
+      [
+        21,
+        "M3",
+        -549.1871031417854
+      ],
+      [
+        26,
+        "RQ",
+        -439.60969296157685
+      ],
+      [
+        31,
+        "M1",
+        -358.416721902618
+      ],
+      [
+        36,
+        "SE*RQ",
+        -294.89933883304667
+      ]
+    ]
+  },
+  {
+    "composition": "gpbo_manifold",
+    "dataset": "buchwald_sub4",
+    "seed": 1000,
+    "elapsed_s": 0,
+    "metrics": {
+      "best_found": 85.89473594,
+      "initial_round_found_best": 71.55294754,
+      "t95": 8,
+      "AUC_best_so_far": 82.96448852450001
+    },
+    "analysis": {
+      "n_iters": 40,
+      "n_improvements": 3,
+      "improvement_rate": 0.075,
+      "llm_action_count": 0,
+      "llm_action_types": [],
+      "acq_switches": 0,
+      "final_best": 85.89473594
+    },
+    "final_kernel": "SE*RQ",
+    "kernel_history": [
+      [
+        1,
+        "M5+LIN",
+        -291.69627396559343
+      ],
+      [
+        6,
+        "M5+LIN",
+        -366.25221265432975
+      ],
+      [
+        11,
+        "RQ",
+        -466.27850673071396
+      ],
+      [
+        16,
+        "M5+LIN",
+        -538.4038811068654
+      ],
+      [
+        21,
+        "M3",
+        -549.1871031417854
+      ],
+      [
+        26,
+        "RQ",
+        -439.60969296157685
+      ],
+      [
+        31,
+        "M1",
+        -358.416721902618
+      ],
+      [
+        36,
+        "SE*RQ",
+        -294.89933883304667
+      ]
+    ]
+  },
+  {
+    "composition": "gpbo_manifold",
+    "dataset": "buchwald_sub4",
+    "seed": 1100,
+    "elapsed_s": 0,
+    "metrics": {
+      "best_found": 85.89473594,
+      "initial_round_found_best": 71.55294754,
+      "t95": 8,
+      "AUC_best_so_far": 82.96448852450001
+    },
+    "analysis": {
+      "n_iters": 40,
+      "n_improvements": 3,
+      "improvement_rate": 0.075,
+      "llm_action_count": 0,
+      "llm_action_types": [],
+      "acq_switches": 0,
+      "final_best": 85.89473594
+    },
+    "final_kernel": "SE*RQ",
+    "kernel_history": [
+      [
+        1,
+        "M5+LIN",
+        -291.69627396559343
+      ],
+      [
+        6,
+        "M5+LIN",
+        -366.25221265432975
+      ],
+      [
+        11,
+        "RQ",
+        -466.27850673071396
+      ],
+      [
+        16,
+        "M5+LIN",
+        -538.4038811068654
+      ],
+      [
+        21,
+        "M3",
+        -549.1871031417854
+      ],
+      [
+        26,
+        "RQ",
+        -439.60969296157685
+      ],
+      [
+        31,
+        "M1",
+        -358.416721902618
+      ],
+      [
+        36,
+        "SE*RQ",
+        -294.89933883304667
+      ]
+    ]
+  },
+  {
+    "composition": "gpbo_manifold",
+    "dataset": "buchwald_sub4",
+    "seed": 1200,
+    "elapsed_s": 0,
+    "metrics": {
+      "best_found": 85.89473594,
+      "initial_round_found_best": 71.55294754,
+      "t95": 8,
+      "AUC_best_so_far": 82.96448852450001
+    },
+    "analysis": {
+      "n_iters": 40,
+      "n_improvements": 3,
+      "improvement_rate": 0.075,
+      "llm_action_count": 0,
+      "llm_action_types": [],
+      "acq_switches": 0,
+      "final_best": 85.89473594
+    },
+    "final_kernel": "SE*RQ",
+    "kernel_history": [
+      [
+        1,
+        "M5+LIN",
+        -291.69627396559343
+      ],
+      [
+        6,
+        "M5+LIN",
+        -366.25221265432975
+      ],
+      [
+        11,
+        "RQ",
+        -466.27850673071396
+      ],
+      [
+        16,
+        "M5+LIN",
+        -538.4038811068654
+      ],
+      [
+        21,
+        "M3",
+        -549.1871031417854
+      ],
+      [
+        26,
+        "RQ",
+        -439.60969296157685
+      ],
+      [
+        31,
+        "M1",
+        -358.416721902618
+      ],
+      [
+        36,
+        "SE*RQ",
+        -294.89933883304667
+      ]
+    ]
+  },
+  {
+    "composition": "gpbo_manifold",
+    "dataset": "buchwald_sub4",
+    "seed": 1300,
+    "elapsed_s": 0,
+    "metrics": {
+      "best_found": 85.89473594,
+      "initial_round_found_best": 71.55294754,
+      "t95": 8,
+      "AUC_best_so_far": 82.96448852450001
+    },
+    "analysis": {
+      "n_iters": 40,
+      "n_improvements": 3,
+      "improvement_rate": 0.075,
+      "llm_action_count": 0,
+      "llm_action_types": [],
+      "acq_switches": 0,
+      "final_best": 85.89473594
+    },
+    "final_kernel": "SE*RQ",
+    "kernel_history": [
+      [
+        1,
+        "M5+LIN",
+        -291.69627396559343
+      ],
+      [
+        6,
+        "M5+LIN",
+        -366.25221265432975
+      ],
+      [
+        11,
+        "RQ",
+        -466.27850673071396
+      ],
+      [
+        16,
+        "M5+LIN",
+        -538.4038811068654
+      ],
+      [
+        21,
+        "M3",
+        -549.1871031417854
+      ],
+      [
+        26,
+        "RQ",
+        -439.60969296157685
+      ],
+      [
+        31,
+        "M1",
+        -358.416721902618
+      ],
+      [
+        36,
+        "SE*RQ",
+        -294.89933883304667
+      ]
+    ]
+  },
+  {
+    "composition": "gpbo_manifold",
+    "dataset": "buchwald_sub4",
+    "seed": 1400,
+    "elapsed_s": 0,
+    "metrics": {
+      "best_found": 85.89473594,
+      "initial_round_found_best": 71.55294754,
+      "t95": 8,
+      "AUC_best_so_far": 82.96448852450001
+    },
+    "analysis": {
+      "n_iters": 40,
+      "n_improvements": 3,
+      "improvement_rate": 0.075,
+      "llm_action_count": 0,
+      "llm_action_types": [],
+      "acq_switches": 0,
+      "final_best": 85.89473594
+    },
+    "final_kernel": "SE*RQ",
+    "kernel_history": [
+      [
+        1,
+        "M5+LIN",
+        -291.69627396559343
+      ],
+      [
+        6,
+        "M5+LIN",
+        -366.25221265432975
+      ],
+      [
+        11,
+        "RQ",
+        -466.27850673071396
+      ],
+      [
+        16,
+        "M5+LIN",
+        -538.4038811068654
+      ],
+      [
+        21,
+        "M3",
+        -549.1871031417854
+      ],
+      [
+        26,
+        "RQ",
+        -439.60969296157685
+      ],
+      [
+        31,
+        "M1",
+        -358.416721902618
+      ],
+      [
+        36,
+        "SE*RQ",
+        -294.89933883304667
+      ]
+    ]
+  },
+  {
+    "composition": "gpbo_manifold",
+    "dataset": "buchwald_sub4",
+    "seed": 1500,
+    "elapsed_s": 0,
+    "metrics": {
+      "best_found": 85.89473594,
+      "initial_round_found_best": 71.55294754,
+      "t95": 8,
+      "AUC_best_so_far": 82.96448852450001
+    },
+    "analysis": {
+      "n_iters": 40,
+      "n_improvements": 3,
+      "improvement_rate": 0.075,
+      "llm_action_count": 0,
+      "llm_action_types": [],
+      "acq_switches": 0,
+      "final_best": 85.89473594
+    },
+    "final_kernel": "SE*RQ",
+    "kernel_history": [
+      [
+        1,
+        "M5+LIN",
+        -291.69627396559343
+      ],
+      [
+        6,
+        "M5+LIN",
+        -366.25221265432975
+      ],
+      [
+        11,
+        "RQ",
+        -466.27850673071396
+      ],
+      [
+        16,
+        "M5+LIN",
+        -538.4038811068654
+      ],
+      [
+        21,
+        "M3",
+        -549.1871031417854
+      ],
+      [
+        26,
+        "RQ",
+        -439.60969296157685
+      ],
+      [
+        31,
+        "M1",
+        -358.416721902618
+      ],
+      [
+        36,
+        "SE*RQ",
+        -294.89933883304667
+      ]
+    ]
+  },
+  {
+    "composition": "gpbo_manifold",
+    "dataset": "buchwald_sub4",
+    "seed": 1600,
+    "elapsed_s": 0,
+    "metrics": {
+      "best_found": 85.89473594,
+      "initial_round_found_best": 71.55294754,
+      "t95": 8,
+      "AUC_best_so_far": 82.96448852450001
+    },
+    "analysis": {
+      "n_iters": 40,
+      "n_improvements": 3,
+      "improvement_rate": 0.075,
+      "llm_action_count": 0,
+      "llm_action_types": [],
+      "acq_switches": 0,
+      "final_best": 85.89473594
+    },
+    "final_kernel": "SE*RQ",
+    "kernel_history": [
+      [
+        1,
+        "M5+LIN",
+        -291.69627396559343
+      ],
+      [
+        6,
+        "M5+LIN",
+        -366.25221265432975
+      ],
+      [
+        11,
+        "RQ",
+        -466.27850673071396
+      ],
+      [
+        16,
+        "M5+LIN",
+        -538.4038811068654
+      ],
+      [
+        21,
+        "M3",
+        -549.1871031417854
+      ],
+      [
+        26,
+        "RQ",
+        -439.60969296157685
+      ],
+      [
+        31,
+        "M1",
+        -358.416721902618
+      ],
+      [
+        36,
+        "SE*RQ",
+        -294.89933883304667
+      ]
+    ]
+  },
+  {
+    "composition": "gpbo_manifold",
+    "dataset": "buchwald_sub4",
+    "seed": 1700,
+    "elapsed_s": 0,
+    "metrics": {
+      "best_found": 85.89473594,
+      "initial_round_found_best": 71.55294754,
+      "t95": 8,
+      "AUC_best_so_far": 82.96448852450001
+    },
+    "analysis": {
+      "n_iters": 40,
+      "n_improvements": 3,
+      "improvement_rate": 0.075,
+      "llm_action_count": 0,
+      "llm_action_types": [],
+      "acq_switches": 0,
+      "final_best": 85.89473594
+    },
+    "final_kernel": "SE*RQ",
+    "kernel_history": [
+      [
+        1,
+        "M5+LIN",
+        -291.69627396559343
+      ],
+      [
+        6,
+        "M5+LIN",
+        -366.25221265432975
+      ],
+      [
+        11,
+        "RQ",
+        -466.27850673071396
+      ],
+      [
+        16,
+        "M5+LIN",
+        -538.4038811068654
+      ],
+      [
+        21,
+        "M3",
+        -549.1871031417854
+      ],
+      [
+        26,
+        "RQ",
+        -439.60969296157685
+      ],
+      [
+        31,
+        "M1",
+        -358.416721902618
+      ],
+      [
+        36,
+        "SE*RQ",
+        -294.89933883304667
+      ]
+    ]
+  },
+  {
+    "composition": "gpbo_manifold",
+    "dataset": "buchwald_sub4",
+    "seed": 1800,
+    "elapsed_s": 0,
+    "metrics": {
+      "best_found": 85.89473594,
+      "initial_round_found_best": 71.55294754,
+      "t95": 8,
+      "AUC_best_so_far": 82.96448852450001
+    },
+    "analysis": {
+      "n_iters": 40,
+      "n_improvements": 3,
+      "improvement_rate": 0.075,
+      "llm_action_count": 0,
+      "llm_action_types": [],
+      "acq_switches": 0,
+      "final_best": 85.89473594
+    },
+    "final_kernel": "SE*RQ",
+    "kernel_history": [
+      [
+        1,
+        "M5+LIN",
+        -291.69627396559343
+      ],
+      [
+        6,
+        "M5+LIN",
+        -366.25221265432975
+      ],
+      [
+        11,
+        "RQ",
+        -466.27850673071396
+      ],
+      [
+        16,
+        "M5+LIN",
+        -538.4038811068654
+      ],
+      [
+        21,
+        "M3",
+        -549.1871031417854
+      ],
+      [
+        26,
+        "RQ",
+        -439.60969296157685
+      ],
+      [
+        31,
+        "M1",
+        -358.416721902618
+      ],
+      [
+        36,
+        "SE*RQ",
+        -294.89933883304667
+      ]
+    ]
+  },
+  {
+    "composition": "gpbo_manifold",
+    "dataset": "buchwald_sub4",
+    "seed": 1900,
+    "elapsed_s": 0,
+    "metrics": {
+      "best_found": 85.89473594,
+      "initial_round_found_best": 71.55294754,
+      "t95": 8,
+      "AUC_best_so_far": 82.96448852450001
+    },
+    "analysis": {
+      "n_iters": 40,
+      "n_improvements": 3,
+      "improvement_rate": 0.075,
+      "llm_action_count": 0,
+      "llm_action_types": [],
+      "acq_switches": 0,
+      "final_best": 85.89473594
+    },
+    "final_kernel": "SE*RQ",
+    "kernel_history": [
+      [
+        1,
+        "M5+LIN",
+        -291.69627396559343
+      ],
+      [
+        6,
+        "M5+LIN",
+        -366.25221265432975
+      ],
+      [
+        11,
+        "RQ",
+        -466.27850673071396
+      ],
+      [
+        16,
+        "M5+LIN",
+        -538.4038811068654
+      ],
+      [
+        21,
+        "M3",
+        -549.1871031417854
+      ],
+      [
+        26,
+        "RQ",
+        -439.60969296157685
+      ],
+      [
+        31,
+        "M1",
+        -358.416721902618
+      ],
+      [
+        36,
+        "SE*RQ",
+        -294.89933883304667
+      ]
+    ]
+  },
+  {
+    "composition": "gpbo_manifold",
+    "dataset": "buchwald_sub4",
+    "seed": 2000,
+    "elapsed_s": 0,
+    "metrics": {
+      "best_found": 85.89473594,
+      "initial_round_found_best": 71.55294754,
+      "t95": 8,
+      "AUC_best_so_far": 82.96448852450001
+    },
+    "analysis": {
+      "n_iters": 40,
+      "n_improvements": 3,
+      "improvement_rate": 0.075,
+      "llm_action_count": 0,
+      "llm_action_types": [],
+      "acq_switches": 0,
+      "final_best": 85.89473594
+    },
+    "final_kernel": "SE*RQ",
+    "kernel_history": [
+      [
+        1,
+        "M5+LIN",
+        -291.69627396559343
+      ],
+      [
+        6,
+        "M5+LIN",
+        -366.25221265432975
+      ],
+      [
+        11,
+        "RQ",
+        -466.27850673071396
+      ],
+      [
+        16,
+        "M5+LIN",
+        -538.4038811068654
+      ],
+      [
+        21,
+        "M3",
+        -549.1871031417854
+      ],
+      [
+        26,
+        "RQ",
+        -439.60969296157685
+      ],
+      [
+        31,
+        "M1",
+        -358.416721902618
+      ],
+      [
+        36,
+        "SE*RQ",
+        -294.89933883304667
+      ]
+    ]
+  },
+  {
+    "composition": "gpbo_manifold",
+    "dataset": "suzuki",
+    "seed": 100,
+    "elapsed_s": 0,
+    "metrics": {
+      "best_found": 96.74,
+      "initial_round_found_best": 38.71,
+      "t95": 4,
+      "AUC_best_so_far": 94.84425
+    },
+    "analysis": {
+      "n_iters": 40,
+      "n_improvements": 2,
+      "improvement_rate": 0.05,
+      "llm_action_count": 0,
+      "llm_action_types": [],
+      "acq_switches": 0,
+      "final_best": 96.74
+    },
+    "final_kernel": "RQ",
+    "kernel_history": [
+      [
+        1,
+        "RQ",
+        -356.197938034221
+      ],
+      [
+        6,
+        "RQ",
+        -561.4934256090028
+      ],
+      [
+        11,
+        "RQ",
+        -480.3744534039395
+      ],
+      [
+        16,
+        "RQ",
+        -496.22166079372784
+      ],
+      [
+        21,
+        "M1",
+        -606.9770715354268
+      ],
+      [
+        26,
+        "M1",
+        -401.81817462965256
+      ],
+      [
+        31,
+        "RQ",
+        -497.73565277786713
+      ],
+      [
+        36,
+        "RQ",
+        -464.9050880692938
+      ]
+    ]
+  },
+  {
+    "composition": "gpbo_manifold",
+    "dataset": "suzuki",
+    "seed": 200,
+    "elapsed_s": 0,
+    "metrics": {
+      "best_found": 96.74,
+      "initial_round_found_best": 38.71,
+      "t95": 4,
+      "AUC_best_so_far": 94.84425
+    },
+    "analysis": {
+      "n_iters": 40,
+      "n_improvements": 2,
+      "improvement_rate": 0.05,
+      "llm_action_count": 0,
+      "llm_action_types": [],
+      "acq_switches": 0,
+      "final_best": 96.74
+    },
+    "final_kernel": "RQ",
+    "kernel_history": [
+      [
+        1,
+        "RQ",
+        -356.197938034221
+      ],
+      [
+        6,
+        "RQ",
+        -561.4934256090028
+      ],
+      [
+        11,
+        "RQ",
+        -480.3744534039395
+      ],
+      [
+        16,
+        "RQ",
+        -496.22166079372784
+      ],
+      [
+        21,
+        "M1",
+        -606.9770715354268
+      ],
+      [
+        26,
+        "M1",
+        -401.81817462965256
+      ],
+      [
+        31,
+        "RQ",
+        -497.73565277786713
+      ],
+      [
+        36,
+        "RQ",
+        -464.9050880692938
+      ]
+    ]
+  },
+  {
+    "composition": "gpbo_manifold",
+    "dataset": "suzuki",
+    "seed": 300,
+    "elapsed_s": 0,
+    "metrics": {
+      "best_found": 96.74,
+      "initial_round_found_best": 38.71,
+      "t95": 4,
+      "AUC_best_so_far": 94.84425
+    },
+    "analysis": {
+      "n_iters": 40,
+      "n_improvements": 2,
+      "improvement_rate": 0.05,
+      "llm_action_count": 0,
+      "llm_action_types": [],
+      "acq_switches": 0,
+      "final_best": 96.74
+    },
+    "final_kernel": "RQ",
+    "kernel_history": [
+      [
+        1,
+        "RQ",
+        -356.197938034221
+      ],
+      [
+        6,
+        "RQ",
+        -561.4934256090028
+      ],
+      [
+        11,
+        "RQ",
+        -480.3744534039395
+      ],
+      [
+        16,
+        "RQ",
+        -496.22166079372784
+      ],
+      [
+        21,
+        "M1",
+        -606.9770715354268
+      ],
+      [
+        26,
+        "M1",
+        -401.81817462965256
+      ],
+      [
+        31,
+        "RQ",
+        -497.73565277786713
+      ],
+      [
+        36,
+        "RQ",
+        -464.9050880692938
+      ]
+    ]
+  },
+  {
+    "composition": "gpbo_manifold",
+    "dataset": "suzuki",
+    "seed": 400,
+    "elapsed_s": 0,
+    "metrics": {
+      "best_found": 96.74,
+      "initial_round_found_best": 38.71,
+      "t95": 4,
+      "AUC_best_so_far": 94.84425
+    },
+    "analysis": {
+      "n_iters": 40,
+      "n_improvements": 2,
+      "improvement_rate": 0.05,
+      "llm_action_count": 0,
+      "llm_action_types": [],
+      "acq_switches": 0,
+      "final_best": 96.74
+    },
+    "final_kernel": "RQ",
+    "kernel_history": [
+      [
+        1,
+        "RQ",
+        -356.197938034221
+      ],
+      [
+        6,
+        "RQ",
+        -561.4934256090028
+      ],
+      [
+        11,
+        "RQ",
+        -480.3744534039395
+      ],
+      [
+        16,
+        "RQ",
+        -496.22166079372784
+      ],
+      [
+        21,
+        "M1",
+        -606.9770715354268
+      ],
+      [
+        26,
+        "M1",
+        -401.81817462965256
+      ],
+      [
+        31,
+        "RQ",
+        -497.73565277786713
+      ],
+      [
+        36,
+        "RQ",
+        -464.9050880692938
+      ]
+    ]
+  },
+  {
+    "composition": "gpbo_manifold",
+    "dataset": "suzuki",
+    "seed": 500,
+    "elapsed_s": 0,
+    "metrics": {
+      "best_found": 96.74,
+      "initial_round_found_best": 38.71,
+      "t95": 4,
+      "AUC_best_so_far": 94.84425
+    },
+    "analysis": {
+      "n_iters": 40,
+      "n_improvements": 2,
+      "improvement_rate": 0.05,
+      "llm_action_count": 0,
+      "llm_action_types": [],
+      "acq_switches": 0,
+      "final_best": 96.74
+    },
+    "final_kernel": "RQ",
+    "kernel_history": [
+      [
+        1,
+        "RQ",
+        -356.197938034221
+      ],
+      [
+        6,
+        "RQ",
+        -561.4934256090028
+      ],
+      [
+        11,
+        "RQ",
+        -480.3744534039395
+      ],
+      [
+        16,
+        "RQ",
+        -496.22166079372784
+      ],
+      [
+        21,
+        "M1",
+        -606.9770715354268
+      ],
+      [
+        26,
+        "M1",
+        -401.81817462965256
+      ],
+      [
+        31,
+        "RQ",
+        -497.73565277786713
+      ],
+      [
+        36,
+        "RQ",
+        -464.9050880692938
+      ]
+    ]
+  },
+  {
+    "composition": "gpbo_manifold",
+    "dataset": "suzuki",
+    "seed": 600,
+    "elapsed_s": 0,
+    "metrics": {
+      "best_found": 96.74,
+      "initial_round_found_best": 38.71,
+      "t95": 4,
+      "AUC_best_so_far": 94.84425
+    },
+    "analysis": {
+      "n_iters": 40,
+      "n_improvements": 2,
+      "improvement_rate": 0.05,
+      "llm_action_count": 0,
+      "llm_action_types": [],
+      "acq_switches": 0,
+      "final_best": 96.74
+    },
+    "final_kernel": "RQ",
+    "kernel_history": [
+      [
+        1,
+        "RQ",
+        -356.197938034221
+      ],
+      [
+        6,
+        "RQ",
+        -561.4934256090028
+      ],
+      [
+        11,
+        "RQ",
+        -480.3744534039395
+      ],
+      [
+        16,
+        "RQ",
+        -496.22166079372784
+      ],
+      [
+        21,
+        "M1",
+        -606.9770715354268
+      ],
+      [
+        26,
+        "M1",
+        -401.81817462965256
+      ],
+      [
+        31,
+        "RQ",
+        -497.73565277786713
+      ],
+      [
+        36,
+        "RQ",
+        -464.9050880692938
+      ]
+    ]
+  },
+  {
+    "composition": "gpbo_manifold",
+    "dataset": "suzuki",
+    "seed": 700,
+    "elapsed_s": 0,
+    "metrics": {
+      "best_found": 96.74,
+      "initial_round_found_best": 38.71,
+      "t95": 4,
+      "AUC_best_so_far": 94.84425
+    },
+    "analysis": {
+      "n_iters": 40,
+      "n_improvements": 2,
+      "improvement_rate": 0.05,
+      "llm_action_count": 0,
+      "llm_action_types": [],
+      "acq_switches": 0,
+      "final_best": 96.74
+    },
+    "final_kernel": "RQ",
+    "kernel_history": [
+      [
+        1,
+        "RQ",
+        -356.197938034221
+      ],
+      [
+        6,
+        "RQ",
+        -561.4934256090028
+      ],
+      [
+        11,
+        "RQ",
+        -480.3744534039395
+      ],
+      [
+        16,
+        "RQ",
+        -496.22166079372784
+      ],
+      [
+        21,
+        "M1",
+        -606.9770715354268
+      ],
+      [
+        26,
+        "M1",
+        -401.81817462965256
+      ],
+      [
+        31,
+        "RQ",
+        -497.73565277786713
+      ],
+      [
+        36,
+        "RQ",
+        -464.9050880692938
+      ]
+    ]
+  },
+  {
+    "composition": "gpbo_manifold",
+    "dataset": "suzuki",
+    "seed": 800,
+    "elapsed_s": 0,
+    "metrics": {
+      "best_found": 96.74,
+      "initial_round_found_best": 38.71,
+      "t95": 4,
+      "AUC_best_so_far": 94.84425
+    },
+    "analysis": {
+      "n_iters": 40,
+      "n_improvements": 2,
+      "improvement_rate": 0.05,
+      "llm_action_count": 0,
+      "llm_action_types": [],
+      "acq_switches": 0,
+      "final_best": 96.74
+    },
+    "final_kernel": "RQ",
+    "kernel_history": [
+      [
+        1,
+        "RQ",
+        -356.197938034221
+      ],
+      [
+        6,
+        "RQ",
+        -561.4934256090028
+      ],
+      [
+        11,
+        "RQ",
+        -480.3744534039395
+      ],
+      [
+        16,
+        "RQ",
+        -496.22166079372784
+      ],
+      [
+        21,
+        "M1",
+        -606.9770715354268
+      ],
+      [
+        26,
+        "M1",
+        -401.81817462965256
+      ],
+      [
+        31,
+        "RQ",
+        -497.73565277786713
+      ],
+      [
+        36,
+        "RQ",
+        -464.9050880692938
+      ]
+    ]
+  },
+  {
+    "composition": "gpbo_manifold",
+    "dataset": "suzuki",
+    "seed": 900,
+    "elapsed_s": 0,
+    "metrics": {
+      "best_found": 96.74,
+      "initial_round_found_best": 38.71,
+      "t95": 4,
+      "AUC_best_so_far": 94.84425
+    },
+    "analysis": {
+      "n_iters": 40,
+      "n_improvements": 2,
+      "improvement_rate": 0.05,
+      "llm_action_count": 0,
+      "llm_action_types": [],
+      "acq_switches": 0,
+      "final_best": 96.74
+    },
+    "final_kernel": "RQ",
+    "kernel_history": [
+      [
+        1,
+        "RQ",
+        -356.197938034221
+      ],
+      [
+        6,
+        "RQ",
+        -561.4934256090028
+      ],
+      [
+        11,
+        "RQ",
+        -480.3744534039395
+      ],
+      [
+        16,
+        "RQ",
+        -496.22166079372784
+      ],
+      [
+        21,
+        "M1",
+        -606.9770715354268
+      ],
+      [
+        26,
+        "M1",
+        -401.81817462965256
+      ],
+      [
+        31,
+        "RQ",
+        -497.73565277786713
+      ],
+      [
+        36,
+        "RQ",
+        -464.9050880692938
+      ]
+    ]
+  },
+  {
+    "composition": "gpbo_manifold",
+    "dataset": "suzuki",
+    "seed": 1000,
+    "elapsed_s": 0,
+    "metrics": {
+      "best_found": 96.74,
+      "initial_round_found_best": 38.71,
+      "t95": 4,
+      "AUC_best_so_far": 94.84425
+    },
+    "analysis": {
+      "n_iters": 40,
+      "n_improvements": 2,
+      "improvement_rate": 0.05,
+      "llm_action_count": 0,
+      "llm_action_types": [],
+      "acq_switches": 0,
+      "final_best": 96.74
+    },
+    "final_kernel": "RQ",
+    "kernel_history": [
+      [
+        1,
+        "RQ",
+        -356.197938034221
+      ],
+      [
+        6,
+        "RQ",
+        -561.4934256090028
+      ],
+      [
+        11,
+        "RQ",
+        -480.3744534039395
+      ],
+      [
+        16,
+        "RQ",
+        -496.22166079372784
+      ],
+      [
+        21,
+        "M1",
+        -606.9770715354268
+      ],
+      [
+        26,
+        "M1",
+        -401.81817462965256
+      ],
+      [
+        31,
+        "RQ",
+        -497.73565277786713
+      ],
+      [
+        36,
+        "RQ",
+        -464.9050880692938
+      ]
+    ]
+  },
+  {
+    "composition": "gpbo_manifold",
+    "dataset": "suzuki",
+    "seed": 1100,
+    "elapsed_s": 0,
+    "metrics": {
+      "best_found": 96.74,
+      "initial_round_found_best": 38.71,
+      "t95": 4,
+      "AUC_best_so_far": 94.84425
+    },
+    "analysis": {
+      "n_iters": 40,
+      "n_improvements": 2,
+      "improvement_rate": 0.05,
+      "llm_action_count": 0,
+      "llm_action_types": [],
+      "acq_switches": 0,
+      "final_best": 96.74
+    },
+    "final_kernel": "RQ",
+    "kernel_history": [
+      [
+        1,
+        "RQ",
+        -356.197938034221
+      ],
+      [
+        6,
+        "RQ",
+        -561.4934256090028
+      ],
+      [
+        11,
+        "RQ",
+        -480.3744534039395
+      ],
+      [
+        16,
+        "RQ",
+        -496.22166079372784
+      ],
+      [
+        21,
+        "M1",
+        -606.9770715354268
+      ],
+      [
+        26,
+        "M1",
+        -401.81817462965256
+      ],
+      [
+        31,
+        "RQ",
+        -497.73565277786713
+      ],
+      [
+        36,
+        "RQ",
+        -464.9050880692938
+      ]
+    ]
+  },
+  {
+    "composition": "gpbo_manifold",
+    "dataset": "suzuki",
+    "seed": 1200,
+    "elapsed_s": 0,
+    "metrics": {
+      "best_found": 96.74,
+      "initial_round_found_best": 38.71,
+      "t95": 4,
+      "AUC_best_so_far": 94.84425
+    },
+    "analysis": {
+      "n_iters": 40,
+      "n_improvements": 2,
+      "improvement_rate": 0.05,
+      "llm_action_count": 0,
+      "llm_action_types": [],
+      "acq_switches": 0,
+      "final_best": 96.74
+    },
+    "final_kernel": "RQ",
+    "kernel_history": [
+      [
+        1,
+        "RQ",
+        -356.197938034221
+      ],
+      [
+        6,
+        "RQ",
+        -561.4934256090028
+      ],
+      [
+        11,
+        "RQ",
+        -480.3744534039395
+      ],
+      [
+        16,
+        "RQ",
+        -496.22166079372784
+      ],
+      [
+        21,
+        "M1",
+        -606.9770715354268
+      ],
+      [
+        26,
+        "M1",
+        -401.81817462965256
+      ],
+      [
+        31,
+        "RQ",
+        -497.73565277786713
+      ],
+      [
+        36,
+        "RQ",
+        -464.9050880692938
+      ]
+    ]
+  },
+  {
+    "composition": "gpbo_manifold",
+    "dataset": "suzuki",
+    "seed": 1300,
+    "elapsed_s": 0,
+    "metrics": {
+      "best_found": 96.74,
+      "initial_round_found_best": 38.71,
+      "t95": 4,
+      "AUC_best_so_far": 94.84425
+    },
+    "analysis": {
+      "n_iters": 40,
+      "n_improvements": 2,
+      "improvement_rate": 0.05,
+      "llm_action_count": 0,
+      "llm_action_types": [],
+      "acq_switches": 0,
+      "final_best": 96.74
+    },
+    "final_kernel": "RQ",
+    "kernel_history": [
+      [
+        1,
+        "RQ",
+        -356.197938034221
+      ],
+      [
+        6,
+        "RQ",
+        -561.4934256090028
+      ],
+      [
+        11,
+        "RQ",
+        -480.3744534039395
+      ],
+      [
+        16,
+        "RQ",
+        -496.22166079372784
+      ],
+      [
+        21,
+        "M1",
+        -606.9770715354268
+      ],
+      [
+        26,
+        "M1",
+        -401.81817462965256
+      ],
+      [
+        31,
+        "RQ",
+        -497.73565277786713
+      ],
+      [
+        36,
+        "RQ",
+        -464.9050880692938
+      ]
+    ]
+  },
+  {
+    "composition": "gpbo_manifold",
+    "dataset": "suzuki",
+    "seed": 1400,
+    "elapsed_s": 0,
+    "metrics": {
+      "best_found": 96.74,
+      "initial_round_found_best": 38.71,
+      "t95": 4,
+      "AUC_best_so_far": 94.84425
+    },
+    "analysis": {
+      "n_iters": 40,
+      "n_improvements": 2,
+      "improvement_rate": 0.05,
+      "llm_action_count": 0,
+      "llm_action_types": [],
+      "acq_switches": 0,
+      "final_best": 96.74
+    },
+    "final_kernel": "RQ",
+    "kernel_history": [
+      [
+        1,
+        "RQ",
+        -356.197938034221
+      ],
+      [
+        6,
+        "RQ",
+        -561.4934256090028
+      ],
+      [
+        11,
+        "RQ",
+        -480.3744534039395
+      ],
+      [
+        16,
+        "RQ",
+        -496.22166079372784
+      ],
+      [
+        21,
+        "M1",
+        -606.9770715354268
+      ],
+      [
+        26,
+        "M1",
+        -401.81817462965256
+      ],
+      [
+        31,
+        "RQ",
+        -497.73565277786713
+      ],
+      [
+        36,
+        "RQ",
+        -464.9050880692938
+      ]
+    ]
+  },
+  {
+    "composition": "gpbo_manifold",
+    "dataset": "suzuki",
+    "seed": 1500,
+    "elapsed_s": 0,
+    "metrics": {
+      "best_found": 96.74,
+      "initial_round_found_best": 38.71,
+      "t95": 4,
+      "AUC_best_so_far": 94.84425
+    },
+    "analysis": {
+      "n_iters": 40,
+      "n_improvements": 2,
+      "improvement_rate": 0.05,
+      "llm_action_count": 0,
+      "llm_action_types": [],
+      "acq_switches": 0,
+      "final_best": 96.74
+    },
+    "final_kernel": "RQ",
+    "kernel_history": [
+      [
+        1,
+        "RQ",
+        -356.197938034221
+      ],
+      [
+        6,
+        "RQ",
+        -561.4934256090028
+      ],
+      [
+        11,
+        "RQ",
+        -480.3744534039395
+      ],
+      [
+        16,
+        "RQ",
+        -496.22166079372784
+      ],
+      [
+        21,
+        "M1",
+        -606.9770715354268
+      ],
+      [
+        26,
+        "M1",
+        -401.81817462965256
+      ],
+      [
+        31,
+        "RQ",
+        -497.73565277786713
+      ],
+      [
+        36,
+        "RQ",
+        -464.9050880692938
+      ]
+    ]
+  },
+  {
+    "composition": "gpbo_manifold",
+    "dataset": "suzuki",
+    "seed": 1600,
+    "elapsed_s": 0,
+    "metrics": {
+      "best_found": 96.74,
+      "initial_round_found_best": 38.71,
+      "t95": 4,
+      "AUC_best_so_far": 94.84425
+    },
+    "analysis": {
+      "n_iters": 40,
+      "n_improvements": 2,
+      "improvement_rate": 0.05,
+      "llm_action_count": 0,
+      "llm_action_types": [],
+      "acq_switches": 0,
+      "final_best": 96.74
+    },
+    "final_kernel": "RQ",
+    "kernel_history": [
+      [
+        1,
+        "RQ",
+        -356.197938034221
+      ],
+      [
+        6,
+        "RQ",
+        -561.4934256090028
+      ],
+      [
+        11,
+        "RQ",
+        -480.3744534039395
+      ],
+      [
+        16,
+        "RQ",
+        -496.22166079372784
+      ],
+      [
+        21,
+        "M1",
+        -606.9770715354268
+      ],
+      [
+        26,
+        "M1",
+        -401.81817462965256
+      ],
+      [
+        31,
+        "RQ",
+        -497.73565277786713
+      ],
+      [
+        36,
+        "RQ",
+        -464.9050880692938
+      ]
+    ]
+  },
+  {
+    "composition": "gpbo_manifold",
+    "dataset": "suzuki",
+    "seed": 1700,
+    "elapsed_s": 0,
+    "metrics": {
+      "best_found": 96.74,
+      "initial_round_found_best": 38.71,
+      "t95": 4,
+      "AUC_best_so_far": 94.84425
+    },
+    "analysis": {
+      "n_iters": 40,
+      "n_improvements": 2,
+      "improvement_rate": 0.05,
+      "llm_action_count": 0,
+      "llm_action_types": [],
+      "acq_switches": 0,
+      "final_best": 96.74
+    },
+    "final_kernel": "RQ",
+    "kernel_history": [
+      [
+        1,
+        "RQ",
+        -356.197938034221
+      ],
+      [
+        6,
+        "RQ",
+        -561.4934256090028
+      ],
+      [
+        11,
+        "RQ",
+        -480.3744534039395
+      ],
+      [
+        16,
+        "RQ",
+        -496.22166079372784
+      ],
+      [
+        21,
+        "M1",
+        -606.9770715354268
+      ],
+      [
+        26,
+        "M1",
+        -401.81817462965256
+      ],
+      [
+        31,
+        "RQ",
+        -497.73565277786713
+      ],
+      [
+        36,
+        "RQ",
+        -464.9050880692938
+      ]
+    ]
+  },
+  {
+    "composition": "gpbo_manifold",
+    "dataset": "suzuki",
+    "seed": 1800,
+    "elapsed_s": 0,
+    "metrics": {
+      "best_found": 96.74,
+      "initial_round_found_best": 38.71,
+      "t95": 4,
+      "AUC_best_so_far": 94.84425
+    },
+    "analysis": {
+      "n_iters": 40,
+      "n_improvements": 2,
+      "improvement_rate": 0.05,
+      "llm_action_count": 0,
+      "llm_action_types": [],
+      "acq_switches": 0,
+      "final_best": 96.74
+    },
+    "final_kernel": "RQ",
+    "kernel_history": [
+      [
+        1,
+        "RQ",
+        -356.197938034221
+      ],
+      [
+        6,
+        "RQ",
+        -561.4934256090028
+      ],
+      [
+        11,
+        "RQ",
+        -480.3744534039395
+      ],
+      [
+        16,
+        "RQ",
+        -496.22166079372784
+      ],
+      [
+        21,
+        "M1",
+        -606.9770715354268
+      ],
+      [
+        26,
+        "M1",
+        -401.81817462965256
+      ],
+      [
+        31,
+        "RQ",
+        -497.73565277786713
+      ],
+      [
+        36,
+        "RQ",
+        -464.9050880692938
+      ]
+    ]
+  },
+  {
+    "composition": "gpbo_manifold",
+    "dataset": "suzuki",
+    "seed": 1900,
+    "elapsed_s": 0,
+    "metrics": {
+      "best_found": 96.74,
+      "initial_round_found_best": 38.71,
+      "t95": 4,
+      "AUC_best_so_far": 94.84425
+    },
+    "analysis": {
+      "n_iters": 40,
+      "n_improvements": 2,
+      "improvement_rate": 0.05,
+      "llm_action_count": 0,
+      "llm_action_types": [],
+      "acq_switches": 0,
+      "final_best": 96.74
+    },
+    "final_kernel": "RQ",
+    "kernel_history": [
+      [
+        1,
+        "RQ",
+        -356.197938034221
+      ],
+      [
+        6,
+        "RQ",
+        -561.4934256090028
+      ],
+      [
+        11,
+        "RQ",
+        -480.3744534039395
+      ],
+      [
+        16,
+        "RQ",
+        -496.22166079372784
+      ],
+      [
+        21,
+        "M1",
+        -606.9770715354268
+      ],
+      [
+        26,
+        "M1",
+        -401.81817462965256
+      ],
+      [
+        31,
+        "RQ",
+        -497.73565277786713
+      ],
+      [
+        36,
+        "RQ",
+        -464.9050880692938
+      ]
+    ]
+  },
+  {
+    "composition": "gpbo_manifold",
+    "dataset": "suzuki",
+    "seed": 2000,
+    "elapsed_s": 0,
+    "metrics": {
+      "best_found": 96.74,
+      "initial_round_found_best": 38.71,
+      "t95": 4,
+      "AUC_best_so_far": 94.84425
+    },
+    "analysis": {
+      "n_iters": 40,
+      "n_improvements": 2,
+      "improvement_rate": 0.05,
+      "llm_action_count": 0,
+      "llm_action_types": [],
+      "acq_switches": 0,
+      "final_best": 96.74
+    },
+    "final_kernel": "RQ",
+    "kernel_history": [
+      [
+        1,
+        "RQ",
+        -356.197938034221
+      ],
+      [
+        6,
+        "RQ",
+        -561.4934256090028
+      ],
+      [
+        11,
+        "RQ",
+        -480.3744534039395
+      ],
+      [
+        16,
+        "RQ",
+        -496.22166079372784
+      ],
+      [
+        21,
+        "M1",
+        -606.9770715354268
+      ],
+      [
+        26,
+        "M1",
+        -401.81817462965256
+      ],
+      [
+        31,
+        "RQ",
+        -497.73565277786713
+      ],
+      [
+        36,
+        "RQ",
+        -464.9050880692938
+      ]
+    ]
+  }
+]

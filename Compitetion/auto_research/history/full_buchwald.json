@@ -1,0 +1,262 @@
+[
+  {
+    "composition": "gpbo_ei",
+    "dataset": "buchwald_sub4",
+    "seed": 100,
+    "elapsed_s": 12.62502121925354,
+    "metrics": {
+      "best_found": 86.59757822,
+      "initial_round_found_best": 71.55294754,
+      "t95": 8,
+      "AUC_best_so_far": 84.4711800085
+    },
+    "status": "ok"
+  },
+  {
+    "composition": "gpbo_ei",
+    "dataset": "buchwald_sub4",
+    "seed": 200,
+    "elapsed_s": 7.586245059967041,
+    "metrics": {
+      "best_found": 86.59757822,
+      "initial_round_found_best": 71.55294754,
+      "t95": 8,
+      "AUC_best_so_far": 84.4711800085
+    },
+    "status": "ok"
+  },
+  {
+    "composition": "gpbo_ei",
+    "dataset": "buchwald_sub4",
+    "seed": 300,
+    "elapsed_s": 7.167939901351929,
+    "metrics": {
+      "best_found": 86.59757822,
+      "initial_round_found_best": 71.55294754,
+      "t95": 8,
+      "AUC_best_so_far": 84.4711800085
+    },
+    "status": "ok"
+  },
+  {
+    "composition": "gpbo_ei",
+    "dataset": "buchwald_sub4",
+    "seed": 400,
+    "elapsed_s": 6.854417324066162,
+    "metrics": {
+      "best_found": 86.59757822,
+      "initial_round_found_best": 71.55294754,
+      "t95": 8,
+      "AUC_best_so_far": 84.4711800085
+    },
+    "status": "ok"
+  },
+  {
+    "composition": "gpbo_ei",
+    "dataset": "buchwald_sub4",
+    "seed": 500,
+    "elapsed_s": 6.184800386428833,
+    "metrics": {
+      "best_found": 86.59757822,
+      "initial_round_found_best": 71.55294754,
+      "t95": 8,
+      "AUC_best_so_far": 84.4711800085
+    },
+    "status": "ok"
+  },
+  {
+    "composition": "gpbo_ei",
+    "dataset": "buchwald_sub4",
+    "seed": 600,
+    "elapsed_s": 6.303606033325195,
+    "metrics": {
+      "best_found": 86.59757822,
+      "initial_round_found_best": 71.55294754,
+      "t95": 8,
+      "AUC_best_so_far": 84.4711800085
+    },
+    "status": "ok"
+  },
+  {
+    "composition": "gpbo_ei",
+    "dataset": "buchwald_sub4",
+    "seed": 700,
+    "elapsed_s": 5.852171421051025,
+    "metrics": {
+      "best_found": 86.59757822,
+      "initial_round_found_best": 71.55294754,
+      "t95": 8,
+      "AUC_best_so_far": 84.4711800085
+    },
+    "status": "ok"
+  },
+  {
+    "composition": "gpbo_ei",
+    "dataset": "buchwald_sub4",
+    "seed": 800,
+    "elapsed_s": 6.4711058139801025,
+    "metrics": {
+      "best_found": 86.59757822,
+      "initial_round_found_best": 71.55294754,
+      "t95": 8,
+      "AUC_best_so_far": 84.4711800085
+    },
+    "status": "ok"
+  },
+  {
+    "composition": "gpbo_ei",
+    "dataset": "buchwald_sub4",
+    "seed": 900,
+    "elapsed_s": 6.312917470932007,
+    "metrics": {
+      "best_found": 86.59757822,
+      "initial_round_found_best": 71.55294754,
+      "t95": 8,
+      "AUC_best_so_far": 84.4711800085
+    },
+    "status": "ok"
+  },
+  {
+    "composition": "gpbo_ei",
+    "dataset": "buchwald_sub4",
+    "seed": 1000,
+    "elapsed_s": 7.33513617515564,
+    "metrics": {
+      "best_found": 86.59757822,
+      "initial_round_found_best": 71.55294754,
+      "t95": 8,
+      "AUC_best_so_far": 84.4711800085
+    },
+    "status": "ok"
+  },
+  {
+    "composition": "gpbo_ei",
+    "dataset": "buchwald_sub4",
+    "seed": 1100,
+    "elapsed_s": 8.00407600402832,
+    "metrics": {
+      "best_found": 86.59757822,
+      "initial_round_found_best": 71.55294754,
+      "t95": 8,
+      "AUC_best_so_far": 84.4711800085
+    },
+    "status": "ok"
+  },
+  {
+    "composition": "gpbo_ei",
+    "dataset": "buchwald_sub4",
+    "seed": 1200,
+    "elapsed_s": 6.230452060699463,
+    "metrics": {
+      "best_found": 86.59757822,
+      "initial_round_found_best": 71.55294754,
+      "t95": 8,
+      "AUC_best_so_far": 84.4711800085
+    },
+    "status": "ok"
+  },
+  {
+    "composition": "gpbo_ei",
+    "dataset": "buchwald_sub4",
+    "seed": 1300,
+    "elapsed_s": 6.635917663574219,
+    "metrics": {
+      "best_found": 86.59757822,
+      "initial_round_found_best": 71.55294754,
+      "t95": 8,
+      "AUC_best_so_far": 84.4711800085
+    },
+    "status": "ok"
+  },
+  {
+    "composition": "gpbo_ei",
+    "dataset": "buchwald_sub4",
+    "seed": 1400,
+    "elapsed_s": 6.456060171127319,
+    "metrics": {
+      "best_found": 86.59757822,
+      "initial_round_found_best": 71.55294754,
+      "t95": 8,
+      "AUC_best_so_far": 84.4711800085
+    },
+    "status": "ok"
+  },
+  {
+    "composition": "gpbo_ei",
+    "dataset": "buchwald_sub4",
+    "seed": 1500,
+    "elapsed_s": 6.569477558135986,
+    "metrics": {
+      "best_found": 86.59757822,
+      "initial_round_found_best": 71.55294754,
+      "t95": 8,
+      "AUC_best_so_far": 84.4711800085
+    },
+    "status": "ok"
+  },
+  {
+    "composition": "gpbo_ei",
+    "dataset": "buchwald_sub4",
+    "seed": 1600,
+    "elapsed_s": 6.743014097213745,
+    "metrics": {
+      "best_found": 86.59757822,
+      "initial_round_found_best": 71.55294754,
+      "t95": 8,
+      "AUC_best_so_far": 84.4711800085
+    },
+    "status": "ok"
+  },
+  {
+    "composition": "gpbo_ei",
+    "dataset": "buchwald_sub4",
+    "seed": 1700,
+    "elapsed_s": 6.04643177986145,
+    "metrics": {
+      "best_found": 86.59757822,
+      "initial_round_found_best": 71.55294754,
+      "t95": 8,
+      "AUC_best_so_far": 84.4711800085
+    },
+    "status": "ok"
+  },
+  {
+    "composition": "gpbo_ei",
+    "dataset": "buchwald_sub4",
+    "seed": 1800,
+    "elapsed_s": 6.223870754241943,
+    "metrics": {
+      "best_found": 86.59757822,
+      "initial_round_found_best": 71.55294754,
+      "t95": 8,
+      "AUC_best_so_far": 84.4711800085
+    },
+    "status": "ok"
+  },
+  {
+    "composition": "gpbo_ei",
+    "dataset": "buchwald_sub4",
+    "seed": 1900,
+    "elapsed_s": 6.737224817276001,
+    "metrics": {
+      "best_found": 86.59757822,
+      "initial_round_found_best": 71.55294754,
+      "t95": 8,
+      "AUC_best_so_far": 84.4711800085
+    },
+    "status": "ok"
+  },
+  {
+    "composition": "gpbo_ei",
+    "dataset": "buchwald_sub4",
+    "seed": 2000,
+    "elapsed_s": 7.960564136505127,
+    "metrics": {
+      "best_found": 86.59757822,
+      "initial_round_found_best": 71.55294754,
+      "t95": 8,
+      "AUC_best_so_far": 84.4711800085
+    },
+    "status": "ok"
+  }
+]

@@ -1,0 +1,882 @@
+[
+  {
+    "composition": "gpbo_dkl",
+    "dataset": "buchwald_sub4",
+    "seed": 100,
+    "prior_protocol": "seeded_subsample",
+    "n_initial": 5,
+    "initial_indices": [
+      33,
+      34,
+      31,
+      5,
+      1
+    ],
+    "elapsed_s": 17.3,
+    "metrics": {
+      "best_found": 86.59757822,
+      "initial_round_found_best": 1.023181291,
+      "t95": 22,
+      "AUC_best_so_far": 80.26526621102501
+    },
+    "status": "ok"
+  },
+  {
+    "composition": "gpbo_dkl",
+    "dataset": "buchwald_sub4",
+    "seed": 200,
+    "prior_protocol": "seeded_subsample",
+    "n_initial": 5,
+    "initial_indices": [
+      18,
+      33,
+      13,
+      32,
+      29
+    ],
+    "elapsed_s": 19.1,
+    "metrics": {
+      "best_found": 85.89473594,
+      "initial_round_found_best": 1.036456102,
+      "t95": 25,
+      "AUC_best_so_far": 76.02752817185001
+    },
+    "status": "ok"
+  },
+  {
+    "composition": "gpbo_dkl",
+    "dataset": "buchwald_sub4",
+    "seed": 300,
+    "prior_protocol": "seeded_subsample",
+    "n_initial": 5,
+    "initial_indices": [
+      8,
+      30,
+      34,
+      15,
+      16
+    ],
+    "elapsed_s": 14.1,
+    "metrics": {
+      "best_found": 83.29437838,
+      "initial_round_found_best": 66.71317285,
+      "t95": 12,
+      "AUC_best_so_far": 80.63692252125
+    },
+    "status": "ok"
+  },
+  {
+    "composition": "gpbo_dkl",
+    "dataset": "buchwald_sub4",
+    "seed": 400,
+    "prior_protocol": "seeded_subsample",
+    "n_initial": 5,
+    "initial_indices": [
+      27,
+      24,
+      34,
+      0,
+      9
+    ],
+    "elapsed_s": 14.7,
+    "metrics": {
+      "best_found": 83.3036144,
+      "initial_round_found_best": 73.85492194,
+      "t95": 2,
+      "AUC_best_so_far": 82.78037192600002
+    },
+    "status": "ok"
+  },
+  {
+    "composition": "gpbo_dkl",
+    "dataset": "buchwald_sub4",
+    "seed": 500,
+    "prior_protocol": "seeded_subsample",
+    "n_initial": 5,
+    "initial_indices": [
+      0,
+      4,
+      24,
+      31,
+      5
+    ],
+    "elapsed_s": 13.8,
+    "metrics": {
+      "best_found": 85.89473594,
+      "initial_round_found_best": 37.71186321,
+      "t95": 27,
+      "AUC_best_so_far": 79.32924494675001
+    },
+    "status": "ok"
+  },
+  {
+    "composition": "gpbo_dkl",
+    "dataset": "buchwald_sub4",
+    "seed": 600,
+    "prior_protocol": "seeded_subsample",
+    "n_initial": 5,
+    "initial_indices": [
+      16,
+      25,
+      7,
+      9,
+      13
+    ],
+    "elapsed_s": 14.8,
+    "metrics": {
+      "best_found": 86.59757822,
+      "initial_round_found_best": 57.55922845,
+      "t95": 13,
+      "AUC_best_so_far": 82.2388963665
+    },
+    "status": "ok"
+  },
+  {
+    "composition": "gpbo_dkl",
+    "dataset": "buchwald_sub4",
+    "seed": 700,
+    "prior_protocol": "seeded_subsample",
+    "n_initial": 5,
+    "initial_indices": [
+      11,
+      10,
+      14,
+      23,
+      19
+    ],
+    "elapsed_s": 10.5,
+    "metrics": {
+      "best_found": 85.89473594,
+      "initial_round_found_best": 69.84952946,
+      "t95": 28,
+      "AUC_best_so_far": 80.07404295675
+    },
+    "status": "ok"
+  },
+  {
+    "composition": "gpbo_dkl",
+    "dataset": "buchwald_sub4",
+    "seed": 800,
+    "prior_protocol": "seeded_subsample",
+    "n_initial": 5,
+    "initial_indices": [
+      5,
+      0,
+      10,
+      33,
+      27
+    ],
+    "elapsed_s": 11.7,
+    "metrics": {
+      "best_found": 85.89473594,
+      "initial_round_found_best": 0.665471445,
+      "t95": 13,
+      "AUC_best_so_far": 78.20163159662499
+    },
+    "status": "ok"
+  },
+  {
+    "composition": "gpbo_dkl",
+    "dataset": "buchwald_sub4",
+    "seed": 900,
+    "prior_protocol": "seeded_subsample",
+    "n_initial": 5,
+    "initial_indices": [
+      21,
+      14,
+      33,
+      5,
+      27
+    ],
+    "elapsed_s": 13.8,
+    "metrics": {
+      "best_found": 84.89551287,
+      "initial_round_found_best": 72.58292155,
+      "t95": 13,
+      "AUC_best_so_far": 81.063745936
+    },
+    "status": "ok"
+  },
+  {
+    "composition": "gpbo_dkl",
+    "dataset": "buchwald_sub4",
+    "seed": 1000,
+    "prior_protocol": "seeded_subsample",
+    "n_initial": 5,
+    "initial_indices": [
+      33,
+      6,
+      16,
+      29,
+      11
+    ],
+    "elapsed_s": 14.1,
+    "metrics": {
+      "best_found": 83.29437838,
+      "initial_round_found_best": 1.023181291,
+      "t95": 23,
+      "AUC_best_so_far": 76.32517070477499
+    },
+    "status": "ok"
+  },
+  {
+    "composition": "gpbo_dkl",
+    "dataset": "buchwald_sub4",
+    "seed": 1100,
+    "prior_protocol": "seeded_subsample",
+    "n_initial": 5,
+    "initial_indices": [
+      2,
+      13,
+      22,
+      19,
+      9
+    ],
+    "elapsed_s": 14.6,
+    "metrics": {
+      "best_found": 79.76639273,
+      "initial_round_found_best": 71.55294754,
+      "t95": 41,
+      "AUC_best_so_far": 75.70845489725001
+    },
+    "status": "ok"
+  },
+  {
+    "composition": "gpbo_dkl",
+    "dataset": "buchwald_sub4",
+    "seed": 1200,
+    "prior_protocol": "seeded_subsample",
+    "n_initial": 5,
+    "initial_indices": [
+      30,
+      11,
+      2,
+      28,
+      16
+    ],
+    "elapsed_s": 14.8,
+    "metrics": {
+      "best_found": 82.71053034,
+      "initial_round_found_best": 6.262930072,
+      "t95": 37,
+      "AUC_best_so_far": 70.81909039555
+    },
+    "status": "ok"
+  },
+  {
+    "composition": "gpbo_dkl",
+    "dataset": "buchwald_sub4",
+    "seed": 1300,
+    "prior_protocol": "seeded_subsample",
+    "n_initial": 5,
+    "initial_indices": [
+      21,
+      29,
+      5,
+      13,
+      27
+    ],
+    "elapsed_s": 13.8,
+    "metrics": {
+      "best_found": 82.71053034,
+      "initial_round_found_best": 69.27632316,
+      "t95": 36,
+      "AUC_best_so_far": 78.84083878199999
+    },
+    "status": "ok"
+  },
+  {
+    "composition": "gpbo_dkl",
+    "dataset": "buchwald_sub4",
+    "seed": 1400,
+    "prior_protocol": "seeded_subsample",
+    "n_initial": 5,
+    "initial_indices": [
+      24,
+      26,
+      22,
+      29,
+      6
+    ],
+    "elapsed_s": 11.9,
+    "metrics": {
+      "best_found": 85.89473594,
+      "initial_round_found_best": 54.56471519,
+      "t95": 10,
+      "AUC_best_so_far": 80.41416738625
+    },
+    "status": "ok"
+  },
+  {
+    "composition": "gpbo_dkl",
+    "dataset": "buchwald_sub4",
+    "seed": 1500,
+    "prior_protocol": "seeded_subsample",
+    "n_initial": 5,
+    "initial_indices": [
+      23,
+      8,
+      6,
+      25,
+      28
+    ],
+    "elapsed_s": 14.3,
+    "metrics": {
+      "best_found": 85.89473594,
+      "initial_round_found_best": 68.58213231,
+      "t95": 8,
+      "AUC_best_so_far": 82.34159019175002
+    },
+    "status": "ok"
+  },
+  {
+    "composition": "gpbo_dkl",
+    "dataset": "buchwald_sub4",
+    "seed": 1600,
+    "prior_protocol": "seeded_subsample",
+    "n_initial": 5,
+    "initial_indices": [
+      1,
+      32,
+      25,
+      18,
+      31
+    ],
+    "elapsed_s": 19.2,
+    "metrics": {
+      "best_found": 81.22830675,
+      "initial_round_found_best": 1.542228309,
+      "t95": 41,
+      "AUC_best_so_far": 77.747929056975
+    },
+    "status": "ok"
+  },
+  {
+    "composition": "gpbo_dkl",
+    "dataset": "buchwald_sub4",
+    "seed": 1700,
+    "prior_protocol": "seeded_subsample",
+    "n_initial": 5,
+    "initial_indices": [
+      14,
+      22,
+      1,
+      15,
+      18
+    ],
+    "elapsed_s": 16.0,
+    "metrics": {
+      "best_found": 85.89473594,
+      "initial_round_found_best": 74.90352783,
+      "t95": 18,
+      "AUC_best_so_far": 81.787919986
+    },
+    "status": "ok"
+  },
+  {
+    "composition": "gpbo_dkl",
+    "dataset": "buchwald_sub4",
+    "seed": 1800,
+    "prior_protocol": "seeded_subsample",
+    "n_initial": 5,
+    "initial_indices": [
+      25,
+      22,
+      33,
+      30,
+      27
+    ],
+    "elapsed_s": 19.2,
+    "metrics": {
+      "best_found": 86.59757822,
+      "initial_round_found_best": 47.92550874,
+      "t95": 24,
+      "AUC_best_so_far": 78.10697120300001
+    },
+    "status": "ok"
+  },
+  {
+    "composition": "gpbo_dkl",
+    "dataset": "buchwald_sub4",
+    "seed": 1900,
+    "prior_protocol": "seeded_subsample",
+    "n_initial": 5,
+    "initial_indices": [
+      10,
+      28,
+      29,
+      11,
+      13
+    ],
+    "elapsed_s": 17.8,
+    "metrics": {
+      "best_found": 86.59757822,
+      "initial_round_found_best": 71.55294754,
+      "t95": 16,
+      "AUC_best_so_far": 82.0430629415
+    },
+    "status": "ok"
+  },
+  {
+    "composition": "gpbo_dkl",
+    "dataset": "buchwald_sub4",
+    "seed": 2000,
+    "prior_protocol": "seeded_subsample",
+    "n_initial": 5,
+    "initial_indices": [
+      31,
+      34,
+      19,
+      3,
+      5
+    ],
+    "elapsed_s": 17.9,
+    "metrics": {
+      "best_found": 85.89473594,
+      "initial_round_found_best": 75.02467082,
+      "t95": 7,
+      "AUC_best_so_far": 83.03054953850001
+    },
+    "status": "ok"
+  },
+  {
+    "composition": "gpbo_dkl",
+    "dataset": "suzuki",
+    "seed": 100,
+    "prior_protocol": "seeded_subsample",
+    "n_initial": 5,
+    "initial_indices": [
+      9,
+      25,
+      22,
+      12,
+      5
+    ],
+    "elapsed_s": 19.7,
+    "metrics": {
+      "best_found": 93.79,
+      "initial_round_found_best": 0.0,
+      "t95": 41,
+      "AUC_best_so_far": 89.59650000000002
+    },
+    "status": "ok"
+  },
+  {
+    "composition": "gpbo_dkl",
+    "dataset": "suzuki",
+    "seed": 200,
+    "prior_protocol": "seeded_subsample",
+    "n_initial": 5,
+    "initial_indices": [
+      13,
+      25,
+      2,
+      20,
+      0
+    ],
+    "elapsed_s": 24.4,
+    "metrics": {
+      "best_found": 96.16,
+      "initial_round_found_best": 92.25,
+      "t95": 17,
+      "AUC_best_so_far": 94.83725
+    },
+    "status": "ok"
+  },
+  {
+    "composition": "gpbo_dkl",
+    "dataset": "suzuki",
+    "seed": 300,
+    "prior_protocol": "seeded_subsample",
+    "n_initial": 5,
+    "initial_indices": [
+      6,
+      19,
+      14,
+      13,
+      11
+    ],
+    "elapsed_s": 26.6,
+    "metrics": {
+      "best_found": 96.7,
+      "initial_round_found_best": 18.55,
+      "t95": 38,
+      "AUC_best_so_far": 88.13
+    },
+    "status": "ok"
+  },
+  {
+    "composition": "gpbo_dkl",
+    "dataset": "suzuki",
+    "seed": 400,
+    "prior_protocol": "seeded_subsample",
+    "n_initial": 5,
+    "initial_indices": [
+      10,
+      9,
+      17,
+      0,
+      20
+    ],
+    "elapsed_s": 32.9,
+    "metrics": {
+      "best_found": 96.74,
+      "initial_round_found_best": 72.36,
+      "t95": 40,
+      "AUC_best_so_far": 83.52625
+    },
+    "status": "ok"
+  },
+  {
+    "composition": "gpbo_dkl",
+    "dataset": "suzuki",
+    "seed": 500,
+    "prior_protocol": "seeded_subsample",
+    "n_initial": 5,
+    "initial_indices": [
+      15,
+      28,
+      0,
+      12,
+      18
+    ],
+    "elapsed_s": 32.8,
+    "metrics": {
+      "best_found": 92.19,
+      "initial_round_found_best": 11.53,
+      "t95": 41,
+      "AUC_best_so_far": 84.0265
+    },
+    "status": "ok"
+  },
+  {
+    "composition": "gpbo_dkl",
+    "dataset": "suzuki",
+    "seed": 600,
+    "prior_protocol": "seeded_subsample",
+    "n_initial": 5,
+    "initial_indices": [
+      14,
+      23,
+      9,
+      21,
+      8
+    ],
+    "elapsed_s": 21.5,
+    "metrics": {
+      "best_found": 96.74,
+      "initial_round_found_best": 68.64,
+      "t95": 33,
+      "AUC_best_so_far": 83.154
+    },
+    "status": "ok"
+  },
+  {
+    "composition": "gpbo_dkl",
+    "dataset": "suzuki",
+    "seed": 700,
+    "prior_protocol": "seeded_subsample",
+    "n_initial": 5,
+    "initial_indices": [
+      15,
+      6,
+      13,
+      19,
+      12
+    ],
+    "elapsed_s": 22.0,
+    "metrics": {
+      "best_found": 96.14,
+      "initial_round_found_best": 88.57,
+      "t95": 9,
+      "AUC_best_so_far": 94.59275
+    },
+    "status": "ok"
+  },
+  {
+    "composition": "gpbo_dkl",
+    "dataset": "suzuki",
+    "seed": 800,
+    "prior_protocol": "seeded_subsample",
+    "n_initial": 5,
+    "initial_indices": [
+      4,
+      10,
+      7,
+      23,
+      14
+    ],
+    "elapsed_s": 22.2,
+    "metrics": {
+      "best_found": 98.69,
+      "initial_round_found_best": 35.41,
+      "t95": 18,
+      "AUC_best_so_far": 94.856
+    },
+    "status": "ok"
+  },
+  {
+    "composition": "gpbo_dkl",
+    "dataset": "suzuki",
+    "seed": 900,
+    "prior_protocol": "seeded_subsample",
+    "n_initial": 5,
+    "initial_indices": [
+      21,
+      5,
+      4,
+      23,
+      27
+    ],
+    "elapsed_s": 20.2,
+    "metrics": {
+      "best_found": 95.58,
+      "initial_round_found_best": 80.65,
+      "t95": 23,
+      "AUC_best_so_far": 93.92849999999999
+    },
+    "status": "ok"
+  },
+  {
+    "composition": "gpbo_dkl",
+    "dataset": "suzuki",
+    "seed": 1000,
+    "prior_protocol": "seeded_subsample",
+    "n_initial": 5,
+    "initial_indices": [
+      3,
+      5,
+      24,
+      27,
+      17
+    ],
+    "elapsed_s": 18.4,
+    "metrics": {
+      "best_found": 98.69,
+      "initial_round_found_best": 96.02,
+      "t95": 1,
+      "AUC_best_so_far": 97.3145
+    },
+    "status": "ok"
+  },
+  {
+    "composition": "gpbo_dkl",
+    "dataset": "suzuki",
+    "seed": 1100,
+    "prior_protocol": "seeded_subsample",
+    "n_initial": 5,
+    "initial_indices": [
+      28,
+      1,
+      23,
+      5,
+      9
+    ],
+    "elapsed_s": 21.5,
+    "metrics": {
+      "best_found": 96.3,
+      "initial_round_found_best": 73.72,
+      "t95": 8,
+      "AUC_best_so_far": 95.33725000000001
+    },
+    "status": "ok"
+  },
+  {
+    "composition": "gpbo_dkl",
+    "dataset": "suzuki",
+    "seed": 1200,
+    "prior_protocol": "seeded_subsample",
+    "n_initial": 5,
+    "initial_indices": [
+      9,
+      23,
+      3,
+      27,
+      2
+    ],
+    "elapsed_s": 22.9,
+    "metrics": {
+      "best_found": 96.74,
+      "initial_round_found_best": 86.58,
+      "t95": 4,
+      "AUC_best_so_far": 96.20450000000001
+    },
+    "status": "ok"
+  },
+  {
+    "composition": "gpbo_dkl",
+    "dataset": "suzuki",
+    "seed": 1300,
+    "prior_protocol": "seeded_subsample",
+    "n_initial": 5,
+    "initial_indices": [
+      12,
+      17,
+      20,
+      14,
+      8
+    ],
+    "elapsed_s": 20.1,
+    "metrics": {
+      "best_found": 98.69,
+      "initial_round_found_best": 66.72,
+      "t95": 16,
+      "AUC_best_so_far": 93.93575
+    },
+    "status": "ok"
+  },
+  {
+    "composition": "gpbo_dkl",
+    "dataset": "suzuki",
+    "seed": 1400,
+    "prior_protocol": "seeded_subsample",
+    "n_initial": 5,
+    "initial_indices": [
+      2,
+      20,
+      0,
+      6,
+      18
+    ],
+    "elapsed_s": 24.2,
+    "metrics": {
+      "best_found": 95.8,
+      "initial_round_found_best": 13.7,
+      "t95": 34,
+      "AUC_best_so_far": 82.93975
+    },
+    "status": "ok"
+  },
+  {
+    "composition": "gpbo_dkl",
+    "dataset": "suzuki",
+    "seed": 1500,
+    "prior_protocol": "seeded_subsample",
+    "n_initial": 5,
+    "initial_indices": [
+      23,
+      21,
+      12,
+      27,
+      20
+    ],
+    "elapsed_s": 21.3,
+    "metrics": {
+      "best_found": 98.69,
+      "initial_round_found_best": 78.59,
+      "t95": 32,
+      "AUC_best_so_far": 86.16749999999999
+    },
+    "status": "ok"
+  },
+  {
+    "composition": "gpbo_dkl",
+    "dataset": "suzuki",
+    "seed": 1600,
+    "prior_protocol": "seeded_subsample",
+    "n_initial": 5,
+    "initial_indices": [
+      1,
+      20,
+      18,
+      13,
+      11
+    ],
+    "elapsed_s": 25.4,
+    "metrics": {
+      "best_found": 96.14,
+      "initial_round_found_best": 65.74,
+      "t95": 10,
+      "AUC_best_so_far": 92.91
+    },
+    "status": "ok"
+  },
+  {
+    "composition": "gpbo_dkl",
+    "dataset": "suzuki",
+    "seed": 1700,
+    "prior_protocol": "seeded_subsample",
+    "n_initial": 5,
+    "initial_indices": [
+      1,
+      16,
+      25,
+      20,
+      22
+    ],
+    "elapsed_s": 23.4,
+    "metrics": {
+      "best_found": 93.61,
+      "initial_round_found_best": 48.02,
+      "t95": 41,
+      "AUC_best_so_far": 81.47
+    },
+    "status": "ok"
+  },
+  {
+    "composition": "gpbo_dkl",
+    "dataset": "suzuki",
+    "seed": 1800,
+    "prior_protocol": "seeded_subsample",
+    "n_initial": 5,
+    "initial_indices": [
+      15,
+      26,
+      16,
+      24,
+      7
+    ],
+    "elapsed_s": 21.0,
+    "metrics": {
+      "best_found": 92.19,
+      "initial_round_found_best": 14.45,
+      "t95": 41,
+      "AUC_best_so_far": 80.84075
+    },
+    "status": "ok"
+  },
+  {
+    "composition": "gpbo_dkl",
+    "dataset": "suzuki",
+    "seed": 1900,
+    "prior_protocol": "seeded_subsample",
+    "n_initial": 5,
+    "initial_indices": [
+      14,
+      11,
+      2,
+      20,
+      26
+    ],
+    "elapsed_s": 22.6,
+    "metrics": {
+      "best_found": 33.4,
+      "initial_round_found_best": 7.73,
+      "t95": 41,
+      "AUC_best_so_far": 28.448249999999994
+    },
+    "status": "ok"
+  },
+  {
+    "composition": "gpbo_dkl",
+    "dataset": "suzuki",
+    "seed": 2000,
+    "prior_protocol": "seeded_subsample",
+    "n_initial": 5,
+    "initial_indices": [
+      3,
+      5,
+      17,
+      24,
+      10
+    ],
+    "elapsed_s": 26.7,
+    "metrics": {
+      "best_found": 96.16,
+      "initial_round_found_best": 71.09,
+      "t95": 8,
+      "AUC_best_so_far": 94.92099999999999
+    },
+    "status": "ok"
+  }
+]

@@ -1,0 +1,93 @@
+{
+  "state": "running",
+  "phase": "full",
+  "stop_reason": null,
+  "champion": {
+    "source": "confirm:gpbo_ei",
+    "composition": "gpbo_ei",
+    "score": 2.892411030130965,
+    "tier": "confirm",
+    "delta_vs_baseline_gpbo": 0.8457383632258804,
+    "summary": {
+      "buchwald_sub4": {
+        "best_found": {
+          "mean": 86.59757822,
+          "std": 0.0,
+          "ci95": 0.0
+        },
+        "initial_round_found_best": {
+          "mean": 71.55294754,
+          "std": 0.0,
+          "ci95": 0.0
+        },
+        "t95": {
+          "mean": 8.0,
+          "std": 0.0,
+          "ci95": 0.0
+        },
+        "AUC_best_so_far": {
+          "mean": 84.4711800085,
+          "std": 0.0,
+          "ci95": 0.0
+        }
+      },
+      "suzuki": {
+        "best_found": {
+          "mean": 97.29,
+          "std": 0.0,
+          "ci95": 0.0
+        },
+        "initial_round_found_best": {
+          "mean": 33.67,
+          "std": 0.0,
+          "ci95": 0.0
+        },
+        "t95": {
+          "mean": 4.0,
+          "std": 0.0,
+          "ci95": 0.0
+        },
+        "AUC_best_so_far": {
+          "mean": 95.04350000000002,
+          "std": 0.0,
+          "ci95": 0.0
+        }
+      }
+    }
+  },
+  "evaluated": [
+    "gpbo_ei",
+    "gpbo_ucb"
+  ],
+  "queue": [
+    "gpbo_ei"
+  ],
+  "queue_llm_deferred": [
+    "lgbo_mean_shift",
+    "lmabo_adaptive",
+    "bora_adaptive",
+    "llm_in_loop",
+    "lgbo_softmax",
+    "lmabo_ucb"
+  ],
+  "budget": {
+    "wall_hours_used": 0.8856277482218213,
+    "compositions_evaluated": 2,
+    "llm_calls": 0,
+    "full_runs": 0,
+    "max_wall_hours": 8,
+    "max_compositions_evaluated": 16,
+    "max_llm_calls": 500,
+    "max_full_runs": 1
+  },
+  "smoke_scores": {
+    "gpbo_ei": 2.892411030130965,
+    "gpbo_ucb": 2.5268732180778684
+  },
+  "baseline_gpbo_composite": 2.0466726669050845,
+  "last_event": "run full on ['gpbo_ei']",
+  "updated_at": "2026-07-25T06:49:50.415261+00:00",
+  "confirm_scores": {
+    "gpbo_ei": 2.892411030130965
+  }
+}
