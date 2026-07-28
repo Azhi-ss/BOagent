@@ -53,7 +53,7 @@ class DeepSeekClient:
     def chat(
         self,
         messages: list[dict[str, str]],
-        max_tokens: int = 512,
+        max_tokens: int = 2048,
         extra_body: dict[str, Any] | None = None,
     ) -> LlmCallResult:
         protected_overrides = PROTECTED_CHAT_PAYLOAD_KEYS & set(extra_body or {})

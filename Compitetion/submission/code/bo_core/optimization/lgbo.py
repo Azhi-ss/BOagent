@@ -28,7 +28,7 @@ import numpy as np
 from scipy.stats import norm
 
 from bo_core.benchmark.data_loader import DATA_LOADERS, UNIFIED_DATASET_ROOT
-from bo_core.optimization.categorical import OneHotEncoder, union_options
+from bo_core.optimization.categorical import OneHotEncoder
 from bo_core.optimization.lgbo_parser import parse_llm_response
 from bo_core.optimization.lgbo_prompt import (
     DatasetMeta,
@@ -104,11 +104,12 @@ class LGBOEngine:
         opts_path = UNIFIED_DATASET_ROOT / "chemical_reactions" / self.dataset / "options.json"
         self.options_json: dict[str, list[str]] = json.loads(opts_path.read_text())
 
-        # Encoder built from the UNION of train+test categories: the merged
-        # train.csv carries cross-product reagents absent from options.json.
+        # The BO input schema is the task's four decision variables only. The
+        # merged prior may contain cross-product reactants, but those must not
+        # create dimensions that are permanently zero in the candidate pool.
         self.encoder = OneHotEncoder(
             self.feature_cols,
-            union_options(self.feature_cols, self.train_df, self.test_df),
+            {col: self.options_json[col] for col in self.feature_cols},
         )
 
         # Candidate pool (== test_features) and its yield oracle (test.csv).
@@ -124,8 +125,12 @@ class LGBOEngine:
         )
 
     def _init_state(self) -> None:
-        # Prior = full train.csv (R8). Encoded into the same one-hot space.
-        self.X_obs = self.encoder.encode_df(self.train_df)              # (N, D)
+        # Training-only categories are represented by an all-zero feature block;
+        # candidate-pool and LLM encodes remain strict.
+        self.X_obs = self.encoder.encode_df(
+            self.train_df,
+            allow_unknown=True,
+        )  # (N, D)
         self.y_obs = self.train_df[self.target_col].to_numpy(dtype=float)
         self.queried: set[int] = set()                                  # pool indices evaluated
         self.trajectory: list[dict[str, Any]] = []

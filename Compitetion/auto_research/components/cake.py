@@ -292,7 +292,7 @@ class CAKESurrogate(BoTorchSurrogate):
         population_size: int = 6,
         evolve_interval: int = 5,
         selection_max_iter: int = 50,
-        chat_engine: str = "deepseek-v4-flash",
+        chat_engine: str = "deepseek-v4-pro",
         reasoning_effort: str = "low",
     ) -> None:
         super().__init__(
@@ -314,6 +314,11 @@ class CAKESurrogate(BoTorchSurrogate):
         self._population: dict[str, float] = {k: float("inf") for k in BASE_KERNELS}
         self._kernel_history: list[tuple[int, str, float]] = []
         self._llm_calls: int = 0
+        self._llm_attempts: int = 0
+        self._llm_successes: int = 0
+        self._llm_failures: int = 0
+        self._kernel_evolution_failures: int = 0
+        self._fit_diagnostics: list[dict[str, Any]] = []
         self._client = None  # lazy init
         # Observations (X, y) for the system prompt; updated each fit
         self._obs_X: np.ndarray | None = None
@@ -362,18 +367,24 @@ class CAKESurrogate(BoTorchSurrogate):
             try:
                 self._evolve_kernel(train_X, train_Y, dimension)
             except Exception as exc:  # noqa: BLE001 - kernel evolution is best-effort
+                self._kernel_evolution_failures += 1
                 print(f"[CAKESurrogate] kernel evolution failed: {exc}; using M5")
                 self._current_kernel = "M5"
 
         # Fit ALL population kernels → ensemble
         self._population_models = {}
         bics: dict[str, float] = {}
+        failed_kernels: list[dict[str, str]] = []
         for kexpr in self._population:
             try:
                 model, bic = self._fit_one_kernel(train_X, train_Y, kexpr, dimension)
                 self._population_models[kexpr] = model
                 bics[kexpr] = bic
             except Exception as exc:  # noqa: BLE001 - per-kernel fit is best-effort
+                failed_kernels.append({
+                    "kernel": kexpr,
+                    "error": f"{type(exc).__name__}: {exc}",
+                })
                 print(f"[CAKESurrogate] fit {kexpr} failed: {exc}; skipping")
 
         if not self._population_models:
@@ -398,6 +409,13 @@ class CAKESurrogate(BoTorchSurrogate):
         self.model = self._population_models[best_k]
         self._current_kernel = best_k
         self._inference_jitter = float(self.jitter_levels[0])
+        self._fit_diagnostics.append({
+            "fit": self._fit_count,
+            "active_kernels": list(self._population_models),
+            "failed_kernels": failed_kernels,
+            "population_weights": dict(self._population_weights),
+            "best_kernel": best_k,
+        })
         print(
             f"[CAKESurrogate] ensemble fit#{self._fit_count}: "
             f"{len(self._population_models)} models, best={best_k} "
@@ -539,19 +557,23 @@ class CAKESurrogate(BoTorchSurrogate):
             operators=OPERATORS,
         )
         system_prompt = self._build_system_prompt()
+        self._llm_attempts += 1
         try:
             result = client.chat(
                 [{"role": "system", "content": system_prompt},
                  {"role": "user", "content": prompt}],
-                max_tokens=512,
+                max_tokens=2048,
                 extra_body={"thinking": {"type": "disabled"}, "temperature": 0.7},
             )
             self._llm_calls += 1
             if getattr(result, "status", None) != "success" or not result.content:
+                self._llm_failures += 1
                 return []
             kernel, _ = _parse_llm_response(result.content)
+            self._llm_successes += 1
             return [kernel]
         except Exception as exc:  # noqa: BLE001 - LLM is best-effort
+            self._llm_failures += 1
             print(f"[CAKESurrogate] crossover LLM call failed: {exc}")
             return []
 
@@ -567,19 +589,23 @@ class CAKESurrogate(BoTorchSurrogate):
             kernel=kernel, fitness=f"{fitness:.4f}", base_kernels=BASE_KERNELS
         )
         system_prompt = self._build_system_prompt()
+        self._llm_attempts += 1
         try:
             result = client.chat(
                 [{"role": "system", "content": system_prompt},
                  {"role": "user", "content": prompt}],
-                max_tokens=512,
+                max_tokens=2048,
                 extra_body={"thinking": {"type": "disabled"}, "temperature": 0.7},
             )
             self._llm_calls += 1
             if getattr(result, "status", None) != "success" or not result.content:
+                self._llm_failures += 1
                 return []
             kernel, _ = _parse_llm_response(result.content)
+            self._llm_successes += 1
             return [kernel]
         except Exception as exc:  # noqa: BLE001 - LLM is best-effort
+            self._llm_failures += 1
             print(f"[CAKESurrogate] mutation LLM call failed: {exc}")
             return []
 
@@ -683,6 +709,34 @@ class CAKESurrogate(BoTorchSurrogate):
     @property
     def population_weights(self) -> dict[str, float] | None:
         return dict(self._population_weights) if self._population_weights else None
+
+    @property
+    def diagnostics(self) -> dict[str, Any]:
+        """Return a JSON-safe snapshot of CAKE fit and LLM health."""
+        return {
+            "summary": {
+                "fits": self._fit_count,
+                "kernel_fit_failures": sum(
+                    len(fit["failed_kernels"]) for fit in self._fit_diagnostics
+                ),
+                "kernel_evolution_failures": self._kernel_evolution_failures,
+                "llm_attempts": self._llm_attempts,
+                "llm_calls_completed": self._llm_calls,
+                "llm_successes": self._llm_successes,
+                "llm_failures": self._llm_failures,
+            },
+            "fits": [
+                {
+                    **fit,
+                    "active_kernels": list(fit["active_kernels"]),
+                    "failed_kernels": [dict(item) for item in fit["failed_kernels"]],
+                    "population_weights": dict(fit["population_weights"]),
+                }
+                for fit in self._fit_diagnostics
+            ],
+            "current_kernel": self._current_kernel,
+            "kernel_history": [list(item) for item in self._kernel_history],
+        }
 
 
 # ---------------------------------------------------------------------------

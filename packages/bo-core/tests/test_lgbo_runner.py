@@ -5,7 +5,6 @@ from pathlib import Path
 from unittest.mock import MagicMock, patch
 
 import pytest
-
 from bo_core.benchmark.lgbo_runner import (
     THREAD_ENV_VARS,
     _aggregate,
@@ -108,6 +107,8 @@ def test_aggregate_rejects_mixed_backends():
 def test_run_one_isolates_backend_outputs_and_records_metadata(tmp_path: Path):
     engine = MagicMock()
     engine.trajectory = [{"observed_yield": 80.0}]
+    engine.train_df = list(range(35))
+    engine.encoder.dim = 32
 
     with (
         patch("bo_core.benchmark.lgbo_runner.LGBOEngine", return_value=engine) as engine_cls,
@@ -130,5 +131,12 @@ def test_run_one_isolates_backend_outputs_and_records_metadata(tmp_path: Path):
     )
     assert (save_dir / "seed_100.csv").exists()
     assert save_pt.call_args.args[0] == save_dir / "seed_100.pt"
-    assert save_pt.call_args.args[1]["backend"] == "botorch"
+    pt_payload = save_pt.call_args.args[1]
+    assert pt_payload["backend"] == "botorch"
+    assert pt_payload["prior_protocol"] == "fixed_train_prior"
+    assert pt_payload["n_train_prior"] == 35
+    assert pt_payload["encoder_dim"] == 32
     assert result["backend"] == "botorch"
+    assert result["prior_protocol"] == "fixed_train_prior"
+    assert result["n_train_prior"] == 35
+    assert result["encoder_dim"] == 32

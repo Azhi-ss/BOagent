@@ -188,6 +188,20 @@ def _sel_softmax(scores: np.ndarray, ctx: StepContext) -> int:
 # LLM Strategies
 # ---------------------------------------------------------------------------
 
+def _set_llm_diagnostic(
+    ctx: StepContext,
+    *,
+    attempted: bool,
+    status: str,
+    error: str | None = None,
+) -> None:
+    ctx.extra["_llm_diagnostic"] = {
+        "attempted": attempted,
+        "status": status,
+        "error": error,
+    }
+
+
 @register_llm("none")
 def _llm_none(ctx: StepContext) -> None:
     return None
@@ -205,6 +219,11 @@ def _llm_lgbo(ctx: StepContext) -> dict[str, Any] | None:
     )
 
     if not ctx.extra.get("use_llm", False):
+        ctx.extra["_llm_diagnostic"] = {
+            "attempted": False,
+            "status": "disabled",
+            "error": None,
+        }
         return None
 
     client = ctx.extra.get("_client")
@@ -214,6 +233,11 @@ def _llm_lgbo(ctx: StepContext) -> dict[str, Any] | None:
         client.timeout_s = 120
         ctx.extra["_client"] = client
     if not client.is_configured():
+        ctx.extra["_llm_diagnostic"] = {
+            "attempted": False,
+            "status": "not_configured",
+            "error": None,
+        }
         return None
 
     meta = DatasetMeta(
@@ -230,15 +254,35 @@ def _llm_lgbo(ctx: StepContext) -> dict[str, Any] | None:
             max_tokens=8192,
             extra_body={"reasoning_effort": ctx.extra.get("reasoning_effort", "low")},
         )
-    except Exception:  # noqa: BLE001 - LLM call is best-effort
+    except Exception as exc:  # noqa: BLE001 - LLM call is best-effort
+        ctx.extra["_llm_diagnostic"] = {
+            "attempted": True,
+            "status": "failed",
+            "error": f"{type(exc).__name__}: {exc}",
+        }
         return None
     if getattr(result, "status", None) != "success" or not result.content:
+        ctx.extra["_llm_diagnostic"] = {
+            "attempted": True,
+            "status": "failed",
+            "error": f"LLM response status={getattr(result, 'status', None)!r} or empty content",
+        }
         return None
 
     parsed = parse_llm_response(result.content, ctx.feature_cols, ctx.options)
     if parsed is None:
+        ctx.extra["_llm_diagnostic"] = {
+            "attempted": True,
+            "status": "parse_failed",
+            "error": "LLM response could not be parsed",
+        }
         return None
     _mode, values, confidence = parsed
+    ctx.extra["_llm_diagnostic"] = {
+        "attempted": True,
+        "status": "success",
+        "error": None,
+    }
     return {
         "action": "mean_shift",
         "point": dict(zip(ctx.feature_cols, values)),
@@ -253,6 +297,7 @@ def _llm_lmabo(ctx: StepContext) -> dict[str, Any] | None:
     from bo_core.llm_client import DeepSeekClient
 
     if not ctx.extra.get("use_llm", False):
+        _set_llm_diagnostic(ctx, attempted=False, status="disabled")
         return None
 
     client = ctx.extra.get("_client")
@@ -262,6 +307,7 @@ def _llm_lmabo(ctx: StepContext) -> dict[str, Any] | None:
         client.timeout_s = 120
         ctx.extra["_client"] = client
     if not client.is_configured():
+        _set_llm_diagnostic(ctx, attempted=False, status="not_configured")
         return None
 
     # Build GP-state summary (lmabo style)
@@ -284,14 +330,27 @@ Respond strictly with one word from the list above."""
             [{"role": "user", "content": prompt}],
             max_tokens=32,
         )
-    except Exception:  # noqa: BLE001 - LLM call is best-effort
+    except Exception as exc:  # noqa: BLE001 - LLM call is best-effort
+        _set_llm_diagnostic(
+            ctx,
+            attempted=True,
+            status="failed",
+            error=f"{type(exc).__name__}: {exc}",
+        )
         return None
     if getattr(result, "status", None) != "success" or not result.content:
+        _set_llm_diagnostic(
+            ctx,
+            attempted=True,
+            status="failed",
+            error=f"LLM response status={getattr(result, 'status', None)!r} or empty content",
+        )
         return None
 
     choice = result.content.strip().split()[0].strip('.,;:!?"')
     if choice not in acq_choices:
         choice = "EI"  # fallback
+    _set_llm_diagnostic(ctx, attempted=True, status="success")
     return {"action": "switch_acq", "acq_type": choice}
 
 
@@ -308,9 +367,12 @@ def _llm_bora(ctx: StepContext) -> dict[str, Any] | None:
 
     if plateau or high_unc:
         # a2: full LLM intervention (exploration)
-        return {"action": "llm_pick"}
-    # a1: vanilla BO (exploitation)
-    return {"action": "bo_pick"}
+        decision = {"action": "llm_pick"}
+    else:
+        # a1: vanilla BO (exploitation)
+        decision = {"action": "bo_pick"}
+    _set_llm_diagnostic(ctx, attempted=False, status="policy_decision")
+    return decision
 
 
 @register_llm("llm_in_loop_pick")
@@ -319,6 +381,7 @@ def _llm_llm_in_loop(ctx: StepContext) -> dict[str, Any] | None:
     from bo_core.llm_client import DeepSeekClient
 
     if not ctx.extra.get("use_llm", False):
+        _set_llm_diagnostic(ctx, attempted=False, status="disabled")
         return None
 
     client = ctx.extra.get("_client")
@@ -328,11 +391,13 @@ def _llm_llm_in_loop(ctx: StepContext) -> dict[str, Any] | None:
         client.timeout_s = 120
         ctx.extra["_client"] = client
     if not client.is_configured():
+        _set_llm_diagnostic(ctx, attempted=False, status="not_configured")
         return None
 
     # Build candidate summary from unqueried pool
     unqueried = [i for i in range(len(ctx.extra["pool_conditions"])) if i not in ctx.queried]
     if not unqueried:
+        _set_llm_diagnostic(ctx, attempted=False, status="no_candidates")
         return None
     # Sample up to 20 for prompt
     rng = random.Random(ctx.extra.get("seed", 0) + ctx.iteration)
@@ -361,15 +426,40 @@ Return ONLY the integer index, no explanation."""
             [{"role": "user", "content": prompt}],
             max_tokens=16,
         )
-    except Exception:  # noqa: BLE001 - LLM call is best-effort
+    except Exception as exc:  # noqa: BLE001 - LLM call is best-effort
+        _set_llm_diagnostic(
+            ctx,
+            attempted=True,
+            status="failed",
+            error=f"{type(exc).__name__}: {exc}",
+        )
         return None
     if getattr(result, "status", None) != "success" or not result.content:
+        _set_llm_diagnostic(
+            ctx,
+            attempted=True,
+            status="failed",
+            error=f"LLM response status={getattr(result, 'status', None)!r} or empty content",
+        )
         return None
 
     try:
         idx = int(result.content.strip().split()[0])
     except (ValueError, IndexError):
+        _set_llm_diagnostic(
+            ctx,
+            attempted=True,
+            status="parse_failed",
+            error="LLM response did not contain an integer index",
+        )
         return None
     if idx not in unqueried:
+        _set_llm_diagnostic(
+            ctx,
+            attempted=True,
+            status="parse_failed",
+            error=f"LLM selected unavailable pool index {idx}",
+        )
         return None
+    _set_llm_diagnostic(ctx, attempted=True, status="success")
     return {"action": "pool_pick", "pool_index": idx}

@@ -21,13 +21,17 @@ ROOT = Path(__file__).resolve().parent
 sys.path.insert(0, str(ROOT))
 
 import components.library  # noqa: F401
-from analyze import aggregate_results, assert_seed_completeness, composite_score, write_report
-from compositions.base import get_base_compositions
+from analyze import (
+    GLOBAL_BEST,
+    aggregate_results,
+    assert_seed_completeness,
+    composite_score,
+    write_report,
+)
 from components.protocol import Composition
-from engine import DEFAULT_N_INITIAL, HybridEngine, compute_metrics
+from compositions.base import get_base_compositions
+from engine import HybridEngine, compute_metrics
 from mutate import generate_neighbors
-
-from analyze import GLOBAL_BEST
 
 SEED_TIERS = {
     "smoke": [100, 200, 300],
@@ -84,24 +88,39 @@ def _resolve_compositions(names: list[str]) -> list[Composition]:
 def run_one(comp_dict: dict[str, Any], dataset: str, seed: int, n_iters: int) -> dict[str, Any]:
     comp = Composition(**comp_dict)
     t0 = time.time()
-    engine = HybridEngine(
-        comp,
-        dataset,
-        seed=seed,
-        n_iters=n_iters,
-        n_initial=DEFAULT_N_INITIAL,
-    )
-    traj = engine.run()
+    engine = None
+    try:
+        engine = HybridEngine(
+            comp,
+            dataset,
+            seed=seed,
+            n_iters=n_iters,
+        )
+        traj = engine.run()
+    except Exception as exc:
+        return {
+            "composition": comp.name,
+            "dataset": dataset,
+            "seed": seed,
+            "prior_protocol": "fixed_train_prior",
+            "n_train_prior": len(engine.initial_indices) if engine is not None else 0,
+            "initial_indices": list(engine.initial_indices) if engine is not None else [],
+            "elapsed_s": time.time() - t0,
+            "diagnostics": engine.diagnostics if engine is not None else None,
+            "status": "failed",
+            "error": f"{type(exc).__name__}: {exc}",
+        }
     metrics = compute_metrics(traj, GLOBAL_BEST[dataset])
     return {
         "composition": comp.name,
         "dataset": dataset,
         "seed": seed,
-        "prior_protocol": "seeded_subsample",
-        "n_initial": DEFAULT_N_INITIAL,
+        "prior_protocol": "fixed_train_prior",
+        "n_train_prior": len(engine.initial_indices),
         "initial_indices": list(engine.initial_indices),
         "elapsed_s": time.time() - t0,
         "metrics": metrics,
+        "diagnostics": engine.diagnostics,
         "status": "ok",
     }
 
@@ -136,6 +155,18 @@ def run_tier(
             name, d, s = futs[fut]
             try:
                 r = fut.result()
+                if r.get("status") != "ok":
+                    row = {"ts": _now(), "tier": tier, **r}
+                    with failures_path.open("a", encoding="utf-8") as f:
+                        f.write(json.dumps(row, default=str) + "\n")
+                    _ledger({
+                        "event": "error",
+                        **{
+                            k: row[k]
+                            for k in ("composition", "dataset", "seed", "tier", "error")
+                        },
+                    })
+                    continue
                 results.append(r)
                 m = r["metrics"]
                 print(

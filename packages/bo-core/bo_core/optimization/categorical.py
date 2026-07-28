@@ -3,9 +3,8 @@
 Categorical chemical-reaction datasets (Buchwald/Suzuki) carry IUPAC-name
 features that the existing numeric BO pipeline cannot consume. This module
 provides a small, dependency-light one-hot encoder keyed on a fixed option
-schema, plus a helper to build that schema as the union of categories across
-the data frames we actually encode (the merged ``train.csv`` contains
-cross-product categories absent from a dataset's own ``options.json``).
+schema, plus a helper for callers that explicitly need the union of multiple
+data sources. Competition BO paths use the task's ``options.json`` schema.
 """
 
 from __future__ import annotations
@@ -25,10 +24,9 @@ def union_options(
     """Build the per-column option list as the sorted union of categories.
 
     Collects unique values from each provided DataFrame (over ``feature_cols``)
-    and optionally merges a canonical ``options_json`` dict. The merged
-    ``train.csv`` carries cross-product reagents not present in a dataset's own
-    ``options.json``, so the union (not ``options_json`` alone) is the correct
-    encoding schema.
+    and optionally merges a canonical ``options_json`` dict. Callers should use
+    this only when every collected category belongs to the intended model space;
+    competition paths use their task's canonical ``options.json`` directly.
 
     Returns a dict mapping each feature column to its sorted unique values.
     """
@@ -79,8 +77,13 @@ class OneHotEncoder:
         """Total one-hot width D = sum of option counts across columns."""
         return self._dim
 
-    def encode_rows(self, rows: Sequence[dict[str, Any]]) -> np.ndarray:
-        """Encode a sequence of config dicts into an (N, D) float array."""
+    def encode_rows(
+        self,
+        rows: Sequence[dict[str, Any]],
+        *,
+        allow_unknown: bool = False,
+    ) -> np.ndarray:
+        """Encode config dicts, optionally leaving unknown feature blocks zero."""
         n = len(rows)
         X = np.zeros((n, self._dim), dtype=float)
         for i, row in enumerate(rows):
@@ -88,6 +91,8 @@ class OneHotEncoder:
                 value = row[col]
                 idx = self._cat_index[col].get(value)
                 if idx is None:
+                    if allow_unknown:
+                        continue
                     raise ValueError(
                         f"Unknown category {value!r} for column {col!r}; "
                         f"not in encoder option list"
@@ -95,10 +100,15 @@ class OneHotEncoder:
                 X[i, self._offsets[j] + idx] = 1.0
         return X
 
-    def encode_df(self, df: pd.DataFrame) -> np.ndarray:
+    def encode_df(
+        self,
+        df: pd.DataFrame,
+        *,
+        allow_unknown: bool = False,
+    ) -> np.ndarray:
         """Encode a DataFrame's feature columns into an (N, D) float array."""
         rows = df[self.feature_cols].to_dict("records")
-        return self.encode_rows(rows)
+        return self.encode_rows(rows, allow_unknown=allow_unknown)
 
     def decode(self, vec: np.ndarray) -> dict[str, str]:
         """Decode a single one-hot vector (D,) back into a config dict."""

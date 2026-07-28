@@ -19,24 +19,26 @@ def _gpbo():
     return next(c for c in get_base_compositions() if c.name == "gpbo_ei")
 
 
-def test_n_initial_larger_than_train_size_clamps() -> None:
-    engine = HybridEngine(_gpbo(), "buchwald_sub4", seed=100, n_iters=1, n_initial=999)
+def test_legacy_n_initial_argument_is_rejected() -> None:
+    with pytest.raises(TypeError, match="n_initial"):
+        HybridEngine(
+            _gpbo(),
+            "buchwald_sub4",
+            seed=100,
+            n_iters=1,
+            n_initial=5,
+        )
 
-    n_train = len(engine.train_df)
-    assert n_train < 999
-    assert len(engine.initial_indices) == n_train
-    assert len(set(engine.initial_indices)) == n_train
 
-
-def test_same_seed_same_indices_across_different_compositions() -> None:
-    """Cross-method fairness: same seed/dataset/n_initial must yield same prior."""
+def test_same_fixed_prior_across_different_compositions() -> None:
+    """Cross-method fairness: every method receives the same fixed prior."""
     manifold = next(c for c in get_base_compositions() if c.name == "gpbo_manifold")
     cake = next(c for c in get_base_compositions() if c.name == "gpbo_cake")
 
-    e1 = HybridEngine(manifold, "buchwald_sub4", seed=100, n_iters=1, n_initial=5)
-    e2 = HybridEngine(cake, "buchwald_sub4", seed=100, n_iters=1, n_initial=5)
+    e1 = HybridEngine(manifold, "buchwald_sub4", seed=100, n_iters=1)
+    e2 = HybridEngine(cake, "buchwald_sub4", seed=100, n_iters=1)
 
-    assert e1.initial_indices == e2.initial_indices
+    assert e1.initial_indices == e2.initial_indices == tuple(range(35))
 
 
 def test_aggregate_rejects_empty_results() -> None:

@@ -134,6 +134,12 @@ def run_one(
     elapsed = time.time() - t0
     metrics = compute_metrics(engine, GLOBAL_BEST[dataset])
 
+    run_metadata = {
+        "prior_protocol": "fixed_train_prior",
+        "n_train_prior": len(engine.train_df),
+        "encoder_dim": engine.encoder.dim,
+    }
+
     # CSV: human-readable trajectory.
     pd.DataFrame(engine.trajectory).to_csv(save_dir / f"seed_{seed}.csv", index=False)
     # .pt: competition submission format.
@@ -142,6 +148,7 @@ def run_one(
         "dataset": dataset,
         "method": method,
         "backend": backend,
+        **run_metadata,
         "trajectory": engine.trajectory,
     }
     _save_pt(save_dir / f"seed_{seed}.pt", pt_obj)
@@ -152,6 +159,7 @@ def run_one(
         "backend": backend,
         "seed": seed,
         "elapsed_s": elapsed,
+        **run_metadata,
         **metrics,
     }
     print(f"[runner] {backend}/{dataset}/{method}/seed_{seed}: "

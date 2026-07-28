@@ -4,10 +4,9 @@ import warnings
 
 import numpy as np
 import pytest
-from botorch.exceptions.warnings import OptimizationWarning
-
 from bo_core.optimization.lgbo import LGBOEngine
 from bo_core.optimization.surrogate import BoTorchSurrogate
+from botorch.exceptions.warnings import OptimizationWarning
 
 
 def _conditions_match(engine: LGBOEngine) -> bool:
@@ -78,6 +77,40 @@ def test_unknown_dataset_rejected():
         LGBOEngine("not_a_dataset", seed=100, use_llm=False, n_iters=1)
 
 
+def test_buchwald_uses_fixed_35_row_prior_in_32_dimensions():
+    engine = LGBOEngine(
+        "buchwald_sub4",
+        seed=100,
+        use_llm=False,
+        n_iters=0,
+    )
+
+    assert len(engine.train_df) == 35
+    assert engine.X_obs.shape == (35, 32)
+    assert engine.pool_X.shape == (783, 32)
+    assert np.all(engine.pool_X.sum(axis=0) > 0)
+
+    reactant_idx = engine.feature_cols.index("Reactant2")
+    offset = engine.encoder._offsets[reactant_idx]
+    size = engine.encoder._sizes[reactant_idx]
+    reactant_block = engine.X_obs[:, offset:offset + size]
+    target_rows = engine.train_df["Reactant2"].isin(
+        engine.encoder.options["Reactant2"]
+    ).to_numpy()
+    assert int(target_rows.sum()) == 7
+    assert np.allclose(reactant_block[target_rows].sum(axis=1), 1.0)
+    assert np.allclose(reactant_block[~target_rows], 0.0)
+
+
+def test_suzuki_keeps_35_dimensional_fixed_prior():
+    engine = LGBOEngine("suzuki", seed=100, use_llm=False, n_iters=0)
+
+    assert len(engine.train_df) == 29
+    assert engine.X_obs.shape == (29, 35)
+    assert engine.pool_X.shape[1] == 35
+    assert np.all(engine.pool_X.sum(axis=0) > 0)
+
+
 # ---- Slice 5: mean-shift (Proposition 1) math ----
 
 def _fit_and_get_mu(engine):
@@ -86,16 +119,29 @@ def _fit_and_get_mu(engine):
     return surrogate, mu, sigma
 
 
-def test_sklearn_refactor_preserves_recorded_trajectory():
-    e = LGBOEngine("buchwald_sub4", seed=100, use_llm=False, n_iters=3, n_restarts=2, backend="sklearn")
-    e.run()
-    assert [t["query_index"] for t in e.trajectory] == [758, 495, 529]
+@pytest.mark.parametrize("backend", ["sklearn", "botorch"])
+def test_fixed_prior_produces_nondegenerate_acquisition(backend):
+    engine = LGBOEngine(
+        "buchwald_sub4",
+        seed=100,
+        use_llm=False,
+        n_iters=0,
+        n_restarts=2,
+        backend=backend,
+    )
 
+    _, mean, std = _fit_and_get_mu(engine)
+    acquisition = engine._expected_improvement(
+        mean,
+        std,
+        float(np.max(engine.y_obs)),
+    )
 
-def test_botorch_default_preserves_recorded_trajectory():
-    e = LGBOEngine("buchwald_sub4", seed=100, use_llm=False, n_iters=3, n_restarts=2)
-    e.run()
-    assert [t["query_index"] for t in e.trajectory] == [1, 523, 242]
+    assert np.all(np.isfinite(mean))
+    assert np.all(np.isfinite(std))
+    assert np.all(np.isfinite(acquisition))
+    assert np.ptp(acquisition) > 0.0
+    assert 0 <= int(np.argmax(acquisition)) < engine.M
 
 
 def test_gpbo_botorch_backend_smoke():

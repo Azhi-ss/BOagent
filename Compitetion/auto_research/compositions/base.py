@@ -104,6 +104,14 @@ BASE_COMPOSITIONS: list[Composition] = [
     ),
     # Hybrid candidates (mixed components)
     Composition(
+        name="lgbo_manifold",
+        surrogate="botorch_manifold",
+        acquisition="ei",
+        selector="argmax",
+        llm_strategy="lgbo_mean_shift",
+        params={"use_llm": True, "xi": 0.01, "evolve_interval": 5},
+    ),
+    Composition(
         name="lgbo_softmax",
         surrogate="botorch_matern",
         acquisition="ei",

@@ -1,4 +1,4 @@
-"""Tests for seed-controlled initial observations in HybridEngine."""
+"""Tests for the fixed competition prior in HybridEngine."""
 from __future__ import annotations
 
 import sys
@@ -17,23 +17,26 @@ def _gpbo() -> object:
     return next(comp for comp in get_base_compositions() if comp.name == "gpbo_ei")
 
 
-def test_same_seed_selects_same_initial_observations() -> None:
-    first = HybridEngine(_gpbo(), "buchwald_sub4", seed=100, n_iters=1, n_initial=5)
-    second = HybridEngine(_gpbo(), "buchwald_sub4", seed=100, n_iters=1, n_initial=5)
-
-    assert first.initial_indices == second.initial_indices
-    assert len(first.initial_indices) == 5
-
-
-def test_different_seeds_select_different_initial_observations() -> None:
-    first = HybridEngine(_gpbo(), "buchwald_sub4", seed=100, n_iters=1, n_initial=5)
-    second = HybridEngine(_gpbo(), "buchwald_sub4", seed=200, n_iters=1, n_initial=5)
-
-    assert first.initial_indices != second.initial_indices
-
-
-def test_none_uses_full_legacy_prior() -> None:
-    engine = HybridEngine(_gpbo(), "buchwald_sub4", seed=100, n_iters=1, n_initial=None)
+def test_buchwald_uses_all_fixed_initial_observations() -> None:
+    engine = HybridEngine(_gpbo(), "buchwald_sub4", seed=100, n_iters=1)
 
     assert engine.initial_indices == tuple(range(35))
     assert len(engine.train_df) == 35
+    assert engine.encoder.dim == 32
+    assert engine.pool_X.shape == (783, 32)
+
+
+def test_seed_does_not_change_fixed_initial_observations() -> None:
+    first = HybridEngine(_gpbo(), "buchwald_sub4", seed=100, n_iters=1)
+    second = HybridEngine(_gpbo(), "buchwald_sub4", seed=200, n_iters=1)
+
+    assert first.initial_indices == second.initial_indices == tuple(range(35))
+    assert first.train_df.equals(second.train_df)
+
+
+def test_suzuki_uses_all_fixed_initial_observations() -> None:
+    engine = HybridEngine(_gpbo(), "suzuki", seed=100, n_iters=1)
+
+    assert engine.initial_indices == tuple(range(29))
+    assert len(engine.train_df) == 29
+    assert engine.encoder.dim == 35

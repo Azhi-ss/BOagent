@@ -24,13 +24,19 @@ AUTO_ROOT = Path(__file__).resolve().parent
 if str(AUTO_ROOT) not in sys.path:
     sys.path.insert(0, str(AUTO_ROOT))
 
-from analyze import GLOBAL_BEST, aggregate_results, assert_seed_completeness, composite_score, trajectory_analysis, write_report  # noqa: E402
-from compositions.base import get_base_compositions  # noqa: E402
 import components.library  # noqa: E402,F401  # force component registration
+from analyze import (  # noqa: E402
+    GLOBAL_BEST,
+    aggregate_results,
+    assert_seed_completeness,
+    composite_score,
+    trajectory_analysis,
+    write_report,
+)
 from components.protocol import Composition, list_components  # noqa: E402
-from engine import DEFAULT_N_INITIAL, HybridEngine, compute_metrics  # noqa: E402
+from compositions.base import get_base_compositions  # noqa: E402
+from engine import HybridEngine, compute_metrics  # noqa: E402
 from mutate import generate_neighbors  # noqa: E402
-
 
 SEED_TIERS = {
     "smoke": [100, 200, 300],
@@ -47,15 +53,29 @@ def run_one(
     n_iters: int = 40,
 ) -> dict[str, Any]:
     """Run one (composition, dataset, seed) and return metrics."""
-    engine = HybridEngine(
-        comp,
-        dataset,
-        seed=seed,
-        n_iters=n_iters,
-        n_initial=DEFAULT_N_INITIAL,
-    )
     t0 = time.time()
-    trajectory = engine.run()
+    engine = None
+    try:
+        engine = HybridEngine(
+            comp,
+            dataset,
+            seed=seed,
+            n_iters=n_iters,
+        )
+        trajectory = engine.run()
+    except Exception as exc:
+        return {
+            "composition": comp.name,
+            "dataset": dataset,
+            "seed": seed,
+            "prior_protocol": "fixed_train_prior",
+            "n_train_prior": len(engine.initial_indices) if engine is not None else 0,
+            "initial_indices": list(engine.initial_indices) if engine is not None else [],
+            "elapsed_s": time.time() - t0,
+            "diagnostics": engine.diagnostics if engine is not None else None,
+            "status": "failed",
+            "error": f"{type(exc).__name__}: {exc}",
+        }
     elapsed = time.time() - t0
     metrics = compute_metrics(trajectory, GLOBAL_BEST[dataset])
     analysis = trajectory_analysis(trajectory)
@@ -63,13 +83,15 @@ def run_one(
         "composition": comp.name,
         "dataset": dataset,
         "seed": seed,
-        "prior_protocol": "seeded_subsample",
-        "n_initial": DEFAULT_N_INITIAL,
+        "prior_protocol": "fixed_train_prior",
+        "n_train_prior": len(engine.initial_indices),
         "initial_indices": list(engine.initial_indices),
         "elapsed_s": elapsed,
         "metrics": metrics,
         "analysis": analysis,
+        "diagnostics": engine.diagnostics,
         "trajectory": trajectory,
+        "status": "ok",
     }
 
 
@@ -91,7 +113,27 @@ def run_composition(
         for fut in as_completed(futures):
             name, ds, seed = futures[fut]
             try:
-                results.append(fut.result())
+                result = fut.result()
+                if result.get("status") != "ok":
+                    failure = {
+                        "ts": datetime.now(timezone.utc).isoformat(),
+                        **result,
+                    }
+                    with (AUTO_ROOT / "history" / "failures.jsonl").open(
+                        "a", encoding="utf-8"
+                    ) as file:
+                        file.write(json.dumps(failure, default=str) + "\n")
+                    iterations_recorded = (
+                        (result.get("diagnostics") or {})
+                        .get("summary", {})
+                        .get("iterations_recorded", 0)
+                    )
+                    print(
+                        f"  [FAIL] {name}/{ds}/seed_{seed}: {result.get('error')} "
+                        f"({iterations_recorded} iterations recorded)"
+                    )
+                    continue
+                results.append(result)
                 print(f"  [done] {name}/{ds}/seed_{seed}")
             except Exception as exc:
                 print(f"  [FAIL] {name}/{ds}/seed_{seed}: {exc}")
