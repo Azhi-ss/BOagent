@@ -24,7 +24,10 @@ This directory contains technical documentation, Context7 API references, offici
 
 5. [Critical Pitfalls & Defensive Rules](file:///home/dministrator/project/BOagent/docs/hardware/gotchas_and_pitfalls.md)
    - Handling `NotPSDError` with `cholesky_jitter` context managers.
-   - Avoiding CPU denormal float slowdown with `torch.set_flush_denormal(True)`.
-   - Outcome unscaling parity for hybrid LLM+GP scoring (`lambda_t`).
-   - Multi-feature ARD lengthscales (`ard_num_dims`).
-   - PyTorch memory leak prevention in FastAPI/SSE threads.
+   - Posterior output scaling, warm-start transform filtering, and batched pool memory bounds.
+   - Process-level numerical thread budgets and NumPy memory ownership.
+
+6. [H365 sklearn vs BoTorch Benchmark](file:///home/dministrator/project/BOagent/docs/hardware/h365_backend_benchmark.md)
+   - Measured fit, prediction, K=50 covariance, wall time, and peak RSS.
+   - Separates sklearn, BoTorch cold-start, and BoTorch warm-start cases.
+   - Compares one worker with 10 threads against multi-worker one-thread processes.

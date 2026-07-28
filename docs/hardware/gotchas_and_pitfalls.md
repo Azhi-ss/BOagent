@@ -1,111 +1,65 @@
-# Critical Edge Cases, Pitfalls & Defensive Rules for BoTorch / PyTorch
+# BoTorch and PyTorch Pitfalls
 
-This document records **critical pitfalls, numerical stability traps, and thread-safety bugs** that will cause runtime crashes or performance degradation if overlooked during PyTorch / BoTorch integration.
+These rules apply to BOagent's sklearn/BoTorch surrogate layer.
 
----
+## 1. Posterior Output Scale
 
-## 1. Covariance Matrix Decomposition Failures (`NotPSDError`)
+With `outcome_transform=Standardize(m=1)`, BoTorch 0.18.1 automatically calls `untransform_posterior` from the public `model.posterior(X)` API. Mean, variance, and covariance are already in original target units.
 
-### The Pitfall
-In iterative Bayesian Optimization, covariance matrices $K(X, X)$ can become ill-conditioned when candidate points are close to each other. In GPyTorch, if the Cholesky decomposition fails, it raises `gpytorch.utils.errors.NotPSDError`, crashing the entire BO step.
+Do not manually multiply public posterior outputs by `y_std`; doing so scales the result twice and corrupts EI, UCB, LLM hybrid weights, and LGBO confidence calibration.
 
-### Defensive Fix
-Wrap model fitting and posterior predictions in `gpytorch.settings.cholesky_jitter`:
+For sklearn `GaussianProcessRegressor(normalize_y=True)`, manually reconstructed kernel covariance is different: multiply by `_y_train_std**2` to restore original target variance units.
 
-```python
-import gpytorch
+## 2. Warm-Start Transform State
 
-# Use fallback jitter if numerical instability occurs
-try:
-    with gpytorch.settings.cholesky_jitter(1e-4):
-        fit_gpytorch_mll(mll)
-except gpytorch.utils.errors.NotPSDError:
-    # Aggressive jitter fallback to prevent server crash
-    with gpytorch.settings.cholesky_jitter(1e-3):
-        fit_gpytorch_mll(mll)
-```
+Loading an entire prior `state_dict` with `strict=False` can still overwrite matching `input_transform.*` and `outcome_transform.*` buffers. This leaves new observations paired with stale normalization statistics.
 
----
-
-## 2. CPU Denormal Floating-Point Slowdown (`flush_denormal`)
-
-### The Pitfall
-On x86 CPUs with AVX-512 (like AMD Zen 5), when floating-point numbers become extremely close to zero ($< 10^{-38}$), the hardware drops into CPU microcode exception handlers to process "denormal" numbers. This can cause matrix operations to run **2x to 10x slower** out of nowhere.
-
-### Defensive Fix
-Enable flush-to-zero at application startup:
+Create a new `SingleTaskGP` each iteration and copy only:
 
 ```python
-import torch
-
-# Flush subnormal/denormal floating-point numbers to zero on CPU
-if torch.get_num_threads() > 1:
-    torch.set_flush_denormal(True)
+WARM_START_PREFIXES = (
+    "covar_module.",
+    "likelihood.",
+    "mean_module.",
+)
 ```
 
----
+## 3. Noise and Cholesky Jitter Are Different
 
-## 3. Outcome Scale Parity with LLM Hybrid Scoring
+In sklearn, `GaussianProcessRegressor(alpha=...)` adds fixed model noise to the training covariance and therefore changes the fitted posterior. In BoTorch, `gpytorch.settings.cholesky_jitter(...)` is a numerical stabilization setting for matrix factorization, while `SingleTaskGP` learns likelihood noise from data. The shared `alpha` input selects each backend's existing stability policy; it does not make their posterior noise models equivalent.
 
-### The Pitfall
-BOagent computes hybrid LLM+GP scores using `lambda_t = gamma * std(GP_scores)`.
-If `SingleTaskGP` standardizes the target `y_train` to $\mathcal{N}(0, 1)$, predicting on `X_pool` yields standardized $\mu_{\text{scaled}}$ and $\sigma_{\text{scaled}}$.
+The BoTorch factory raises numerical jitter below `1e-4` to that floor. This is intentional and must not be interpreted as matching sklearn `alpha=1e-4`.
 
-If these are not explicitly unscaled back to original target units (e.g. yield percentage $0 \sim 100\%$), then:
-- $\sigma_{\text{scaled}}$ will be $\approx 1.0$ instead of actual standard deviation (e.g. $15.2\%$).
-- The LLM log-prob weight `lambda_t` will be off by orders of magnitude, breaking the physics-informed LLM refinement.
+## 4. Cholesky Failures
 
-### Defensive Fix
-Always unscale posterior predictions before returning to `optimizer.py`:
+Catch `linear_operator.utils.errors.NotPSDError` during fitting and retry with explicit `gpytorch.settings.cholesky_jitter(double_value=...)` levels. Configure L-BFGS-B with up to 80 line-search steps per iteration; its default of 20 produced reproducible SciPy `ABNORMAL` terminations even when one additional line-search step reached the same optimum normally. If all jitter levels fail, clear the fit model and let the caller use its documented fallback. Do not return predictions from a stale model.
+
+Retain the jitter level that completed fitting and apply it to `model.posterior(...)` prediction and covariance calls. The setting is context-local; leaving the fit context restores GPyTorch's default inference jitter, which can make posterior Cholesky decomposition fail even though fitting completed.
+
+## 5. Categorical Acquisition
+
+Do not use continuous `optimize_acqf` for the chemical one-hot candidate pools. Score the finite pool directly so every selected point maps to a valid dataset row.
+
+## 6. Pool Prediction and Covariance Memory
+
+A full Suzuki `M x M` posterior covariance is unnecessarily large. Even requesting `posterior(pool).variance` can cause the lazy operator to allocate a large joint covariance internally. Evaluate public posterior mean and marginal variance in pool batches of at most 512 rows.
+
+LGBO needs only `K x K` grid covariance and `M x K` pool-to-grid cross-covariance as outputs. Process the pool side in batches: each public posterior call materializes a joint covariance for at most `512 + K` points, then retains only the at-most `512 x K` cross block before stacking the results. On the H365 smoke workload, batching pool prediction reduced Suzuki BoTorch peak RSS from approximately 1.71 GiB to 454 MiB; this is a local measurement, not a general memory guarantee.
+
+## 7. Thread Oversubscription
+
+A multi-seed run must not combine several workers with 10 or 20 numerical threads each. Use 10 threads for one worker and 1 thread per process for multiple workers. Configure this at process startup; never race on global thread settings from individual surrogate objects.
+
+## 8. Global Process State
+
+Do not call `torch.set_default_dtype` or `torch.manual_seed` inside surrogate fitting. Construct FP64 tensors explicitly and preserve the application's global RNG behavior.
+
+## 9. NumPy Memory Ownership
+
+Pandas can expose read-only NumPy views. Before `torch.from_numpy`, create a writable contiguous copy:
 
 ```python
-y_mean = float(np.mean(y_train))
-y_std = float(np.std(y_train))
-if y_std < 1e-9:
-    y_std = 1.0
-
-# Predict in scaled space
-mu_scaled = posterior.mean.squeeze(-1).numpy()
-sigma_scaled = np.sqrt(np.maximum(posterior.variance.squeeze(-1).numpy(), 1e-9))
-
-# Strictly unscale back to original units!
-mu = mu_scaled * y_std + y_mean
-sigma = sigma_scaled * y_std
+array = np.array(X, dtype=float, copy=True, order="C")
 ```
 
----
-
-## 4. Multi-Feature ARD (Automatic Relevance Determination)
-
-### The Pitfall
-If `SingleTaskGP` is instantiated without ARD (Automatic Relevance Determination), it fits a single global lengthscale parameter $\ell$ shared across all input features. In chemical formulations where features have different physical dimensions (e.g. Temperature vs Concentration vs CBO), this severely degrades model fit.
-
-### Defensive Fix
-Ensure input dimensions use individual lengthscales:
-
-```python
-from botorch.models import SingleTaskGP
-from gpytorch.kernels import ScaleKernel, MaternKernel
-
-d = train_X.shape[-1]
-# Pass ard_num_dims=d so each feature gets its own learned lengthscale
-covar_module = ScaleKernel(MaternKernel(nu=2.5, ard_num_dims=d))
-model = SingleTaskGP(train_X, train_Y, covar_module=covar_module)
-```
-
----
-
-## 5. PyTorch Memory Accumulation in FastAPI / SSE Threads
-
-### The Pitfall
-In FastAPI backend streams (`apps/api/api.py`), multiple requests or multi-seed benchmarks run in worker threads. PyTorch builds autograd computational graphs by default. If `torch.no_grad()` is omitted during pool scoring, memory accumulates endlessly across 40 BO steps, causing RAM exhaustion.
-
-### Defensive Fix
-Always detach tensors and disable grad in candidate scoring methods:
-
-```python
-model.eval()
-with torch.no_grad():
-    posterior = model.posterior(test_X)
-    mu = posterior.mean.squeeze(-1).detach().cpu().numpy()
-```
+This prevents undefined writes and suppresses the PyTorch read-only-array warning.
