@@ -481,6 +481,7 @@ def main() -> int:
     print(f"result_dir={out_dir}")
     print(f"pool={len(test_df)} rows | train={len(train_df)} rows | params={cfg['param_names']}")
     print("=" * 70)
+    summary = []
     for seed in seeds:
         print(f"\n===== seed {seed} =====")
         payload = run_one_seed(

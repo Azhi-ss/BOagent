@@ -110,6 +110,7 @@ class BuchwaldMetric(DiscreteChemMetric):
         self,
         name: str = "buchwald",
         *,
+        param_names: Sequence[str] | None = None,
         test_csv: str | Path,
         train_csv: str | Path | None = None,
         target_column: str = "Yield",
@@ -118,7 +119,7 @@ class BuchwaldMetric(DiscreteChemMetric):
     ) -> None:
         super().__init__(
             name=name,
-            param_names=BUCHWALD_PARAM_NAMES,
+            param_names=param_names if param_names is not None else BUCHWALD_PARAM_NAMES,
             test_csv=test_csv,
             train_csv=train_csv,
             target_column=target_column,
