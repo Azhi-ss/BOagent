@@ -33,36 +33,3 @@ def add_to_jsonl(file_path, data):
 #     "large_data": "adfdsad",
 # }
 # add_to_jsonl(file_path, data)
-
-
-# jsonl
-# [
-#     {
-#         "trial_index": 1,
-#         "comment": "hello!",
-#     },
-#     {
-#         "trial_index": 2,
-#         "comment": "fuck!",
-#     },
-# ]
-
-
-def concatenate_jsonl(json_data):
-    # TODO
-    """接受解析后的 JSON 对象列表，并进行拼接"""
-    print("Start concatenating comment jsonl...")
-    final_concatenated_data = []
-
-    for entry in json_data:
-        entry_parts = []
-        for key, value in entry.items():
-            entry_parts.append(f"{key}: {value}")
-
-        # Join entry parts and add to the final output
-        final_concatenated_data.append(":\n".join(entry_parts))
-
-    # Concatenate all data with newlines
-    concatenated_output = "\n".join(final_concatenated_data)
-    print("Done!\n")
-    return concatenated_output

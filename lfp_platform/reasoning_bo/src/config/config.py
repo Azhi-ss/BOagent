@@ -18,9 +18,6 @@ load_dotenv(_ENV_PATH, override=False)
 
 class Config:
     def __init__(self):
-        self.OPENAI_API_BASE = os.getenv("OPENAI_API_BASE")
-        self.OPENAI_API_KEY = os.getenv("OPENAI_API_KEY")
-        self.OPENAI_MODEL_NAME = os.getenv("OPENAI_MODEL_NAME")
         self.DEEPSEEK_API_KEY = os.getenv("DEEPSEEK_API_KEY")
         self.DEEPSEEK_API_BASE = os.getenv("DEEPSEEK_API_BASE")
         self.DEEPSEEK_MODEL_NAME = os.getenv("DEEPSEEK_MODEL_NAME")
