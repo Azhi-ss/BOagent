@@ -1,6 +1,6 @@
 [
   {
-    "composition": "lgbo_mean_shift",
+    "composition": "lgbo_cake",
     "dataset": "buchwald_sub4",
     "seed": 100,
     "prior_protocol": "seeded_subsample",
@@ -12,17 +12,17 @@
       5,
       1
     ],
-    "elapsed_s": 1176.5,
+    "elapsed_s": 271.0,
     "metrics": {
-      "best_found": 80.68492948,
-      "initial_round_found_best": 61.04819615,
-      "t95": 41,
-      "AUC_best_so_far": 77.9820809855
+      "best_found": 83.05466982,
+      "initial_round_found_best": 29.36083658,
+      "t95": 15,
+      "AUC_best_so_far": 77.393901652
     },
     "status": "ok"
   },
   {
-    "composition": "lgbo_mean_shift",
+    "composition": "lgbo_cake",
     "dataset": "buchwald_sub4",
     "seed": 200,
     "prior_protocol": "seeded_subsample",
@@ -34,17 +34,17 @@
       32,
       29
     ],
-    "elapsed_s": 126.7,
+    "elapsed_s": 226.7,
     "metrics": {
-      "best_found": 83.93941968,
-      "initial_round_found_best": 1.036456102,
-      "t95": 39,
-      "AUC_best_so_far": 72.353378421
+      "best_found": 83.29437838,
+      "initial_round_found_best": 68.91825786,
+      "t95": 23,
+      "AUC_best_so_far": 79.605921151
     },
     "status": "ok"
   },
   {
-    "composition": "lgbo_mean_shift",
+    "composition": "lgbo_cake",
     "dataset": "buchwald_sub4",
     "seed": 300,
     "prior_protocol": "seeded_subsample",
@@ -56,17 +56,17 @@
       15,
       16
     ],
-    "elapsed_s": 127.2,
+    "elapsed_s": 267.3,
     "metrics": {
-      "best_found": 80.68492948,
-      "initial_round_found_best": 66.71317285,
-      "t95": 41,
-      "AUC_best_so_far": 77.3181497215
+      "best_found": 86.59757822,
+      "initial_round_found_best": 69.07936453,
+      "t95": 15,
+      "AUC_best_so_far": 82.15015742625
     },
     "status": "ok"
   },
   {
-    "composition": "lgbo_mean_shift",
+    "composition": "lgbo_cake",
     "dataset": "buchwald_sub4",
     "seed": 400,
     "prior_protocol": "seeded_subsample",
@@ -78,17 +78,17 @@
       0,
       9
     ],
-    "elapsed_s": 130.3,
+    "elapsed_s": 299.6,
     "metrics": {
-      "best_found": 83.3036144,
-      "initial_round_found_best": 73.85492194,
-      "t95": 5,
-      "AUC_best_so_far": 82.25460249700001
+      "best_found": 85.89473594,
+      "initial_round_found_best": 6.604799576,
+      "t95": 7,
+      "AUC_best_so_far": 78.7419350868
     },
     "status": "ok"
   },
   {
-    "composition": "lgbo_mean_shift",
+    "composition": "lgbo_cake",
     "dataset": "buchwald_sub4",
     "seed": 500,
     "prior_protocol": "seeded_subsample",
@@ -100,17 +100,17 @@
       31,
       5
     ],
-    "elapsed_s": 226.2,
+    "elapsed_s": 133.3,
     "metrics": {
-      "best_found": 83.3036144,
-      "initial_round_found_best": 37.71186321,
-      "t95": 16,
-      "AUC_best_so_far": 79.91138507325002
+      "best_found": 85.89473594,
+      "initial_round_found_best": 57.33300234,
+      "t95": 28,
+      "AUC_best_so_far": 76.80306861599999
     },
     "status": "ok"
   },
   {
-    "composition": "lgbo_mean_shift",
+    "composition": "lgbo_cake",
     "dataset": "buchwald_sub4",
     "seed": 600,
     "prior_protocol": "seeded_subsample",
@@ -122,17 +122,17 @@
       9,
       13
     ],
-    "elapsed_s": 1107.8,
+    "elapsed_s": 85.9,
     "metrics": {
-      "best_found": 83.93941968,
-      "initial_round_found_best": 65.48133698,
-      "t95": 27,
-      "AUC_best_so_far": 74.73804130149999
+      "best_found": 83.29437838,
+      "initial_round_found_best": 68.91825786,
+      "t95": 22,
+      "AUC_best_so_far": 79.244758802
     },
     "status": "ok"
   },
   {
-    "composition": "lgbo_mean_shift",
+    "composition": "lgbo_cake",
     "dataset": "buchwald_sub4",
     "seed": 700,
     "prior_protocol": "seeded_subsample",
@@ -144,17 +144,17 @@
       23,
       19
     ],
-    "elapsed_s": 1214.9,
+    "elapsed_s": 125.4,
     "metrics": {
-      "best_found": 85.89473594,
+      "best_found": 84.89551287,
       "initial_round_found_best": 69.84952946,
-      "t95": 3,
-      "AUC_best_so_far": 85.21882557525001
+      "t95": 33,
+      "AUC_best_so_far": 78.55503351575001
     },
     "status": "ok"
   },
   {
-    "composition": "lgbo_mean_shift",
+    "composition": "lgbo_cake",
     "dataset": "buchwald_sub4",
     "seed": 800,
     "prior_protocol": "seeded_subsample",
@@ -166,17 +166,17 @@
       33,
       27
     ],
-    "elapsed_s": 1358.6,
+    "elapsed_s": 136.5,
     "metrics": {
-      "best_found": 83.05466982,
-      "initial_round_found_best": 50.28049867,
-      "t95": 16,
-      "AUC_best_so_far": 79.40060092675
+      "best_found": 83.3036144,
+      "initial_round_found_best": 0.665471445,
+      "t95": 4,
+      "AUC_best_so_far": 79.919165928625
     },
     "status": "ok"
   },
   {
-    "composition": "lgbo_mean_shift",
+    "composition": "lgbo_cake",
     "dataset": "buchwald_sub4",
     "seed": 900,
     "prior_protocol": "seeded_subsample",
@@ -188,17 +188,17 @@
       5,
       27
     ],
-    "elapsed_s": 1274.5,
+    "elapsed_s": 118.8,
     "metrics": {
       "best_found": 83.09647392,
-      "initial_round_found_best": 72.58292155,
-      "t95": 8,
-      "AUC_best_so_far": 81.59053652124999
+      "initial_round_found_best": 69.84952946,
+      "t95": 16,
+      "AUC_best_so_far": 79.90386164125
     },
     "status": "ok"
   },
   {
-    "composition": "lgbo_mean_shift",
+    "composition": "lgbo_cake",
     "dataset": "buchwald_sub4",
     "seed": 1000,
     "prior_protocol": "seeded_subsample",
@@ -210,17 +210,17 @@
       29,
       11
     ],
-    "elapsed_s": 1060.1,
+    "elapsed_s": 145.2,
     "metrics": {
-      "best_found": 83.29437838,
-      "initial_round_found_best": 28.74353219,
-      "t95": 7,
-      "AUC_best_so_far": 78.4318862875
+      "best_found": 86.59757822,
+      "initial_round_found_best": 27.16016891,
+      "t95": 30,
+      "AUC_best_so_far": 76.06906932825
     },
     "status": "ok"
   },
   {
-    "composition": "lgbo_mean_shift",
+    "composition": "lgbo_cake",
     "dataset": "buchwald_sub4",
     "seed": 1100,
     "prior_protocol": "seeded_subsample",
@@ -232,17 +232,17 @@
       19,
       9
     ],
-    "elapsed_s": 1155.8,
+    "elapsed_s": 123.0,
     "metrics": {
       "best_found": 83.05466982,
-      "initial_round_found_best": 67.69619533,
-      "t95": 38,
-      "AUC_best_so_far": 76.12459675775
+      "initial_round_found_best": 9.993569506,
+      "t95": 26,
+      "AUC_best_so_far": 67.69063523465
     },
     "status": "ok"
   },
   {
-    "composition": "lgbo_mean_shift",
+    "composition": "lgbo_cake",
     "dataset": "buchwald_sub4",
     "seed": 1200,
     "prior_protocol": "seeded_subsample",
@@ -254,17 +254,17 @@
       28,
       16
     ],
-    "elapsed_s": 1135.2,
+    "elapsed_s": 176.5,
     "metrics": {
-      "best_found": 83.29437838,
-      "initial_round_found_best": 6.262930072,
-      "t95": 17,
-      "AUC_best_so_far": 77.66909302910001
+      "best_found": 86.59757822,
+      "initial_round_found_best": 29.29928272,
+      "t95": 28,
+      "AUC_best_so_far": 68.621896496
     },
     "status": "ok"
   },
   {
-    "composition": "lgbo_mean_shift",
+    "composition": "lgbo_cake",
     "dataset": "buchwald_sub4",
     "seed": 1300,
     "prior_protocol": "seeded_subsample",
@@ -276,17 +276,17 @@
       13,
       27
     ],
-    "elapsed_s": 1283.9,
+    "elapsed_s": 149.4,
     "metrics": {
-      "best_found": 78.10978605,
+      "best_found": 85.89473594,
       "initial_round_found_best": 69.27632316,
-      "t95": 41,
-      "AUC_best_so_far": 74.90920537625
+      "t95": 22,
+      "AUC_best_so_far": 79.27368443425
     },
     "status": "ok"
   },
   {
-    "composition": "lgbo_mean_shift",
+    "composition": "lgbo_cake",
     "dataset": "buchwald_sub4",
     "seed": 1400,
     "prior_protocol": "seeded_subsample",
@@ -298,17 +298,17 @@
       29,
       6
     ],
-    "elapsed_s": 949.3,
+    "elapsed_s": 169.8,
     "metrics": {
-      "best_found": 81.22830675,
+      "best_found": 85.89473594,
       "initial_round_found_best": 54.56471519,
-      "t95": 41,
-      "AUC_best_so_far": 77.98764281600002
+      "t95": 11,
+      "AUC_best_so_far": 81.08999872325
     },
     "status": "ok"
   },
   {
-    "composition": "lgbo_mean_shift",
+    "composition": "lgbo_cake",
     "dataset": "buchwald_sub4",
     "seed": 1500,
     "prior_protocol": "seeded_subsample",
@@ -320,17 +320,17 @@
       25,
       28
     ],
-    "elapsed_s": 1161.0,
+    "elapsed_s": 252.1,
     "metrics": {
-      "best_found": 84.89551287,
-      "initial_round_found_best": 62.64758393,
-      "t95": 24,
-      "AUC_best_so_far": 76.92841100275
+      "best_found": 85.89473594,
+      "initial_round_found_best": 44.1778543,
+      "t95": 15,
+      "AUC_best_so_far": 80.16515297675001
     },
     "status": "ok"
   },
   {
-    "composition": "lgbo_mean_shift",
+    "composition": "lgbo_cake",
     "dataset": "buchwald_sub4",
     "seed": 1600,
     "prior_protocol": "seeded_subsample",
@@ -342,17 +342,17 @@
       18,
       31
     ],
-    "elapsed_s": 1089.0,
+    "elapsed_s": 568.4,
     "metrics": {
-      "best_found": 81.15116736,
-      "initial_round_found_best": 1.542228309,
-      "t95": 41,
-      "AUC_best_so_far": 44.806471864975
+      "best_found": 83.09647392,
+      "initial_round_found_best": 75.03674068,
+      "t95": 38,
+      "AUC_best_so_far": 79.43464620625
     },
     "status": "ok"
   },
   {
-    "composition": "lgbo_mean_shift",
+    "composition": "lgbo_cake",
     "dataset": "buchwald_sub4",
     "seed": 1700,
     "prior_protocol": "seeded_subsample",
@@ -364,17 +364,17 @@
       15,
       18
     ],
-    "elapsed_s": 1157.6,
+    "elapsed_s": 370.7,
     "metrics": {
-      "best_found": 83.3036144,
-      "initial_round_found_best": 74.90352783,
-      "t95": 7,
-      "AUC_best_so_far": 82.17510629625001
+      "best_found": 85.89473594,
+      "initial_round_found_best": 47.92550874,
+      "t95": 19,
+      "AUC_best_so_far": 79.22513466875
     },
     "status": "ok"
   },
   {
-    "composition": "lgbo_mean_shift",
+    "composition": "lgbo_cake",
     "dataset": "buchwald_sub4",
     "seed": 1800,
     "prior_protocol": "seeded_subsample",
@@ -386,17 +386,17 @@
       30,
       27
     ],
-    "elapsed_s": 1179.0,
+    "elapsed_s": 357.6,
     "metrics": {
-      "best_found": 80.58281911,
+      "best_found": 86.59757822,
       "initial_round_found_best": 47.92550874,
-      "t95": 41,
-      "AUC_best_so_far": 76.53273082625
+      "t95": 26,
+      "AUC_best_so_far": 76.85787020400001
     },
     "status": "ok"
   },
   {
-    "composition": "lgbo_mean_shift",
+    "composition": "lgbo_cake",
     "dataset": "buchwald_sub4",
     "seed": 1900,
     "prior_protocol": "seeded_subsample",
@@ -408,17 +408,17 @@
       11,
       13
     ],
-    "elapsed_s": 1046.9,
+    "elapsed_s": 249.0,
     "metrics": {
-      "best_found": 79.18190676,
-      "initial_round_found_best": 74.23518284,
-      "t95": 41,
-      "AUC_best_so_far": 76.584876702
+      "best_found": 83.29437838,
+      "initial_round_found_best": 68.91825786,
+      "t95": 32,
+      "AUC_best_so_far": 79.6974537465
     },
     "status": "ok"
   },
   {
-    "composition": "lgbo_mean_shift",
+    "composition": "lgbo_cake",
     "dataset": "buchwald_sub4",
     "seed": 2000,
     "prior_protocol": "seeded_subsample",
@@ -430,17 +430,17 @@
       3,
       5
     ],
-    "elapsed_s": 1214.3,
+    "elapsed_s": 269.7,
     "metrics": {
       "best_found": 85.89473594,
       "initial_round_found_best": 75.02467082,
-      "t95": 7,
-      "AUC_best_so_far": 83.35055981725
+      "t95": 9,
+      "AUC_best_so_far": 82.89579492650002
     },
     "status": "ok"
   },
   {
-    "composition": "lgbo_mean_shift",
+    "composition": "lgbo_cake",
     "dataset": "suzuki",
     "seed": 100,
     "prior_protocol": "seeded_subsample",
@@ -452,17 +452,17 @@
       12,
       5
     ],
-    "elapsed_s": 1291.5,
+    "elapsed_s": 270.3,
     "metrics": {
-      "best_found": 93.1,
-      "initial_round_found_best": 0.0,
-      "t95": 41,
-      "AUC_best_so_far": 81.478
+      "best_found": 95.85,
+      "initial_round_found_best": 71.36,
+      "t95": 13,
+      "AUC_best_so_far": 91.56475
     },
     "status": "ok"
   },
   {
-    "composition": "lgbo_mean_shift",
+    "composition": "lgbo_cake",
     "dataset": "suzuki",
     "seed": 200,
     "prior_protocol": "seeded_subsample",
@@ -474,17 +474,17 @@
       20,
       0
     ],
-    "elapsed_s": 1260.5,
+    "elapsed_s": 247.6,
     "metrics": {
-      "best_found": 96.16,
-      "initial_round_found_best": 81.74,
-      "t95": 7,
-      "AUC_best_so_far": 95.19699999999997
+      "best_found": 98.69,
+      "initial_round_found_best": 75.49,
+      "t95": 3,
+      "AUC_best_so_far": 96.124
     },
     "status": "ok"
   },
   {
-    "composition": "lgbo_mean_shift",
+    "composition": "lgbo_cake",
     "dataset": "suzuki",
     "seed": 300,
     "prior_protocol": "seeded_subsample",
@@ -496,17 +496,17 @@
       13,
       11
     ],
-    "elapsed_s": 5916.6,
+    "elapsed_s": 250.6,
     "metrics": {
-      "best_found": 97.32,
-      "initial_round_found_best": 18.55,
-      "t95": 33,
-      "AUC_best_so_far": 91.179
+      "best_found": 94.33,
+      "initial_round_found_best": 0.0,
+      "t95": 41,
+      "AUC_best_so_far": 87.599
     },
     "status": "ok"
   },
   {
-    "composition": "lgbo_mean_shift",
+    "composition": "lgbo_cake",
     "dataset": "suzuki",
     "seed": 400,
     "prior_protocol": "seeded_subsample",
@@ -518,17 +518,17 @@
       0,
       20
     ],
-    "elapsed_s": 1073.9,
+    "elapsed_s": 287.4,
     "metrics": {
-      "best_found": 99.9,
-      "initial_round_found_best": 72.36,
-      "t95": 18,
-      "AUC_best_so_far": 89.22574999999999
+      "best_found": 94.47,
+      "initial_round_found_best": 0.0,
+      "t95": 41,
+      "AUC_best_so_far": 78.80475
     },
     "status": "ok"
   },
   {
-    "composition": "lgbo_mean_shift",
+    "composition": "lgbo_cake",
     "dataset": "suzuki",
     "seed": 500,
     "prior_protocol": "seeded_subsample",
@@ -540,17 +540,17 @@
       12,
       18
     ],
-    "elapsed_s": 1222.4,
+    "elapsed_s": 314.6,
     "metrics": {
-      "best_found": 91.18,
-      "initial_round_found_best": 11.53,
+      "best_found": 92.19,
+      "initial_round_found_best": 28.52,
       "t95": 41,
-      "AUC_best_so_far": 80.93175000000001
+      "AUC_best_so_far": 83.69500000000001
     },
     "status": "ok"
   },
   {
-    "composition": "lgbo_mean_shift",
+    "composition": "lgbo_cake",
     "dataset": "suzuki",
     "seed": 600,
     "prior_protocol": "seeded_subsample",
@@ -562,17 +562,17 @@
       21,
       8
     ],
-    "elapsed_s": 1173.6,
+    "elapsed_s": 229.6,
     "metrics": {
       "best_found": 96.74,
-      "initial_round_found_best": 68.64,
-      "t95": 9,
-      "AUC_best_so_far": 93.04
+      "initial_round_found_best": 86.92,
+      "t95": 8,
+      "AUC_best_so_far": 95.275
     },
     "status": "ok"
   },
   {
-    "composition": "lgbo_mean_shift",
+    "composition": "lgbo_cake",
     "dataset": "suzuki",
     "seed": 700,
     "prior_protocol": "seeded_subsample",
@@ -584,17 +584,17 @@
       19,
       12
     ],
-    "elapsed_s": 1268.7,
+    "elapsed_s": 301.0,
     "metrics": {
-      "best_found": 96.14,
-      "initial_round_found_best": 88.57,
-      "t95": 31,
-      "AUC_best_so_far": 90.46249999999999
+      "best_found": 98.69,
+      "initial_round_found_best": 56.94,
+      "t95": 28,
+      "AUC_best_so_far": 91.6685
     },
     "status": "ok"
   },
   {
-    "composition": "lgbo_mean_shift",
+    "composition": "lgbo_cake",
     "dataset": "suzuki",
     "seed": 800,
     "prior_protocol": "seeded_subsample",
@@ -606,17 +606,17 @@
       23,
       14
     ],
-    "elapsed_s": 1414.3,
+    "elapsed_s": 364.5,
     "metrics": {
-      "best_found": 96.3,
+      "best_found": 98.69,
       "initial_round_found_best": 35.41,
-      "t95": 4,
-      "AUC_best_so_far": 94.58425
+      "t95": 9,
+      "AUC_best_so_far": 95.0425
     },
     "status": "ok"
   },
   {
-    "composition": "lgbo_mean_shift",
+    "composition": "lgbo_cake",
     "dataset": "suzuki",
     "seed": 900,
     "prior_protocol": "seeded_subsample",
@@ -628,17 +628,17 @@
       23,
       27
     ],
-    "elapsed_s": 1339.7,
+    "elapsed_s": 163.4,
     "metrics": {
-      "best_found": 84.77,
-      "initial_round_found_best": 80.65,
-      "t95": 41,
-      "AUC_best_so_far": 83.49974999999999
+      "best_found": 96.74,
+      "initial_round_found_best": 86.58,
+      "t95": 8,
+      "AUC_best_so_far": 95.76700000000001
     },
     "status": "ok"
   },
   {
-    "composition": "lgbo_mean_shift",
+    "composition": "lgbo_cake",
     "dataset": "suzuki",
     "seed": 1000,
     "prior_protocol": "seeded_subsample",
@@ -650,17 +650,17 @@
       27,
       17
     ],
-    "elapsed_s": 1238.3,
+    "elapsed_s": 187.3,
     "metrics": {
-      "best_found": 99.9,
-      "initial_round_found_best": 96.02,
-      "t95": 1,
-      "AUC_best_so_far": 97.43025
+      "best_found": 96.32,
+      "initial_round_found_best": 86.07,
+      "t95": 3,
+      "AUC_best_so_far": 95.80749999999999
     },
     "status": "ok"
   },
   {
-    "composition": "lgbo_mean_shift",
+    "composition": "lgbo_cake",
     "dataset": "suzuki",
     "seed": 1100,
     "prior_protocol": "seeded_subsample",
@@ -672,17 +672,17 @@
       5,
       9
     ],
-    "elapsed_s": 1237.0,
+    "elapsed_s": 185.3,
     "metrics": {
-      "best_found": 96.74,
-      "initial_round_found_best": 66.13,
-      "t95": 3,
-      "AUC_best_so_far": 95.25025000000001
+      "best_found": 99.9,
+      "initial_round_found_best": 50.79,
+      "t95": 12,
+      "AUC_best_so_far": 94.29075
     },
     "status": "ok"
   },
   {
-    "composition": "lgbo_mean_shift",
+    "composition": "lgbo_cake",
     "dataset": "suzuki",
     "seed": 1200,
     "prior_protocol": "seeded_subsample",
@@ -694,17 +694,17 @@
       27,
       2
     ],
-    "elapsed_s": 21889.2,
+    "elapsed_s": 311.4,
     "metrics": {
-      "best_found": 96.04,
-      "initial_round_found_best": 86.58,
-      "t95": 34,
-      "AUC_best_so_far": 93.90825
+      "best_found": 98.69,
+      "initial_round_found_best": 53.09,
+      "t95": 19,
+      "AUC_best_so_far": 92.59575
     },
     "status": "ok"
   },
   {
-    "composition": "lgbo_mean_shift",
+    "composition": "lgbo_cake",
     "dataset": "suzuki",
     "seed": 1300,
     "prior_protocol": "seeded_subsample",
@@ -716,17 +716,17 @@
       14,
       8
     ],
-    "elapsed_s": 6581.5,
+    "elapsed_s": 312.6,
     "metrics": {
-      "best_found": 98.2,
-      "initial_round_found_best": 66.72,
-      "t95": 11,
-      "AUC_best_so_far": 94.13074999999999
+      "best_found": 98.69,
+      "initial_round_found_best": 13.16,
+      "t95": 9,
+      "AUC_best_so_far": 91.93924999999999
     },
     "status": "ok"
   },
   {
-    "composition": "lgbo_mean_shift",
+    "composition": "lgbo_cake",
     "dataset": "suzuki",
     "seed": 1400,
     "prior_protocol": "seeded_subsample",
@@ -738,17 +738,17 @@
       6,
       18
     ],
-    "elapsed_s": 908.3,
+    "elapsed_s": 355.9,
     "metrics": {
-      "best_found": 94.68,
+      "best_found": 96.7,
       "initial_round_found_best": 13.7,
-      "t95": 41,
-      "AUC_best_so_far": 85.0235
+      "t95": 29,
+      "AUC_best_so_far": 84.39274999999999
     },
     "status": "ok"
   },
   {
-    "composition": "lgbo_mean_shift",
+    "composition": "lgbo_cake",
     "dataset": "suzuki",
     "seed": 1500,
     "prior_protocol": "seeded_subsample",
@@ -760,17 +760,17 @@
       27,
       20
     ],
-    "elapsed_s": 129.0,
+    "elapsed_s": 346.9,
     "metrics": {
-      "best_found": 82.23,
-      "initial_round_found_best": 78.59,
-      "t95": 41,
-      "AUC_best_so_far": 81.36800000000001
+      "best_found": 98.69,
+      "initial_round_found_best": 57.51,
+      "t95": 29,
+      "AUC_best_so_far": 87.19525
     },
     "status": "ok"
   },
   {
-    "composition": "lgbo_mean_shift",
+    "composition": "lgbo_cake",
     "dataset": "suzuki",
     "seed": 1600,
     "prior_protocol": "seeded_subsample",
@@ -782,17 +782,17 @@
       13,
       11
     ],
-    "elapsed_s": 932.5,
+    "elapsed_s": 319.8,
     "metrics": {
-      "best_found": 97.09,
-      "initial_round_found_best": 65.74,
-      "t95": 8,
-      "AUC_best_so_far": 94.16850000000001
+      "best_found": 96.14,
+      "initial_round_found_best": 91.34,
+      "t95": 10,
+      "AUC_best_so_far": 95.0315
     },
     "status": "ok"
   },
   {
-    "composition": "lgbo_mean_shift",
+    "composition": "lgbo_cake",
     "dataset": "suzuki",
     "seed": 1700,
     "prior_protocol": "seeded_subsample",
@@ -804,17 +804,17 @@
       20,
       22
     ],
-    "elapsed_s": 1385.2,
+    "elapsed_s": 297.9,
     "metrics": {
-      "best_found": 95.86,
-      "initial_round_found_best": 48.02,
-      "t95": 27,
-      "AUC_best_so_far": 84.70750000000001
+      "best_found": 97.09,
+      "initial_round_found_best": 70.63,
+      "t95": 17,
+      "AUC_best_so_far": 87.149
     },
     "status": "ok"
   },
   {
-    "composition": "lgbo_mean_shift",
+    "composition": "lgbo_cake",
     "dataset": "suzuki",
     "seed": 1800,
     "prior_protocol": "seeded_subsample",
@@ -826,17 +826,17 @@
       24,
       7
     ],
-    "elapsed_s": 41.2,
+    "elapsed_s": 352.5,
     "metrics": {
-      "best_found": 97.32,
-      "initial_round_found_best": 14.45,
-      "t95": 33,
-      "AUC_best_so_far": 78.76050000000001
+      "best_found": 92.19,
+      "initial_round_found_best": 0.0,
+      "t95": 41,
+      "AUC_best_so_far": 83.55425
     },
     "status": "ok"
   },
   {
-    "composition": "lgbo_mean_shift",
+    "composition": "lgbo_cake",
     "dataset": "suzuki",
     "seed": 1900,
     "prior_protocol": "seeded_subsample",
@@ -848,17 +848,17 @@
       20,
       26
     ],
-    "elapsed_s": 73.0,
+    "elapsed_s": 410.3,
     "metrics": {
-      "best_found": 67.49,
-      "initial_round_found_best": 7.73,
+      "best_found": 75.7,
+      "initial_round_found_best": 16.96,
       "t95": 41,
-      "AUC_best_so_far": 33.394000000000005
+      "AUC_best_so_far": 37.96125
     },
     "status": "ok"
   },
   {
-    "composition": "lgbo_mean_shift",
+    "composition": "lgbo_cake",
     "dataset": "suzuki",
     "seed": 2000,
     "prior_protocol": "seeded_subsample",
@@ -870,12 +870,12 @@
       24,
       10
     ],
-    "elapsed_s": 50.5,
+    "elapsed_s": 354.2,
     "metrics": {
-      "best_found": 98.61,
-      "initial_round_found_best": 71.09,
-      "t95": 5,
-      "AUC_best_so_far": 95.2215
+      "best_found": 96.32,
+      "initial_round_found_best": 86.07,
+      "t95": 2,
+      "AUC_best_so_far": 96.06375
     },
     "status": "ok"
   }

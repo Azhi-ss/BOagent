@@ -97,6 +97,9 @@ references/
 # Competition files filtering: exclude documentation & results, keep algorithm code & history logs
 Compitetion/**/*.md
 Compitetion/*.md
+# Keep the 2026-07-28 auto_research results archive docs trackable
+!Compitetion/auto_research/results_2026-07-28/
+!Compitetion/auto_research/results_2026-07-28/**/*.md
 Compitetion/submission/doc/
 Compitetion/submission/results/
 Compitetion/submission/code/logs/
