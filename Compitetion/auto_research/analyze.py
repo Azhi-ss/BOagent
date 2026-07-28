@@ -12,7 +12,7 @@ The competition does NOT publish a single composite formula. ``composite_score``
 is an *internal* accept/reject signal for the auto-research loop, built so that:
 
   1. every term is normalized to [0,1] (cross-dataset comparable)
-  2. lower confidence bound (mean − 1.96·CI95) is used — std matters, per README
+  2. lower confidence bound (mean − CI95) is used — CI95 already embeds 1.96·se
   3. datasets are weighted equally (no suzuki dominance from raw yield scale)
   4. no single metric can dominate by scale (the old t95 bug)
 
@@ -51,9 +51,8 @@ DEFAULT_DATASET_WEIGHTS = {
     "suzuki": 0.5,
 }
 
-# Lower-confidence-bound multiplier on the 95% CI. Penalises high-variance
-# methods so a lucky single seed cannot win. README §4 explicitly requires
-# reporting std and CI; using the LCB makes the ranking statistically honest.
+# z used when building ci95 = z * std / sqrt(n) in aggregate_results.
+# _normalize_metric must NOT multiply by this again: ci95 is already the half-width.
 LCB_Z = 1.96
 
 
@@ -130,8 +129,12 @@ def aggregate_results(
 def _normalize_metric(metric: str, mean: float, ci95: float, dataset: str) -> float:
     """Normalize one metric to [0,1] with a lower-confidence-bound penalty.
 
-    - Yield metrics (best_found, AUC, initial): mean / GLOBAL_BEST, minus CI.
-    - t95 (lower better): 1 - min(t95, N_ITERS) / N_ITERS, minus CI-scaled spread.
+    ``ci95`` is already the half-width ``1.96 * std / sqrt(n)`` from
+    ``aggregate_results``. The LCB is therefore ``mean - ci95`` (not
+    ``mean - 1.96 * ci95``).
+
+    - Yield metrics (best_found, AUC, initial): (mean - ci95) / GLOBAL_BEST.
+    - t95 (lower better): 1 - min(t95, N_ITERS) / N_ITERS, minus ci95 / N_ITERS.
       t95 = 0  -> 1.0 (instant convergence)
       t95 >= 40 -> 0.0 (never reached within budget)
       t95 = 41 (not reached, README penalty) -> clamped to 0.0
@@ -141,10 +144,10 @@ def _normalize_metric(metric: str, mean: float, ci95: float, dataset: str) -> fl
         # Convergence speed: 1.0 at t95=0, 0.0 at t95>=N_ITERS.
         raw = 1.0 - min(mean, float(N_ITERS)) / N_ITERS
         # Penalize uncertainty: high ci95 on t95 means inconsistent convergence.
-        return max(0.0, raw - LCB_Z * ci95 / N_ITERS)
-    # Yield metrics: normalize by global best, then subtract relative CI.
-    raw = mean / gbest
-    return max(0.0, min(1.0, raw - LCB_Z * ci95 / gbest))
+        return max(0.0, raw - ci95 / N_ITERS)
+    # Yield metrics: LCB of mean, normalized by global best.
+    raw = (mean - ci95) / gbest
+    return max(0.0, min(1.0, raw))
 
 
 def score_composition(
