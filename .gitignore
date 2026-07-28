@@ -32,6 +32,7 @@ apps/web/coverage/
 .cursor/
 .vscode/
 .idea/
+.claude
 .DS_Store
 *.swp
 *.swo
