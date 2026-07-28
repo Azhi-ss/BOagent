@@ -22,11 +22,11 @@ apps/web/coverage/
 
 # Environment files (Wildcard for all directories)
 .env
-.env.*
 .env.local
 .env.*.local
 **/.env
 **/.env.*
+!**/.env.example
 
 # IDE / Editor / System
 .cursor/
@@ -40,6 +40,7 @@ apps/web/coverage/
 # Large data & Binary presentations
 *.xlsx
 *.csv
+!datasets/chemical_reactions/**/*.csv
 *.parquet
 *.feather
 *.pptx
