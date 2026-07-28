@@ -159,9 +159,11 @@ def run_one_seed(
     nei_restarts: int = 5,
     nei_raw_samples: int = 128,
     mle_maxiter: int = 50,
+    n_restarts: int = 5,
     mcmc_warmup: int = 128,
     mcmc_samples: int = 64,
     mcmc_thinning: int = 8,
+    device: str = "cpu",
 ) -> dict:
     random.seed(seed)
     np.random.seed(seed)
@@ -204,6 +206,7 @@ def run_one_seed(
             mcmc_warmup=mcmc_warmup,
             mcmc_samples=mcmc_samples,
             mcmc_thinning=mcmc_thinning,
+            device=device,
         )
 
     # ---- Seed trial: this product's 7 labeled train rows ----
@@ -271,6 +274,7 @@ def run_one_seed(
                     chosen_key = proposed_key
                 else:
                     bo_model = BOModel(experiment)
+                    bo_model.model_bridge = mb  # reuse the NEI-fitted GP, not a fresh None model
                     chosen_key = best_unqueried_by_gp(bo_model, unqueried, rng=rng)
         except Exception as e:  # noqa: BLE001
             print(f"[seed {seed}] step {step} suggest failed ({e}); random fallback")
@@ -345,6 +349,7 @@ def main() -> int:
     parser.add_argument("--nei_restarts", type=int, default=5)
     parser.add_argument("--nei_raw_samples", type=int, default=128)
     parser.add_argument("--mle_maxiter", type=int, default=50)
+    parser.add_argument("--n_restarts", type=int, default=5, help="Random restarts for SingleTaskGP MLE.")
     parser.add_argument(
         "--surrogate", choices=["single_task", "saas"], default="single_task",
         help="GP surrogate for the pool path: single_task (SingleTaskGP + MLE) "
@@ -361,7 +366,12 @@ def main() -> int:
         default=None,
         help="Default: data/results/buchwald_sub4_bo_<acq>[_<surrogate>]",
     )
+    parser.add_argument("--device", default=None,
+                        help="torch device for GP fitting (default: cuda if available else cpu).")
     args = parser.parse_args()
+
+    if args.device is None:
+        args.device = "cuda" if torch.cuda.is_available() else "cpu"
 
     paths = resolve_dataset("Buchwald_sub4", prefix="buchwald_sub4")
     options = json.load(open(paths["options"], encoding="utf-8"))
@@ -411,9 +421,11 @@ def main() -> int:
             nei_restarts=args.nei_restarts,
             nei_raw_samples=args.nei_raw_samples,
             mle_maxiter=args.mle_maxiter,
+            n_restarts=args.n_restarts,
             mcmc_warmup=args.mcmc_warmup,
             mcmc_samples=args.mcmc_samples,
             mcmc_thinning=args.mcmc_thinning,
+            device=args.device,
         )
         # round-to-95%-global-best (t95): first step whose best-so-far >= threshold.
         t95 = None

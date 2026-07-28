@@ -7,10 +7,13 @@ r"""
 """
 
 import os
+from pathlib import Path
 from dotenv import load_dotenv
 
 # 系统环境变量优先级 > .env 配置的值
-load_dotenv('.env', override=False)
+# 从 reasoning_bo 根目录加载 .env（不依赖 CWD）
+_ENV_PATH = Path(__file__).resolve().parents[2] / ".env"
+load_dotenv(_ENV_PATH, override=False)
 
 
 class Config:

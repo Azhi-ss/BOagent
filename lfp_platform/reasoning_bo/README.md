@@ -19,8 +19,12 @@
 
 ## 安装
 
+> [!NOTE]
+> 本模块依赖 `ax-platform==0.5.0` / `botorch`，与仓库主 workspace（`bo-core` pin `botorch>=0.18,<0.19`）可能冲突。建议在**独立虚拟环境**中安装，勿与 `bo-core` / `apps/api` 混装。
+
 ```bash
 cd lfp_platform/reasoning_bo
+python -m venv .venv && source .venv/bin/activate
 pip install -r requirements.txt
 ```
 
@@ -41,6 +45,7 @@ python scripts/run_chem_bo.py --dataset Buchwald_sub4 --use_llm --llm_backend de
 
 # 其他可选：SAAS 代理模型（horseshoe 先验 + NUTS）、Ax qLogNEI 路径
 python scripts/run_buchwald_bo.py --surrogate saas --seeds 100
+python scripts/run_chem_bo.py --dataset Suzuki --surrogate saas --seeds 100
 python scripts/run_chem_bo.py --dataset Suzuki --acq nei --seeds 100
 ```
 

@@ -251,7 +251,8 @@ def llm_pick(
 
 def run_one_seed(
     seed, paths, options, test_df, train_df, cfg, num_iterations, out_dir,
-    *, acq="pool", nei_restarts=5, nei_raw_samples=128, mle_maxiter=50, n_restarts=5,
+    *, acq="pool", surrogate="single_task", nei_restarts=5, nei_raw_samples=128, mle_maxiter=50, n_restarts=5,
+    mcmc_warmup=128, mcmc_samples=64, mcmc_thinning=8,
     use_llm=False, llm_top_k=5, llm_backend="deepseek", device="cpu",
 ):
     param_names = cfg["param_names"]
@@ -285,6 +286,8 @@ def run_one_seed(
             options_per_var=[options[n] for n in param_names],
             param_names=param_names,
             maxiter=mle_maxiter, n_restarts=n_restarts,
+            surrogate=surrogate,
+            mcmc_warmup=mcmc_warmup, mcmc_samples=mcmc_samples, mcmc_thinning=mcmc_thinning,
             device=device,
         )
 
@@ -375,7 +378,8 @@ def run_one_seed(
                 if proposed_key in pool_index_map and proposed_key not in queried:
                     chosen_key = proposed_key
                 else:
-                    chosen_key = best_unqueried_by_gp(BOModel(experiment), unqueried, param_names, rng=rng)
+                    bo_model = BOModel(experiment); bo_model.model_bridge = mb  # reuse the NEI-fitted GP
+                    chosen_key = best_unqueried_by_gp(bo_model, unqueried, param_names, rng=rng)
         except Exception as e:  # noqa: BLE001
             print(f"[seed {seed}] step {step} suggest failed ({e}); random fallback")
             chosen_key = rng.choice(unqueried)
@@ -426,10 +430,18 @@ def main() -> int:
     parser.add_argument("--seeds", type=int, nargs="*", default=None,
                         help="Random seeds (default: the 20 competition seeds 100..2000).")
     parser.add_argument("--acq", choices=["pool", "nei"], default="pool")
+    parser.add_argument(
+        "--surrogate", choices=["single_task", "saas"], default="single_task",
+        help="GP surrogate for the pool path: single_task (SingleTaskGP + MLE) "
+             "or saas (SAASBO + NUTS MCMC, horseshoe prior). Ignored for --acq nei.",
+    )
     parser.add_argument("--nei_restarts", type=int, default=5)
     parser.add_argument("--nei_raw_samples", type=int, default=128)
     parser.add_argument("--mle_maxiter", type=int, default=50)
     parser.add_argument("--n_restarts", type=int, default=5)
+    parser.add_argument("--mcmc_warmup", type=int, default=128, help="NUTS warmup steps (saas only).")
+    parser.add_argument("--mcmc_samples", type=int, default=64, help="NUTS num_samples (saas only).")
+    parser.add_argument("--mcmc_thinning", type=int, default=8, help="NUTS thinning (saas only).")
     parser.add_argument("--use_llm", action="store_true",
                         help="Let an LLM re-rank BO's top-k pool candidates each round.")
     parser.add_argument("--llm_top_k", type=int, default=5,
@@ -469,15 +481,14 @@ def main() -> int:
     print(f"result_dir={out_dir}")
     print(f"pool={len(test_df)} rows | train={len(train_df)} rows | params={cfg['param_names']}")
     print("=" * 70)
-
-    summary = []
     for seed in seeds:
         print(f"\n===== seed {seed} =====")
         payload = run_one_seed(
             seed, paths, options, test_df, train_df, cfg,
-            args.num_iterations, out_dir, acq=args.acq,
+            args.num_iterations, out_dir, acq=args.acq, surrogate=args.surrogate,
             nei_restarts=args.nei_restarts, nei_raw_samples=args.nei_raw_samples,
             mle_maxiter=args.mle_maxiter, n_restarts=args.n_restarts,
+            mcmc_warmup=args.mcmc_warmup, mcmc_samples=args.mcmc_samples, mcmc_thinning=args.mcmc_thinning,
             use_llm=args.use_llm, llm_top_k=args.llm_top_k, llm_backend=args.llm_backend,
             device=args.device)
         t95 = None
