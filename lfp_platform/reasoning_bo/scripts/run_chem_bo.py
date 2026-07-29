@@ -463,7 +463,10 @@ def main() -> int:
     train_df = pd.read_csv(paths["train"])
 
     seeds = args.seeds if args.seeds else DEFAULT_SEEDS
-    suffix = f"_{args.acq}" + ("_llm" if args.use_llm else "")
+    suffix = f"_{args.acq}"
+    if args.acq == "pool" and args.surrogate != "single_task":
+        suffix += f"_{args.surrogate}"
+    suffix += "_llm" if args.use_llm else ""
     out_dir = Path(args.result_dir) if args.result_dir else (
         ROOT / "data" / "results" / f"{args.dataset}_bo{suffix}")
 
@@ -476,7 +479,8 @@ def main() -> int:
 
     print("=" * 70)
     llm_tag = f" | LLM={args.llm_backend}(top-{args.llm_top_k})" if args.use_llm else ""
-    print(f"{args.dataset} BO | acq={args.acq}{llm_tag} | iters={args.num_iterations} | seeds={seeds} | device={args.device}")
+    sur_tag = f" | surrogate={args.surrogate}" if args.acq == "pool" else ""
+    print(f"{args.dataset} BO | acq={args.acq}{sur_tag}{llm_tag} | iters={args.num_iterations} | seeds={seeds} | device={args.device}")
     print(f"data_dir={paths['dir']}")
     print(f"result_dir={out_dir}")
     print(f"pool={len(test_df)} rows | train={len(train_df)} rows | params={cfg['param_names']}")

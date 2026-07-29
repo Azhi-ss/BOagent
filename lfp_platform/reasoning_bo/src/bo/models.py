@@ -16,28 +16,12 @@ from botorch.models.gp_regression import SingleTaskGP
 
 import numpy as np
 from ax.core.observation import ObservationFeatures
-from ax.plot.trace import optimization_trace_single_method
-from ax.utils.notebook.plotting import render
-import json
-from src.config import Config
-
-config = Config()
 
 
 class BOModel:
     def __init__(self, experiment):
         self.experiment = experiment
         self.model_bridge = None
-
-    def hot_start(self, experiment, num_sobol_trials):
-        NUM_SOBOL_TRIALS = num_sobol_trials
-        print(f"Running Sobol initialization trials...")
-        sobol = Models.SOBOL(search_space=experiment.search_space)
-        for i in range(NUM_SOBOL_TRIALS):
-            generator_run = sobol.gen(n=1)
-            trial = experiment.new_trial(generator_run=generator_run)
-            trial.run()
-            trial.mark_completed()
 
     def gen(self, n):
         print(
@@ -60,7 +44,9 @@ class BOModel:
     def predict_posterior(self, candidates_params):
         """Return GP posterior (mean, std) for each candidate parameterization.
 
-        Must be called after ``gen`` (which fits ``self.model_bridge``).
+        Requires ``self.model_bridge`` to be fitted — either by calling ``gen``
+        on this object or by assigning an already-fitted bridge (e.g. one
+        created via ``Models.BOTORCH_MODULAR``) to ``self.model_bridge``.
         Returns a list of ``{"params", "mean", "std"}`` dicts; ``None`` if the
         model is not yet fitted so callers can degrade gracefully.
         """
@@ -86,18 +72,3 @@ class BOModel:
                 }
             )
         return results
-
-    def easy_render_hartmann6(self):
-        objective_means = np.array(
-            [
-                [
-                    trial.objective_mean
-                    for trial in self.experiment.trials.values()
-                ]
-            ]
-        )
-        best_objective_plot = optimization_trace_single_method(
-            y=np.minimum.accumulate(objective_means, axis=1),
-            optimum=-3.32237,  # Known minimum objective for Hartmann6 function.
-        )
-        render(best_objective_plot)
