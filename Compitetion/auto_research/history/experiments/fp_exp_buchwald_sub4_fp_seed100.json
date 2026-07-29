@@ -1,0 +1,75 @@
+{
+  "dataset": "buchwald_sub4",
+  "seed": 100,
+  "encoding": "fingerprint",
+  "best_found": 79.73976585,
+  "t95": 6,
+  "elapsed_s": 18.36154866218567,
+  "trajectory": [
+    {
+      "step": 1,
+      "query_index": 253,
+      "condition": {
+        "Reactant2": "1-bromo-4-ethylbenzene",
+        "Ligand": "ditert-butyl-[3,6-dimethoxy-2-[2,4,6-tri(propan-2-yl)phenyl]phenyl]phosphane",
+        "Additive": "ethyl 5-methyl-1,2-oxazole-3-carboxylate",
+        "Base": "1-methyl-2,3,4,6,7,8-hexahydropyrimido[1,2-a]pyrimidine"
+      },
+      "observed_yield": 79.73976585,
+      "acquisition": "ei",
+      "llm_action": null
+    },
+    {
+      "step": 2,
+      "query_index": 27,
+      "condition": {
+        "Reactant2": "1-bromo-4-ethylbenzene",
+        "Ligand": "dicyclohexyl-[2-[2,4,6-tri(propan-2-yl)phenyl]phenyl]phosphane",
+        "Additive": "ethyl 5-methyl-1,2-oxazole-3-carboxylate",
+        "Base": "N-[dimethylamino-ethylimino-[[tris(dimethylamino)-lambda5-phosphanylidene]amino]-lambda5-phosphanyl]-N-methylmethanamine"
+      },
+      "observed_yield": 53.99699311,
+      "acquisition": "ei",
+      "llm_action": null
+    },
+    {
+      "step": 3,
+      "query_index": 7,
+      "condition": {
+        "Reactant2": "1-bromo-4-ethylbenzene",
+        "Ligand": "ditert-butyl-[2-[2,4,6-tri(propan-2-yl)phenyl]phenyl]phosphane",
+        "Additive": "ethyl 5-methyl-1,2-oxazole-3-carboxylate",
+        "Base": "1-methyl-2,3,4,6,7,8-hexahydropyrimido[1,2-a]pyrimidine"
+      },
+      "observed_yield": 78.80108905,
+      "acquisition": "ei",
+      "llm_action": null
+    },
+    {
+      "step": 4,
+      "query_index": 2,
+      "condition": {
+        "Reactant2": "1-bromo-4-ethylbenzene",
+        "Ligand": "ditert-butyl-[2-[2,4,6-tri(propan-2-yl)phenyl]phenyl]phosphane",
+        "Additive": "2,1-benzoxazole",
+        "Base": "1-methyl-2,3,4,6,7,8-hexahydropyrimido[1,2-a]pyrimidine"
+      },
+      "observed_yield": 24.59821074,
+      "acquisition": "ei",
+      "llm_action": null
+    },
+    {
+      "step": 5,
+      "query_index": 43,
+      "condition": {
+        "Reactant2": "1-bromo-4-ethylbenzene",
+        "Ligand": "ditert-butyl-[2-[2,4,6-tri(propan-2-yl)phenyl]phenyl]phosphane",
+        "Additive": "5-methyl-1,2-oxazole",
+        "Base": "1-methyl-2,3,4,6,7,8-hexahydropyrimido[1,2-a]pyrimidine"
+      },
+      "observed_yield": 68.26027768,
+      "acquisition": "ei",
+      "llm_action": null
+    }
+  ]
+}

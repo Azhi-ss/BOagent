@@ -45,7 +45,12 @@ from bo_core.optimization.surrogate import (
 )
 
 
-def _build_dkl_kernel(dimension: int, hidden_dim: int = 16, n_layers: int = 2):
+def _build_dkl_kernel(
+    dimension: int,
+    hidden_dim: int = 16,
+    n_layers: int = 2,
+    seed: int = 0,
+):
     """Build a deep kernel: MLP feature extractor + Matern-5/2 in feature space.
 
     Architecture (small for d<=~100 one-hot):
@@ -85,8 +90,10 @@ def _build_dkl_kernel(dimension: int, hidden_dim: int = 16, n_layers: int = 2):
     # via the model's input_transform; here we just return the base kernel and
     # the feature extractor, and the surrogate wires them together.
     feature_dim = hidden_dim
-    base_kernel = ScaleKernel(MaternKernel(nu=2.5, ard_num_dims=feature_dim))
-    feature_extractor = _MLPFeatureExtractor(dimension, hidden_dim, n_layers)
+    with torch.random.fork_rng(devices=[]):
+        torch.manual_seed(seed)
+        base_kernel = ScaleKernel(MaternKernel(nu=2.5, ard_num_dims=feature_dim))
+        feature_extractor = _MLPFeatureExtractor(dimension, hidden_dim, n_layers)
     return base_kernel, feature_extractor
 
 
@@ -125,6 +132,21 @@ class DKLSurrogate(BoTorchSurrogate):
         self.hidden_dim = int(hidden_dim)
         self.n_layers = int(n_layers)
         self._fit_count = 0
+        self._dkl_warm_state: dict[str, object] | None = None
+        self._fallback_warm_state: dict[str, object] | None = None
+        self._fit_diagnostics: list[dict[str, Any]] = []
+
+    @property
+    def diagnostics(self) -> dict[str, Any]:
+        return {
+            "summary": {
+                "fits": len(self._fit_diagnostics),
+                "fallback_fits": sum(
+                    fit["status"] == "fallback" for fit in self._fit_diagnostics
+                ),
+            },
+            "fits": [dict(fit) for fit in self._fit_diagnostics],
+        }
 
     # ------------------------------------------------------------------ fit
 
@@ -142,6 +164,17 @@ class DKLSurrogate(BoTorchSurrogate):
         except Exception as exc:  # noqa: BLE001 - DKL is best-effort
             print(f"[DKLSurrogate] DKL fit failed ({exc}); falling back to Matern-5/2")
             self._fit_matern_fallback(train_X, train_Y, dimension)
+            self._fit_diagnostics.append({
+                "fit": self._fit_count,
+                "status": "fallback",
+                "error": f"{type(exc).__name__}: {exc}",
+            })
+        else:
+            self._fit_diagnostics.append({
+                "fit": self._fit_count,
+                "status": "dkl",
+                "error": None,
+            })
 
         return self
 
@@ -154,27 +187,30 @@ class DKLSurrogate(BoTorchSurrogate):
 
         # Build feature extractor + base kernel
         base_kernel, feature_extractor = _build_dkl_kernel(
-            dimension, hidden_dim=self.hidden_dim, n_layers=self.n_layers
+            dimension,
+            hidden_dim=self.hidden_dim,
+            n_layers=self.n_layers,
+            seed=self.seed,
         )
 
         # Build a deep-kernel SingleTaskGP variant: wrap the input transform
         # so the kernel sees the MLP features.
-        model = _DeepKernelGP(
+        model = self._build_model(
             train_X,
             train_Y,
             feature_extractor=feature_extractor,
             covar_module=base_kernel,
-            input_dim=dimension,
         )
 
-        # Warm-start (skip for the first fit because NN init is random)
-        if self._warm_state:
+        # Warm-start from the previous successful DKL fit only.
+        if self._dkl_warm_state:
             current = model.state_dict()
             current.update(
                 {
                     key: value
-                    for key, value in self._warm_state.items()
+                    for key, value in self._dkl_warm_state.items()
                     if key in current
+                    and key.startswith(self._WARM_START_PREFIXES)
                     and getattr(current[key], "shape", None) == getattr(value, "shape", None)
                 }
             )
@@ -205,10 +241,20 @@ class DKLSurrogate(BoTorchSurrogate):
 
         model.eval()
         self.model = model
-        self._warm_state = {
+        self._dkl_warm_state = {
             key: value.detach().clone()
             for key, value in model.state_dict().items()
+            if key.startswith(self._WARM_START_PREFIXES)
         }
+
+    @staticmethod
+    def _build_model(train_X, train_Y, feature_extractor, covar_module):
+        return _DeepKernelGP(
+            train_X,
+            train_Y,
+            feature_extractor=feature_extractor,
+            covar_module=covar_module,
+        )
 
     def _fit_matern_fallback(self, train_X, train_Y, dimension: int) -> None:
         """Fallback: plain Matern-5/2 on raw one-hot (identical to submission)."""
@@ -227,6 +273,19 @@ class DKLSurrogate(BoTorchSurrogate):
             input_transform=Normalize(d=dimension),
             outcome_transform=Standardize(m=1),
         )
+        if self._fallback_warm_state:
+            current = model.state_dict()
+            current.update(
+                {
+                    key: value
+                    for key, value in self._fallback_warm_state.items()
+                    if key in current
+                    and key.startswith(self._WARM_START_PREFIXES)
+                    and getattr(current[key], "shape", None)
+                    == getattr(value, "shape", None)
+                }
+            )
+            model.load_state_dict(current)
         mll = ExactMarginalLogLikelihood(model.likelihood, model)
         last_exc: Exception | None = None
         for jitter in self.jitter_levels:
@@ -249,9 +308,10 @@ class DKLSurrogate(BoTorchSurrogate):
 
         model.eval()
         self.model = model
-        self._warm_state = {
+        self._fallback_warm_state = {
             key: value.detach().clone()
             for key, value in model.state_dict().items()
+            if key.startswith(self._WARM_START_PREFIXES)
         }
 
 
@@ -278,29 +338,25 @@ class _DeepKernelGP:
         train_Y,
         feature_extractor,
         covar_module,
-        input_dim: int,
     ):
         from botorch.models import SingleTaskGP
-        from botorch.models.transforms import InputTransform, Standardize
-        from gpytorch.module import Module
+        from botorch.models.transforms import Standardize
+        from botorch.models.transforms.input import InputTransform
 
-        class _MLPInputTransform(Module, InputTransform):
+        class _MLPInputTransform(InputTransform):
             """InputTransform that applies the MLP feature extractor."""
-            def __init__(self, mlp, output_dim: int) -> None:
+
+            def __init__(self, mlp) -> None:
                 super().__init__()
                 self.mlp = mlp
-                self._output_dim = output_dim
+                self.transform_on_train = True
+                self.transform_on_eval = True
+                self.transform_on_fantasize = True
 
             def transform(self, X):
                 return self.mlp(X)
 
-            def forward(self, X):
-                return self.transform(X)
-
-        mlp_transform = _MLPInputTransform(feature_extractor, feature_extractor.net[-2].out_features)
-        # After the MLP, we want the Normalize to operate on the learned feature dim,
-        # not the raw input dim. Compose: raw -> MLP -> Normalize.
-        # SingleTaskGP applies input_transform before the kernel.
+        mlp_transform = _MLPInputTransform(feature_extractor)
         model = SingleTaskGP(
             train_X,
             train_Y,

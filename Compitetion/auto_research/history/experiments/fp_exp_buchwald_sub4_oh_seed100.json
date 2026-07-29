@@ -1,0 +1,75 @@
+{
+  "dataset": "buchwald_sub4",
+  "seed": 100,
+  "encoding": "one_hot",
+  "best_found": 69.27632316,
+  "t95": 6,
+  "elapsed_s": 7.516029119491577,
+  "trajectory": [
+    {
+      "step": 1,
+      "query_index": 709,
+      "condition": {
+        "Reactant2": "1-ethyl-4-iodobenzene",
+        "Ligand": "bis(1-adamantyl)-[3,6-dimethoxy-2-[2,4,6-tri(propan-2-yl)phenyl]phenyl]phosphane",
+        "Additive": "5-methyl-3-pyrrol-1-yl-1,2-oxazole",
+        "Base": "N-[dimethylamino-ethylimino-[[tris(dimethylamino)-lambda5-phosphanylidene]amino]-lambda5-phosphanyl]-N-methylmethanamine"
+      },
+      "observed_yield": 68.20094264,
+      "acquisition": "ei",
+      "llm_action": null
+    },
+    {
+      "step": 2,
+      "query_index": 186,
+      "condition": {
+        "Reactant2": "1-bromo-4-ethylbenzene",
+        "Ligand": "ditert-butyl-[3,6-dimethoxy-2-[2,4,6-tri(propan-2-yl)phenyl]phenyl]phosphane",
+        "Additive": "5-methyl-3-pyrrol-1-yl-1,2-oxazole",
+        "Base": "N-[dimethylamino-ethylimino-[[tris(dimethylamino)-lambda5-phosphanylidene]amino]-lambda5-phosphanyl]-N-methylmethanamine"
+      },
+      "observed_yield": 68.91825786,
+      "acquisition": "ei",
+      "llm_action": null
+    },
+    {
+      "step": 3,
+      "query_index": 758,
+      "condition": {
+        "Reactant2": "1-ethyl-4-iodobenzene",
+        "Ligand": "ditert-butyl-[2-[2,4,6-tri(propan-2-yl)phenyl]phenyl]phosphane",
+        "Additive": "5-methyl-3-pyrrol-1-yl-1,2-oxazole",
+        "Base": "N-[dimethylamino-ethylimino-[[tris(dimethylamino)-lambda5-phosphanylidene]amino]-lambda5-phosphanyl]-N-methylmethanamine"
+      },
+      "observed_yield": 63.53604944,
+      "acquisition": "ei",
+      "llm_action": null
+    },
+    {
+      "step": 4,
+      "query_index": 727,
+      "condition": {
+        "Reactant2": "1-ethyl-4-iodobenzene",
+        "Ligand": "ditert-butyl-[3,6-dimethoxy-2-[2,4,6-tri(propan-2-yl)phenyl]phenyl]phosphane",
+        "Additive": "5-methyl-3-pyrrol-1-yl-1,2-oxazole",
+        "Base": "N-[dimethylamino-ethylimino-[[tris(dimethylamino)-lambda5-phosphanylidene]amino]-lambda5-phosphanyl]-N-methylmethanamine"
+      },
+      "observed_yield": 69.27632316,
+      "acquisition": "ei",
+      "llm_action": null
+    },
+    {
+      "step": 5,
+      "query_index": 574,
+      "condition": {
+        "Reactant2": "1-ethyl-4-iodobenzene",
+        "Ligand": "dicyclohexyl-[2-[2,4,6-tri(propan-2-yl)phenyl]phenyl]phosphane",
+        "Additive": "5-methyl-3-pyrrol-1-yl-1,2-oxazole",
+        "Base": "N-[dimethylamino-ethylimino-[[tris(dimethylamino)-lambda5-phosphanylidene]amino]-lambda5-phosphanyl]-N-methylmethanamine"
+      },
+      "observed_yield": 67.69619533,
+      "acquisition": "ei",
+      "llm_action": null
+    }
+  ]
+}

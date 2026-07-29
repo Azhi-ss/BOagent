@@ -1,0 +1,5392 @@
+[
+  {
+    "dataset": "buchwald_sub4",
+    "seed": 100,
+    "encoding": "one_hot",
+    "prior_protocol": "seeded_subsample",
+    "n_initial": 5,
+    "initial_indices": [
+      33,
+      34,
+      31,
+      5,
+      1
+    ],
+    "best_found": 84.89551287,
+    "t95": 18,
+    "elapsed_s": 8.203614950180054,
+    "trajectory": [
+      {
+        "step": 1,
+        "query_index": 304,
+        "condition": {
+          "Reactant2": "1-chloro-4-ethylbenzene",
+          "Ligand": "bis(1-adamantyl)-[3,6-dimethoxy-2-[2,4,6-tri(propan-2-yl)phenyl]phenyl]phosphane",
+          "Additive": "ethyl 3-methoxy-1,2-oxazole-5-carboxylate",
+          "Base": "1-methyl-2,3,4,6,7,8-hexahydropyrimido[1,2-a]pyrimidine"
+        },
+        "observed_yield": 0.665471445,
+        "acquisition": "ei",
+        "llm_action": null
+      },
+      {
+        "step": 2,
+        "query_index": 528,
+        "condition": {
+          "Reactant2": "1-ethyl-4-iodobenzene",
+          "Ligand": "bis(1-adamantyl)-[3,6-dimethoxy-2-[2,4,6-tri(propan-2-yl)phenyl]phenyl]phosphane",
+          "Additive": "ethyl 3-methoxy-1,2-oxazole-5-carboxylate",
+          "Base": "1-methyl-2,3,4,6,7,8-hexahydropyrimido[1,2-a]pyrimidine"
+        },
+        "observed_yield": 75.02467082,
+        "acquisition": "ei",
+        "llm_action": null
+      },
+      {
+        "step": 3,
+        "query_index": 93,
+        "condition": {
+          "Reactant2": "1-bromo-4-ethylbenzene",
+          "Ligand": "bis(1-adamantyl)-[3,6-dimethoxy-2-[2,4,6-tri(propan-2-yl)phenyl]phenyl]phosphane",
+          "Additive": "ethyl 3-methoxy-1,2-oxazole-5-carboxylate",
+          "Base": "1-methyl-2,3,4,6,7,8-hexahydropyrimido[1,2-a]pyrimidine"
+        },
+        "observed_yield": 50.28049867,
+        "acquisition": "ei",
+        "llm_action": null
+      },
+      {
+        "step": 4,
+        "query_index": 0,
+        "condition": {
+          "Reactant2": "1-bromo-4-ethylbenzene",
+          "Ligand": "bis(1-adamantyl)-[3,6-dimethoxy-2-[2,4,6-tri(propan-2-yl)phenyl]phenyl]phosphane",
+          "Additive": "ethyl 1,2-oxazole-3-carboxylate",
+          "Base": "N-[dimethylamino-ethylimino-[[tris(dimethylamino)-lambda5-phosphanylidene]amino]-lambda5-phosphanyl]-N-methylmethanamine"
+        },
+        "observed_yield": 1.023181291,
+        "acquisition": "ei",
+        "llm_action": null
+      },
+      {
+        "step": 5,
+        "query_index": 1,
+        "condition": {
+          "Reactant2": "1-bromo-4-ethylbenzene",
+          "Ligand": "ditert-butyl-[2-[2,4,6-tri(propan-2-yl)phenyl]phenyl]phosphane",
+          "Additive": "5-methyl-3-pyrrol-1-yl-1,2-oxazole",
+          "Base": "1-methyl-2,3,4,6,7,8-hexahydropyrimido[1,2-a]pyrimidine"
+        },
+        "observed_yield": 71.55294754,
+        "acquisition": "ei",
+        "llm_action": null
+      },
+      {
+        "step": 6,
+        "query_index": 96,
+        "condition": {
+          "Reactant2": "1-bromo-4-ethylbenzene",
+          "Ligand": "ditert-butyl-[2-[2,4,6-tri(propan-2-yl)phenyl]phenyl]phosphane",
+          "Additive": "c1ccc(CN(Cc2ccccc2)c2ccno2)cc1",
+          "Base": "1-methyl-2,3,4,6,7,8-hexahydropyrimido[1,2-a]pyrimidine"
+        },
+        "observed_yield": 39.55034963,
+        "acquisition": "ei",
+        "llm_action": null
+      },
+      {
+        "step": 7,
+        "query_index": 629,
+        "condition": {
+          "Reactant2": "1-ethyl-4-iodobenzene",
+          "Ligand": "ditert-butyl-[2-[2,4,6-tri(propan-2-yl)phenyl]phenyl]phosphane",
+          "Additive": "5-methyl-3-pyrrol-1-yl-1,2-oxazole",
+          "Base": "1-methyl-2,3,4,6,7,8-hexahydropyrimido[1,2-a]pyrimidine"
+        },
+        "observed_yield": 72.58292155,
+        "acquisition": "ei",
+        "llm_action": null
+      },
+      {
+        "step": 8,
+        "query_index": 684,
+        "condition": {
+          "Reactant2": "1-ethyl-4-iodobenzene",
+          "Ligand": "ditert-butyl-[2-[2,4,6-tri(propan-2-yl)phenyl]phenyl]phosphane",
+          "Additive": "5-(2,6-difluorophenyl)-1,2-oxazole",
+          "Base": "1-methyl-2,3,4,6,7,8-hexahydropyrimido[1,2-a]pyrimidine"
+        },
+        "observed_yield": 72.13959481,
+        "acquisition": "ei",
+        "llm_action": null
+      },
+      {
+        "step": 9,
+        "query_index": 557,
+        "condition": {
+          "Reactant2": "1-ethyl-4-iodobenzene",
+          "Ligand": "ditert-butyl-[2-[2,4,6-tri(propan-2-yl)phenyl]phenyl]phosphane",
+          "Additive": "ethyl 5-methyl-1,2-oxazole-4-carboxylate",
+          "Base": "1-methyl-2,3,4,6,7,8-hexahydropyrimido[1,2-a]pyrimidine"
+        },
+        "observed_yield": 61.5016932,
+        "acquisition": "ei",
+        "llm_action": null
+      },
+      {
+        "step": 10,
+        "query_index": 535,
+        "condition": {
+          "Reactant2": "1-ethyl-4-iodobenzene",
+          "Ligand": "ditert-butyl-[2-[2,4,6-tri(propan-2-yl)phenyl]phenyl]phosphane",
+          "Additive": "3-methyl-5-phenyl-1,2-oxazole",
+          "Base": "1-methyl-2,3,4,6,7,8-hexahydropyrimido[1,2-a]pyrimidine"
+        },
+        "observed_yield": 68.71737558,
+        "acquisition": "ei",
+        "llm_action": null
+      },
+      {
+        "step": 11,
+        "query_index": 529,
+        "condition": {
+          "Reactant2": "1-ethyl-4-iodobenzene",
+          "Ligand": "ditert-butyl-[2-[2,4,6-tri(propan-2-yl)phenyl]phenyl]phosphane",
+          "Additive": "ethyl 5-methyl-1,2-oxazole-3-carboxylate",
+          "Base": "1-methyl-2,3,4,6,7,8-hexahydropyrimido[1,2-a]pyrimidine"
+        },
+        "observed_yield": 79.44483195,
+        "acquisition": "ei",
+        "llm_action": null
+      },
+      {
+        "step": 12,
+        "query_index": 581,
+        "condition": {
+          "Reactant2": "1-ethyl-4-iodobenzene",
+          "Ligand": "ditert-butyl-[2-[2,4,6-tri(propan-2-yl)phenyl]phenyl]phosphane",
+          "Additive": "5-methyl-1,2-oxazole",
+          "Base": "1-methyl-2,3,4,6,7,8-hexahydropyrimido[1,2-a]pyrimidine"
+        },
+        "observed_yield": 67.19924832,
+        "acquisition": "ei",
+        "llm_action": null
+      },
+      {
+        "step": 13,
+        "query_index": 697,
+        "condition": {
+          "Reactant2": "1-ethyl-4-iodobenzene",
+          "Ligand": "ditert-butyl-[2-[2,4,6-tri(propan-2-yl)phenyl]phenyl]phosphane",
+          "Additive": "ethyl 1,2-oxazole-4-carboxylate",
+          "Base": "1-methyl-2,3,4,6,7,8-hexahydropyrimido[1,2-a]pyrimidine"
+        },
+        "observed_yield": 30.76250124,
+        "acquisition": "ei",
+        "llm_action": null
+      },
+      {
+        "step": 14,
+        "query_index": 738,
+        "condition": {
+          "Reactant2": "1-ethyl-4-iodobenzene",
+          "Ligand": "ditert-butyl-[2-[2,4,6-tri(propan-2-yl)phenyl]phenyl]phosphane",
+          "Additive": "4-phenyl-1,2-oxazole",
+          "Base": "1-methyl-2,3,4,6,7,8-hexahydropyrimido[1,2-a]pyrimidine"
+        },
+        "observed_yield": 81.15116736,
+        "acquisition": "ei",
+        "llm_action": null
+      },
+      {
+        "step": 15,
+        "query_index": 571,
+        "condition": {
+          "Reactant2": "1-ethyl-4-iodobenzene",
+          "Ligand": "ditert-butyl-[2-[2,4,6-tri(propan-2-yl)phenyl]phenyl]phosphane",
+          "Additive": "5-phenyl-1,2-oxazole",
+          "Base": "1-methyl-2,3,4,6,7,8-hexahydropyrimido[1,2-a]pyrimidine"
+        },
+        "observed_yield": 77.57371189,
+        "acquisition": "ei",
+        "llm_action": null
+      },
+      {
+        "step": 16,
+        "query_index": 741,
+        "condition": {
+          "Reactant2": "1-ethyl-4-iodobenzene",
+          "Ligand": "ditert-butyl-[2-[2,4,6-tri(propan-2-yl)phenyl]phenyl]phosphane",
+          "Additive": "3-methyl-1,2-oxazole",
+          "Base": "1-methyl-2,3,4,6,7,8-hexahydropyrimido[1,2-a]pyrimidine"
+        },
+        "observed_yield": 79.63886176,
+        "acquisition": "ei",
+        "llm_action": null
+      },
+      {
+        "step": 17,
+        "query_index": 617,
+        "condition": {
+          "Reactant2": "1-ethyl-4-iodobenzene",
+          "Ligand": "ditert-butyl-[2-[2,4,6-tri(propan-2-yl)phenyl]phenyl]phosphane",
+          "Additive": "3-phenyl-1,2-oxazole",
+          "Base": "1-methyl-2,3,4,6,7,8-hexahydropyrimido[1,2-a]pyrimidine"
+        },
+        "observed_yield": 79.26160687,
+        "acquisition": "ei",
+        "llm_action": null
+      },
+      {
+        "step": 18,
+        "query_index": 565,
+        "condition": {
+          "Reactant2": "1-ethyl-4-iodobenzene",
+          "Ligand": "ditert-butyl-[2-[2,4,6-tri(propan-2-yl)phenyl]phenyl]phosphane",
+          "Additive": "ethyl 3-methyl-1,2-oxazole-5-carboxylate",
+          "Base": "1-methyl-2,3,4,6,7,8-hexahydropyrimido[1,2-a]pyrimidine"
+        },
+        "observed_yield": 84.89551287,
+        "acquisition": "ei",
+        "llm_action": null
+      },
+      {
+        "step": 19,
+        "query_index": 695,
+        "condition": {
+          "Reactant2": "1-ethyl-4-iodobenzene",
+          "Ligand": "ditert-butyl-[2-[2,4,6-tri(propan-2-yl)phenyl]phenyl]phosphane",
+          "Additive": "1,2-benzoxazole",
+          "Base": "1-methyl-2,3,4,6,7,8-hexahydropyrimido[1,2-a]pyrimidine"
+        },
+        "observed_yield": 60.28741502,
+        "acquisition": "ei",
+        "llm_action": null
+      },
+      {
+        "step": 20,
+        "query_index": 632,
+        "condition": {
+          "Reactant2": "1-ethyl-4-iodobenzene",
+          "Ligand": "ditert-butyl-[2-[2,4,6-tri(propan-2-yl)phenyl]phenyl]phosphane",
+          "Additive": "2,1-benzoxazole",
+          "Base": "1-methyl-2,3,4,6,7,8-hexahydropyrimido[1,2-a]pyrimidine"
+        },
+        "observed_yield": 66.86881109,
+        "acquisition": "ei",
+        "llm_action": null
+      },
+      {
+        "step": 21,
+        "query_index": 640,
+        "condition": {
+          "Reactant2": "1-ethyl-4-iodobenzene",
+          "Ligand": "ditert-butyl-[2-[2,4,6-tri(propan-2-yl)phenyl]phenyl]phosphane",
+          "Additive": "c1ccc(CN(Cc2ccccc2)c2ccon2)cc1",
+          "Base": "1-methyl-2,3,4,6,7,8-hexahydropyrimido[1,2-a]pyrimidine"
+        },
+        "observed_yield": 67.52036403,
+        "acquisition": "ei",
+        "llm_action": null
+      },
+      {
+        "step": 22,
+        "query_index": 648,
+        "condition": {
+          "Reactant2": "1-ethyl-4-iodobenzene",
+          "Ligand": "ditert-butyl-[2-[2,4,6-tri(propan-2-yl)phenyl]phenyl]phosphane",
+          "Additive": "methyl 5-thiophen-2-yl-1,2-oxazole-3-carboxylate",
+          "Base": "1-methyl-2,3,4,6,7,8-hexahydropyrimido[1,2-a]pyrimidine"
+        },
+        "observed_yield": 71.48272249,
+        "acquisition": "ei",
+        "llm_action": null
+      },
+      {
+        "step": 23,
+        "query_index": 703,
+        "condition": {
+          "Reactant2": "1-ethyl-4-iodobenzene",
+          "Ligand": "ditert-butyl-[2-[2,4,6-tri(propan-2-yl)phenyl]phenyl]phosphane",
+          "Additive": "ethyl 1,2-oxazole-3-carboxylate",
+          "Base": "1-methyl-2,3,4,6,7,8-hexahydropyrimido[1,2-a]pyrimidine"
+        },
+        "observed_yield": 74.44046437,
+        "acquisition": "ei",
+        "llm_action": null
+      },
+      {
+        "step": 24,
+        "query_index": 655,
+        "condition": {
+          "Reactant2": "1-ethyl-4-iodobenzene",
+          "Ligand": "ditert-butyl-[2-[2,4,6-tri(propan-2-yl)phenyl]phenyl]phosphane",
+          "Additive": "methyl 5-(furan-2-yl)-1,2-oxazole-3-carboxylate",
+          "Base": "1-methyl-2,3,4,6,7,8-hexahydropyrimido[1,2-a]pyrimidine"
+        },
+        "observed_yield": 65.42133393,
+        "acquisition": "ei",
+        "llm_action": null
+      },
+      {
+        "step": 25,
+        "query_index": 641,
+        "condition": {
+          "Reactant2": "1-ethyl-4-iodobenzene",
+          "Ligand": "ditert-butyl-[3,6-dimethoxy-2-[2,4,6-tri(propan-2-yl)phenyl]phenyl]phosphane",
+          "Additive": "ethyl 3-methyl-1,2-oxazole-5-carboxylate",
+          "Base": "1-methyl-2,3,4,6,7,8-hexahydropyrimido[1,2-a]pyrimidine"
+        },
+        "observed_yield": 82.71053034,
+        "acquisition": "ei",
+        "llm_action": null
+      },
+      {
+        "step": 26,
+        "query_index": 595,
+        "condition": {
+          "Reactant2": "1-ethyl-4-iodobenzene",
+          "Ligand": "ditert-butyl-[3,6-dimethoxy-2-[2,4,6-tri(propan-2-yl)phenyl]phenyl]phosphane",
+          "Additive": "5-(2,6-difluorophenyl)-1,2-oxazole",
+          "Base": "1-methyl-2,3,4,6,7,8-hexahydropyrimido[1,2-a]pyrimidine"
+        },
+        "observed_yield": 73.95398123,
+        "acquisition": "ei",
+        "llm_action": null
+      },
+      {
+        "step": 27,
+        "query_index": 564,
+        "condition": {
+          "Reactant2": "1-ethyl-4-iodobenzene",
+          "Ligand": "ditert-butyl-[3,6-dimethoxy-2-[2,4,6-tri(propan-2-yl)phenyl]phenyl]phosphane",
+          "Additive": "4-phenyl-1,2-oxazole",
+          "Base": "1-methyl-2,3,4,6,7,8-hexahydropyrimido[1,2-a]pyrimidine"
+        },
+        "observed_yield": 83.29437838,
+        "acquisition": "ei",
+        "llm_action": null
+      },
+      {
+        "step": 28,
+        "query_index": 755,
+        "condition": {
+          "Reactant2": "1-ethyl-4-iodobenzene",
+          "Ligand": "ditert-butyl-[3,6-dimethoxy-2-[2,4,6-tri(propan-2-yl)phenyl]phenyl]phosphane",
+          "Additive": "ethyl 5-methyl-1,2-oxazole-3-carboxylate",
+          "Base": "1-methyl-2,3,4,6,7,8-hexahydropyrimido[1,2-a]pyrimidine"
+        },
+        "observed_yield": 80.78664078,
+        "acquisition": "ei",
+        "llm_action": null
+      },
+      {
+        "step": 29,
+        "query_index": 723,
+        "condition": {
+          "Reactant2": "1-ethyl-4-iodobenzene",
+          "Ligand": "ditert-butyl-[3,6-dimethoxy-2-[2,4,6-tri(propan-2-yl)phenyl]phenyl]phosphane",
+          "Additive": "3-methyl-1,2-oxazole",
+          "Base": "1-methyl-2,3,4,6,7,8-hexahydropyrimido[1,2-a]pyrimidine"
+        },
+        "observed_yield": 79.06108402,
+        "acquisition": "ei",
+        "llm_action": null
+      },
+      {
+        "step": 30,
+        "query_index": 578,
+        "condition": {
+          "Reactant2": "1-ethyl-4-iodobenzene",
+          "Ligand": "ditert-butyl-[3,6-dimethoxy-2-[2,4,6-tri(propan-2-yl)phenyl]phenyl]phosphane",
+          "Additive": "3-phenyl-1,2-oxazole",
+          "Base": "1-methyl-2,3,4,6,7,8-hexahydropyrimido[1,2-a]pyrimidine"
+        },
+        "observed_yield": 78.10978605,
+        "acquisition": "ei",
+        "llm_action": null
+      },
+      {
+        "step": 31,
+        "query_index": 653,
+        "condition": {
+          "Reactant2": "1-ethyl-4-iodobenzene",
+          "Ligand": "ditert-butyl-[3,6-dimethoxy-2-[2,4,6-tri(propan-2-yl)phenyl]phenyl]phosphane",
+          "Additive": "5-phenyl-1,2-oxazole",
+          "Base": "1-methyl-2,3,4,6,7,8-hexahydropyrimido[1,2-a]pyrimidine"
+        },
+        "observed_yield": 77.02732986,
+        "acquisition": "ei",
+        "llm_action": null
+      },
+      {
+        "step": 32,
+        "query_index": 523,
+        "condition": {
+          "Reactant2": "1-ethyl-4-iodobenzene",
+          "Ligand": "ditert-butyl-[3,6-dimethoxy-2-[2,4,6-tri(propan-2-yl)phenyl]phenyl]phosphane",
+          "Additive": "5-methyl-3-pyrrol-1-yl-1,2-oxazole",
+          "Base": "1-methyl-2,3,4,6,7,8-hexahydropyrimido[1,2-a]pyrimidine"
+        },
+        "observed_yield": 75.97219172,
+        "acquisition": "ei",
+        "llm_action": null
+      },
+      {
+        "step": 33,
+        "query_index": 685,
+        "condition": {
+          "Reactant2": "1-ethyl-4-iodobenzene",
+          "Ligand": "ditert-butyl-[3,6-dimethoxy-2-[2,4,6-tri(propan-2-yl)phenyl]phenyl]phosphane",
+          "Additive": "ethyl 1,2-oxazole-3-carboxylate",
+          "Base": "1-methyl-2,3,4,6,7,8-hexahydropyrimido[1,2-a]pyrimidine"
+        },
+        "observed_yield": 80.5818059,
+        "acquisition": "ei",
+        "llm_action": null
+      },
+      {
+        "step": 34,
+        "query_index": 577,
+        "condition": {
+          "Reactant2": "1-ethyl-4-iodobenzene",
+          "Ligand": "ditert-butyl-[3,6-dimethoxy-2-[2,4,6-tri(propan-2-yl)phenyl]phenyl]phosphane",
+          "Additive": "3-methyl-5-phenyl-1,2-oxazole",
+          "Base": "1-methyl-2,3,4,6,7,8-hexahydropyrimido[1,2-a]pyrimidine"
+        },
+        "observed_yield": 71.82751675,
+        "acquisition": "ei",
+        "llm_action": null
+      },
+      {
+        "step": 35,
+        "query_index": 586,
+        "condition": {
+          "Reactant2": "1-ethyl-4-iodobenzene",
+          "Ligand": "ditert-butyl-[3,6-dimethoxy-2-[2,4,6-tri(propan-2-yl)phenyl]phenyl]phosphane",
+          "Additive": "methyl 5-thiophen-2-yl-1,2-oxazole-3-carboxylate",
+          "Base": "1-methyl-2,3,4,6,7,8-hexahydropyrimido[1,2-a]pyrimidine"
+        },
+        "observed_yield": 74.59845802,
+        "acquisition": "ei",
+        "llm_action": null
+      },
+      {
+        "step": 36,
+        "query_index": 742,
+        "condition": {
+          "Reactant2": "1-ethyl-4-iodobenzene",
+          "Ligand": "ditert-butyl-[3,6-dimethoxy-2-[2,4,6-tri(propan-2-yl)phenyl]phenyl]phosphane",
+          "Additive": "5-methyl-1,2-oxazole",
+          "Base": "1-methyl-2,3,4,6,7,8-hexahydropyrimido[1,2-a]pyrimidine"
+        },
+        "observed_yield": 75.71719698,
+        "acquisition": "ei",
+        "llm_action": null
+      },
+      {
+        "step": 37,
+        "query_index": 778,
+        "condition": {
+          "Reactant2": "1-ethyl-4-iodobenzene",
+          "Ligand": "ditert-butyl-[3,6-dimethoxy-2-[2,4,6-tri(propan-2-yl)phenyl]phenyl]phosphane",
+          "Additive": "c1ccc(CN(Cc2ccccc2)c2ccon2)cc1",
+          "Base": "1-methyl-2,3,4,6,7,8-hexahydropyrimido[1,2-a]pyrimidine"
+        },
+        "observed_yield": 75.06056887,
+        "acquisition": "ei",
+        "llm_action": null
+      },
+      {
+        "step": 38,
+        "query_index": 554,
+        "condition": {
+          "Reactant2": "1-ethyl-4-iodobenzene",
+          "Ligand": "ditert-butyl-[3,6-dimethoxy-2-[2,4,6-tri(propan-2-yl)phenyl]phenyl]phosphane",
+          "Additive": "2,1-benzoxazole",
+          "Base": "1-methyl-2,3,4,6,7,8-hexahydropyrimido[1,2-a]pyrimidine"
+        },
+        "observed_yield": 73.16269955,
+        "acquisition": "ei",
+        "llm_action": null
+      },
+      {
+        "step": 39,
+        "query_index": 526,
+        "condition": {
+          "Reactant2": "1-ethyl-4-iodobenzene",
+          "Ligand": "ditert-butyl-[3,6-dimethoxy-2-[2,4,6-tri(propan-2-yl)phenyl]phenyl]phosphane",
+          "Additive": "methyl 5-(furan-2-yl)-1,2-oxazole-3-carboxylate",
+          "Base": "1-methyl-2,3,4,6,7,8-hexahydropyrimido[1,2-a]pyrimidine"
+        },
+        "observed_yield": 73.57415684,
+        "acquisition": "ei",
+        "llm_action": null
+      },
+      {
+        "step": 40,
+        "query_index": 633,
+        "condition": {
+          "Reactant2": "1-ethyl-4-iodobenzene",
+          "Ligand": "ditert-butyl-[3,6-dimethoxy-2-[2,4,6-tri(propan-2-yl)phenyl]phenyl]phosphane",
+          "Additive": "ethyl 5-methyl-1,2-oxazole-4-carboxylate",
+          "Base": "1-methyl-2,3,4,6,7,8-hexahydropyrimido[1,2-a]pyrimidine"
+        },
+        "observed_yield": 59.85587044,
+        "acquisition": "ei",
+        "llm_action": null
+      }
+    ]
+  },
+  {
+    "dataset": "buchwald_sub4",
+    "seed": 100,
+    "encoding": "fingerprint",
+    "prior_protocol": "seeded_subsample",
+    "n_initial": 5,
+    "initial_indices": [
+      33,
+      34,
+      31,
+      5,
+      1
+    ],
+    "best_found": 80.68492948,
+    "t95": 41,
+    "elapsed_s": 4.135275363922119,
+    "trajectory": [
+      {
+        "step": 1,
+        "query_index": 0,
+        "condition": {
+          "Reactant2": "1-bromo-4-ethylbenzene",
+          "Ligand": "bis(1-adamantyl)-[3,6-dimethoxy-2-[2,4,6-tri(propan-2-yl)phenyl]phenyl]phosphane",
+          "Additive": "ethyl 1,2-oxazole-3-carboxylate",
+          "Base": "N-[dimethylamino-ethylimino-[[tris(dimethylamino)-lambda5-phosphanylidene]amino]-lambda5-phosphanyl]-N-methylmethanamine"
+        },
+        "observed_yield": 1.023181291,
+        "acquisition": "ei",
+        "llm_action": null
+      },
+      {
+        "step": 2,
+        "query_index": 1,
+        "condition": {
+          "Reactant2": "1-bromo-4-ethylbenzene",
+          "Ligand": "ditert-butyl-[2-[2,4,6-tri(propan-2-yl)phenyl]phenyl]phosphane",
+          "Additive": "5-methyl-3-pyrrol-1-yl-1,2-oxazole",
+          "Base": "1-methyl-2,3,4,6,7,8-hexahydropyrimido[1,2-a]pyrimidine"
+        },
+        "observed_yield": 71.55294754,
+        "acquisition": "ei",
+        "llm_action": null
+      },
+      {
+        "step": 3,
+        "query_index": 2,
+        "condition": {
+          "Reactant2": "1-bromo-4-ethylbenzene",
+          "Ligand": "ditert-butyl-[2-[2,4,6-tri(propan-2-yl)phenyl]phenyl]phosphane",
+          "Additive": "2,1-benzoxazole",
+          "Base": "1-methyl-2,3,4,6,7,8-hexahydropyrimido[1,2-a]pyrimidine"
+        },
+        "observed_yield": 24.59821074,
+        "acquisition": "ei",
+        "llm_action": null
+      },
+      {
+        "step": 4,
+        "query_index": 3,
+        "condition": {
+          "Reactant2": "1-bromo-4-ethylbenzene",
+          "Ligand": "bis(1-adamantyl)-[3,6-dimethoxy-2-[2,4,6-tri(propan-2-yl)phenyl]phenyl]phosphane",
+          "Additive": "3-phenyl-1,2-oxazole",
+          "Base": "2-tert-butyl-1,1,3,3-tetramethylguanidine"
+        },
+        "observed_yield": 73.85492194,
+        "acquisition": "ei",
+        "llm_action": null
+      },
+      {
+        "step": 5,
+        "query_index": 4,
+        "condition": {
+          "Reactant2": "1-bromo-4-ethylbenzene",
+          "Ligand": "dicyclohexyl-[2-[2,4,6-tri(propan-2-yl)phenyl]phenyl]phosphane",
+          "Additive": "ethyl 3-methyl-1,2-oxazole-5-carboxylate",
+          "Base": "1-methyl-2,3,4,6,7,8-hexahydropyrimido[1,2-a]pyrimidine"
+        },
+        "observed_yield": 35.87055638,
+        "acquisition": "ei",
+        "llm_action": null
+      },
+      {
+        "step": 6,
+        "query_index": 5,
+        "condition": {
+          "Reactant2": "1-bromo-4-ethylbenzene",
+          "Ligand": "bis(1-adamantyl)-[3,6-dimethoxy-2-[2,4,6-tri(propan-2-yl)phenyl]phenyl]phosphane",
+          "Additive": "5-phenyl-1,2-oxazole",
+          "Base": "2-tert-butyl-1,1,3,3-tetramethylguanidine"
+        },
+        "observed_yield": 29.29795514,
+        "acquisition": "ei",
+        "llm_action": null
+      },
+      {
+        "step": 7,
+        "query_index": 6,
+        "condition": {
+          "Reactant2": "1-bromo-4-ethylbenzene",
+          "Ligand": "bis(1-adamantyl)-[3,6-dimethoxy-2-[2,4,6-tri(propan-2-yl)phenyl]phenyl]phosphane",
+          "Additive": "3-methyl-1,2-oxazole",
+          "Base": "1-methyl-2,3,4,6,7,8-hexahydropyrimido[1,2-a]pyrimidine"
+        },
+        "observed_yield": 80.68492948,
+        "acquisition": "ei",
+        "llm_action": null
+      },
+      {
+        "step": 8,
+        "query_index": 7,
+        "condition": {
+          "Reactant2": "1-bromo-4-ethylbenzene",
+          "Ligand": "ditert-butyl-[2-[2,4,6-tri(propan-2-yl)phenyl]phenyl]phosphane",
+          "Additive": "ethyl 5-methyl-1,2-oxazole-3-carboxylate",
+          "Base": "1-methyl-2,3,4,6,7,8-hexahydropyrimido[1,2-a]pyrimidine"
+        },
+        "observed_yield": 78.80108905,
+        "acquisition": "ei",
+        "llm_action": null
+      },
+      {
+        "step": 9,
+        "query_index": 8,
+        "condition": {
+          "Reactant2": "1-bromo-4-ethylbenzene",
+          "Ligand": "ditert-butyl-[3,6-dimethoxy-2-[2,4,6-tri(propan-2-yl)phenyl]phenyl]phosphane",
+          "Additive": "4-phenyl-1,2-oxazole",
+          "Base": "2-tert-butyl-1,1,3,3-tetramethylguanidine"
+        },
+        "observed_yield": 36.54381967,
+        "acquisition": "ei",
+        "llm_action": null
+      },
+      {
+        "step": 10,
+        "query_index": 9,
+        "condition": {
+          "Reactant2": "1-bromo-4-ethylbenzene",
+          "Ligand": "ditert-butyl-[3,6-dimethoxy-2-[2,4,6-tri(propan-2-yl)phenyl]phenyl]phosphane",
+          "Additive": "5-phenyl-1,2-oxazole",
+          "Base": "N-[dimethylamino-ethylimino-[[tris(dimethylamino)-lambda5-phosphanylidene]amino]-lambda5-phosphanyl]-N-methylmethanamine"
+        },
+        "observed_yield": 19.47378974,
+        "acquisition": "ei",
+        "llm_action": null
+      },
+      {
+        "step": 11,
+        "query_index": 10,
+        "condition": {
+          "Reactant2": "1-bromo-4-ethylbenzene",
+          "Ligand": "ditert-butyl-[3,6-dimethoxy-2-[2,4,6-tri(propan-2-yl)phenyl]phenyl]phosphane",
+          "Additive": "c1ccc(CN(Cc2ccccc2)c2ccno2)cc1",
+          "Base": "1-methyl-2,3,4,6,7,8-hexahydropyrimido[1,2-a]pyrimidine"
+        },
+        "observed_yield": 62.86856054,
+        "acquisition": "ei",
+        "llm_action": null
+      },
+      {
+        "step": 12,
+        "query_index": 11,
+        "condition": {
+          "Reactant2": "1-bromo-4-ethylbenzene",
+          "Ligand": "ditert-butyl-[3,6-dimethoxy-2-[2,4,6-tri(propan-2-yl)phenyl]phenyl]phosphane",
+          "Additive": "ethyl 1,2-oxazole-4-carboxylate",
+          "Base": "1-methyl-2,3,4,6,7,8-hexahydropyrimido[1,2-a]pyrimidine"
+        },
+        "observed_yield": 30.87951231,
+        "acquisition": "ei",
+        "llm_action": null
+      },
+      {
+        "step": 13,
+        "query_index": 12,
+        "condition": {
+          "Reactant2": "1-bromo-4-ethylbenzene",
+          "Ligand": "ditert-butyl-[3,6-dimethoxy-2-[2,4,6-tri(propan-2-yl)phenyl]phenyl]phosphane",
+          "Additive": "ethyl 1,2-oxazole-4-carboxylate",
+          "Base": "N-[dimethylamino-ethylimino-[[tris(dimethylamino)-lambda5-phosphanylidene]amino]-lambda5-phosphanyl]-N-methylmethanamine"
+        },
+        "observed_yield": 13.59760256,
+        "acquisition": "ei",
+        "llm_action": null
+      },
+      {
+        "step": 14,
+        "query_index": 13,
+        "condition": {
+          "Reactant2": "1-bromo-4-ethylbenzene",
+          "Ligand": "dicyclohexyl-[2-[2,4,6-tri(propan-2-yl)phenyl]phenyl]phosphane",
+          "Additive": "3-methyl-1,2-oxazole",
+          "Base": "N-[dimethylamino-ethylimino-[[tris(dimethylamino)-lambda5-phosphanylidene]amino]-lambda5-phosphanyl]-N-methylmethanamine"
+        },
+        "observed_yield": 64.27233548,
+        "acquisition": "ei",
+        "llm_action": null
+      },
+      {
+        "step": 15,
+        "query_index": 14,
+        "condition": {
+          "Reactant2": "1-bromo-4-ethylbenzene",
+          "Ligand": "ditert-butyl-[2-[2,4,6-tri(propan-2-yl)phenyl]phenyl]phosphane",
+          "Additive": "c1ccc(CN(Cc2ccccc2)c2ccon2)cc1",
+          "Base": "1-methyl-2,3,4,6,7,8-hexahydropyrimido[1,2-a]pyrimidine"
+        },
+        "observed_yield": 69.07936453,
+        "acquisition": "ei",
+        "llm_action": null
+      },
+      {
+        "step": 16,
+        "query_index": 15,
+        "condition": {
+          "Reactant2": "1-bromo-4-ethylbenzene",
+          "Ligand": "ditert-butyl-[2-[2,4,6-tri(propan-2-yl)phenyl]phenyl]phosphane",
+          "Additive": "ethyl 3-methyl-1,2-oxazole-5-carboxylate",
+          "Base": "N-[dimethylamino-ethylimino-[[tris(dimethylamino)-lambda5-phosphanylidene]amino]-lambda5-phosphanyl]-N-methylmethanamine"
+        },
+        "observed_yield": 70.86219062,
+        "acquisition": "ei",
+        "llm_action": null
+      },
+      {
+        "step": 17,
+        "query_index": 16,
+        "condition": {
+          "Reactant2": "1-bromo-4-ethylbenzene",
+          "Ligand": "ditert-butyl-[3,6-dimethoxy-2-[2,4,6-tri(propan-2-yl)phenyl]phenyl]phosphane",
+          "Additive": "ethyl 1,2-oxazole-3-carboxylate",
+          "Base": "1-methyl-2,3,4,6,7,8-hexahydropyrimido[1,2-a]pyrimidine"
+        },
+        "observed_yield": 79.8902752,
+        "acquisition": "ei",
+        "llm_action": null
+      },
+      {
+        "step": 18,
+        "query_index": 17,
+        "condition": {
+          "Reactant2": "1-bromo-4-ethylbenzene",
+          "Ligand": "bis(1-adamantyl)-[3,6-dimethoxy-2-[2,4,6-tri(propan-2-yl)phenyl]phenyl]phosphane",
+          "Additive": "ethyl 5-methyl-1,2-oxazole-4-carboxylate",
+          "Base": "1-methyl-2,3,4,6,7,8-hexahydropyrimido[1,2-a]pyrimidine"
+        },
+        "observed_yield": 43.35191306,
+        "acquisition": "ei",
+        "llm_action": null
+      },
+      {
+        "step": 19,
+        "query_index": 18,
+        "condition": {
+          "Reactant2": "1-bromo-4-ethylbenzene",
+          "Ligand": "bis(1-adamantyl)-[3,6-dimethoxy-2-[2,4,6-tri(propan-2-yl)phenyl]phenyl]phosphane",
+          "Additive": "5-methyl-3-pyrrol-1-yl-1,2-oxazole",
+          "Base": "1-methyl-2,3,4,6,7,8-hexahydropyrimido[1,2-a]pyrimidine"
+        },
+        "observed_yield": 69.84952946,
+        "acquisition": "ei",
+        "llm_action": null
+      },
+      {
+        "step": 20,
+        "query_index": 19,
+        "condition": {
+          "Reactant2": "1-bromo-4-ethylbenzene",
+          "Ligand": "bis(1-adamantyl)-[3,6-dimethoxy-2-[2,4,6-tri(propan-2-yl)phenyl]phenyl]phosphane",
+          "Additive": "5-methyl-1,2-oxazole",
+          "Base": "1-methyl-2,3,4,6,7,8-hexahydropyrimido[1,2-a]pyrimidine"
+        },
+        "observed_yield": 66.71317285,
+        "acquisition": "ei",
+        "llm_action": null
+      },
+      {
+        "step": 21,
+        "query_index": 20,
+        "condition": {
+          "Reactant2": "1-bromo-4-ethylbenzene",
+          "Ligand": "ditert-butyl-[3,6-dimethoxy-2-[2,4,6-tri(propan-2-yl)phenyl]phenyl]phosphane",
+          "Additive": "5-phenyl-1,2-oxazole",
+          "Base": "2-tert-butyl-1,1,3,3-tetramethylguanidine"
+        },
+        "observed_yield": 27.79577337,
+        "acquisition": "ei",
+        "llm_action": null
+      },
+      {
+        "step": 22,
+        "query_index": 21,
+        "condition": {
+          "Reactant2": "1-bromo-4-ethylbenzene",
+          "Ligand": "ditert-butyl-[3,6-dimethoxy-2-[2,4,6-tri(propan-2-yl)phenyl]phenyl]phosphane",
+          "Additive": "3-methyl-1,2-oxazole",
+          "Base": "1-methyl-2,3,4,6,7,8-hexahydropyrimido[1,2-a]pyrimidine"
+        },
+        "observed_yield": 79.45834404,
+        "acquisition": "ei",
+        "llm_action": null
+      },
+      {
+        "step": 23,
+        "query_index": 22,
+        "condition": {
+          "Reactant2": "1-bromo-4-ethylbenzene",
+          "Ligand": "ditert-butyl-[3,6-dimethoxy-2-[2,4,6-tri(propan-2-yl)phenyl]phenyl]phosphane",
+          "Additive": "c1ccc(CN(Cc2ccccc2)c2ccon2)cc1",
+          "Base": "1-methyl-2,3,4,6,7,8-hexahydropyrimido[1,2-a]pyrimidine"
+        },
+        "observed_yield": 74.21032846,
+        "acquisition": "ei",
+        "llm_action": null
+      },
+      {
+        "step": 24,
+        "query_index": 23,
+        "condition": {
+          "Reactant2": "1-bromo-4-ethylbenzene",
+          "Ligand": "ditert-butyl-[3,6-dimethoxy-2-[2,4,6-tri(propan-2-yl)phenyl]phenyl]phosphane",
+          "Additive": "5-methyl-1,2-oxazole",
+          "Base": "N-[dimethylamino-ethylimino-[[tris(dimethylamino)-lambda5-phosphanylidene]amino]-lambda5-phosphanyl]-N-methylmethanamine"
+        },
+        "observed_yield": 14.46737016,
+        "acquisition": "ei",
+        "llm_action": null
+      },
+      {
+        "step": 25,
+        "query_index": 24,
+        "condition": {
+          "Reactant2": "1-bromo-4-ethylbenzene",
+          "Ligand": "ditert-butyl-[2-[2,4,6-tri(propan-2-yl)phenyl]phenyl]phosphane",
+          "Additive": "methyl 5-thiophen-2-yl-1,2-oxazole-3-carboxylate",
+          "Base": "1-methyl-2,3,4,6,7,8-hexahydropyrimido[1,2-a]pyrimidine"
+        },
+        "observed_yield": 69.58481273,
+        "acquisition": "ei",
+        "llm_action": null
+      },
+      {
+        "step": 26,
+        "query_index": 25,
+        "condition": {
+          "Reactant2": "1-bromo-4-ethylbenzene",
+          "Ligand": "bis(1-adamantyl)-[3,6-dimethoxy-2-[2,4,6-tri(propan-2-yl)phenyl]phenyl]phosphane",
+          "Additive": "methyl 5-(furan-2-yl)-1,2-oxazole-3-carboxylate",
+          "Base": "N-[dimethylamino-ethylimino-[[tris(dimethylamino)-lambda5-phosphanylidene]amino]-lambda5-phosphanyl]-N-methylmethanamine"
+        },
+        "observed_yield": 47.34816594,
+        "acquisition": "ei",
+        "llm_action": null
+      },
+      {
+        "step": 27,
+        "query_index": 26,
+        "condition": {
+          "Reactant2": "1-bromo-4-ethylbenzene",
+          "Ligand": "ditert-butyl-[2-[2,4,6-tri(propan-2-yl)phenyl]phenyl]phosphane",
+          "Additive": "4-phenyl-1,2-oxazole",
+          "Base": "1-methyl-2,3,4,6,7,8-hexahydropyrimido[1,2-a]pyrimidine"
+        },
+        "observed_yield": 79.87241595,
+        "acquisition": "ei",
+        "llm_action": null
+      },
+      {
+        "step": 28,
+        "query_index": 27,
+        "condition": {
+          "Reactant2": "1-bromo-4-ethylbenzene",
+          "Ligand": "dicyclohexyl-[2-[2,4,6-tri(propan-2-yl)phenyl]phenyl]phosphane",
+          "Additive": "ethyl 5-methyl-1,2-oxazole-3-carboxylate",
+          "Base": "N-[dimethylamino-ethylimino-[[tris(dimethylamino)-lambda5-phosphanylidene]amino]-lambda5-phosphanyl]-N-methylmethanamine"
+        },
+        "observed_yield": 53.99699311,
+        "acquisition": "ei",
+        "llm_action": null
+      },
+      {
+        "step": 29,
+        "query_index": 28,
+        "condition": {
+          "Reactant2": "1-bromo-4-ethylbenzene",
+          "Ligand": "ditert-butyl-[3,6-dimethoxy-2-[2,4,6-tri(propan-2-yl)phenyl]phenyl]phosphane",
+          "Additive": "3-phenyl-1,2-oxazole",
+          "Base": "N-[dimethylamino-ethylimino-[[tris(dimethylamino)-lambda5-phosphanylidene]amino]-lambda5-phosphanyl]-N-methylmethanamine"
+        },
+        "observed_yield": 70.22907456,
+        "acquisition": "ei",
+        "llm_action": null
+      },
+      {
+        "step": 30,
+        "query_index": 29,
+        "condition": {
+          "Reactant2": "1-bromo-4-ethylbenzene",
+          "Ligand": "ditert-butyl-[3,6-dimethoxy-2-[2,4,6-tri(propan-2-yl)phenyl]phenyl]phosphane",
+          "Additive": "methyl 1,2-oxazole-5-carboxylate",
+          "Base": "1-methyl-2,3,4,6,7,8-hexahydropyrimido[1,2-a]pyrimidine"
+        },
+        "observed_yield": 32.02304313,
+        "acquisition": "ei",
+        "llm_action": null
+      },
+      {
+        "step": 31,
+        "query_index": 30,
+        "condition": {
+          "Reactant2": "1-bromo-4-ethylbenzene",
+          "Ligand": "ditert-butyl-[3,6-dimethoxy-2-[2,4,6-tri(propan-2-yl)phenyl]phenyl]phosphane",
+          "Additive": "5-(2,6-difluorophenyl)-1,2-oxazole",
+          "Base": "2-tert-butyl-1,1,3,3-tetramethylguanidine"
+        },
+        "observed_yield": 24.96800216,
+        "acquisition": "ei",
+        "llm_action": null
+      },
+      {
+        "step": 32,
+        "query_index": 31,
+        "condition": {
+          "Reactant2": "1-bromo-4-ethylbenzene",
+          "Ligand": "dicyclohexyl-[2-[2,4,6-tri(propan-2-yl)phenyl]phenyl]phosphane",
+          "Additive": "3-methyl-5-phenyl-1,2-oxazole",
+          "Base": "N-[dimethylamino-ethylimino-[[tris(dimethylamino)-lambda5-phosphanylidene]amino]-lambda5-phosphanyl]-N-methylmethanamine"
+        },
+        "observed_yield": 69.98737297,
+        "acquisition": "ei",
+        "llm_action": null
+      },
+      {
+        "step": 33,
+        "query_index": 32,
+        "condition": {
+          "Reactant2": "1-bromo-4-ethylbenzene",
+          "Ligand": "ditert-butyl-[3,6-dimethoxy-2-[2,4,6-tri(propan-2-yl)phenyl]phenyl]phosphane",
+          "Additive": "ethyl 5-methyl-1,2-oxazole-4-carboxylate",
+          "Base": "N-[dimethylamino-ethylimino-[[tris(dimethylamino)-lambda5-phosphanylidene]amino]-lambda5-phosphanyl]-N-methylmethanamine"
+        },
+        "observed_yield": 23.73944169,
+        "acquisition": "ei",
+        "llm_action": null
+      },
+      {
+        "step": 34,
+        "query_index": 33,
+        "condition": {
+          "Reactant2": "1-bromo-4-ethylbenzene",
+          "Ligand": "dicyclohexyl-[2-[2,4,6-tri(propan-2-yl)phenyl]phenyl]phosphane",
+          "Additive": "5-methyl-3-pyrrol-1-yl-1,2-oxazole",
+          "Base": "1-methyl-2,3,4,6,7,8-hexahydropyrimido[1,2-a]pyrimidine"
+        },
+        "observed_yield": 28.74353219,
+        "acquisition": "ei",
+        "llm_action": null
+      },
+      {
+        "step": 35,
+        "query_index": 34,
+        "condition": {
+          "Reactant2": "1-bromo-4-ethylbenzene",
+          "Ligand": "bis(1-adamantyl)-[3,6-dimethoxy-2-[2,4,6-tri(propan-2-yl)phenyl]phenyl]phosphane",
+          "Additive": "ethyl 5-methyl-1,2-oxazole-3-carboxylate",
+          "Base": "N-[dimethylamino-ethylimino-[[tris(dimethylamino)-lambda5-phosphanylidene]amino]-lambda5-phosphanyl]-N-methylmethanamine"
+        },
+        "observed_yield": 74.13888356,
+        "acquisition": "ei",
+        "llm_action": null
+      },
+      {
+        "step": 36,
+        "query_index": 35,
+        "condition": {
+          "Reactant2": "1-bromo-4-ethylbenzene",
+          "Ligand": "ditert-butyl-[2-[2,4,6-tri(propan-2-yl)phenyl]phenyl]phosphane",
+          "Additive": "ethyl 1,2-oxazole-4-carboxylate",
+          "Base": "N-[dimethylamino-ethylimino-[[tris(dimethylamino)-lambda5-phosphanylidene]amino]-lambda5-phosphanyl]-N-methylmethanamine"
+        },
+        "observed_yield": 5.425616594,
+        "acquisition": "ei",
+        "llm_action": null
+      },
+      {
+        "step": 37,
+        "query_index": 36,
+        "condition": {
+          "Reactant2": "1-bromo-4-ethylbenzene",
+          "Ligand": "ditert-butyl-[2-[2,4,6-tri(propan-2-yl)phenyl]phenyl]phosphane",
+          "Additive": "5-methyl-3-pyrrol-1-yl-1,2-oxazole",
+          "Base": "2-tert-butyl-1,1,3,3-tetramethylguanidine"
+        },
+        "observed_yield": 57.74229286,
+        "acquisition": "ei",
+        "llm_action": null
+      },
+      {
+        "step": 38,
+        "query_index": 37,
+        "condition": {
+          "Reactant2": "1-bromo-4-ethylbenzene",
+          "Ligand": "bis(1-adamantyl)-[3,6-dimethoxy-2-[2,4,6-tri(propan-2-yl)phenyl]phenyl]phosphane",
+          "Additive": "methyl 5-(furan-2-yl)-1,2-oxazole-3-carboxylate",
+          "Base": "1-methyl-2,3,4,6,7,8-hexahydropyrimido[1,2-a]pyrimidine"
+        },
+        "observed_yield": 39.51845686,
+        "acquisition": "ei",
+        "llm_action": null
+      },
+      {
+        "step": 39,
+        "query_index": 38,
+        "condition": {
+          "Reactant2": "1-bromo-4-ethylbenzene",
+          "Ligand": "bis(1-adamantyl)-[3,6-dimethoxy-2-[2,4,6-tri(propan-2-yl)phenyl]phenyl]phosphane",
+          "Additive": "2,1-benzoxazole",
+          "Base": "2-tert-butyl-1,1,3,3-tetramethylguanidine"
+        },
+        "observed_yield": 4.677881799,
+        "acquisition": "ei",
+        "llm_action": null
+      },
+      {
+        "step": 40,
+        "query_index": 39,
+        "condition": {
+          "Reactant2": "1-bromo-4-ethylbenzene",
+          "Ligand": "bis(1-adamantyl)-[3,6-dimethoxy-2-[2,4,6-tri(propan-2-yl)phenyl]phenyl]phosphane",
+          "Additive": "ethyl 1,2-oxazole-4-carboxylate",
+          "Base": "1-methyl-2,3,4,6,7,8-hexahydropyrimido[1,2-a]pyrimidine"
+        },
+        "observed_yield": 30.37188127,
+        "acquisition": "ei",
+        "llm_action": null
+      }
+    ]
+  },
+  {
+    "dataset": "buchwald_sub4",
+    "seed": 200,
+    "encoding": "one_hot",
+    "prior_protocol": "seeded_subsample",
+    "n_initial": 5,
+    "initial_indices": [
+      18,
+      33,
+      13,
+      32,
+      29
+    ],
+    "best_found": 80.68492948,
+    "t95": 41,
+    "elapsed_s": 3.79547381401062,
+    "trajectory": [
+      {
+        "step": 1,
+        "query_index": 0,
+        "condition": {
+          "Reactant2": "1-bromo-4-ethylbenzene",
+          "Ligand": "bis(1-adamantyl)-[3,6-dimethoxy-2-[2,4,6-tri(propan-2-yl)phenyl]phenyl]phosphane",
+          "Additive": "ethyl 1,2-oxazole-3-carboxylate",
+          "Base": "N-[dimethylamino-ethylimino-[[tris(dimethylamino)-lambda5-phosphanylidene]amino]-lambda5-phosphanyl]-N-methylmethanamine"
+        },
+        "observed_yield": 1.023181291,
+        "acquisition": "ei",
+        "llm_action": null
+      },
+      {
+        "step": 2,
+        "query_index": 1,
+        "condition": {
+          "Reactant2": "1-bromo-4-ethylbenzene",
+          "Ligand": "ditert-butyl-[2-[2,4,6-tri(propan-2-yl)phenyl]phenyl]phosphane",
+          "Additive": "5-methyl-3-pyrrol-1-yl-1,2-oxazole",
+          "Base": "1-methyl-2,3,4,6,7,8-hexahydropyrimido[1,2-a]pyrimidine"
+        },
+        "observed_yield": 71.55294754,
+        "acquisition": "ei",
+        "llm_action": null
+      },
+      {
+        "step": 3,
+        "query_index": 3,
+        "condition": {
+          "Reactant2": "1-bromo-4-ethylbenzene",
+          "Ligand": "bis(1-adamantyl)-[3,6-dimethoxy-2-[2,4,6-tri(propan-2-yl)phenyl]phenyl]phosphane",
+          "Additive": "3-phenyl-1,2-oxazole",
+          "Base": "2-tert-butyl-1,1,3,3-tetramethylguanidine"
+        },
+        "observed_yield": 73.85492194,
+        "acquisition": "ei",
+        "llm_action": null
+      },
+      {
+        "step": 4,
+        "query_index": 87,
+        "condition": {
+          "Reactant2": "1-bromo-4-ethylbenzene",
+          "Ligand": "ditert-butyl-[3,6-dimethoxy-2-[2,4,6-tri(propan-2-yl)phenyl]phenyl]phosphane",
+          "Additive": "5-methyl-3-pyrrol-1-yl-1,2-oxazole",
+          "Base": "2-tert-butyl-1,1,3,3-tetramethylguanidine"
+        },
+        "observed_yield": 59.10146589,
+        "acquisition": "ei",
+        "llm_action": null
+      },
+      {
+        "step": 5,
+        "query_index": 5,
+        "condition": {
+          "Reactant2": "1-bromo-4-ethylbenzene",
+          "Ligand": "bis(1-adamantyl)-[3,6-dimethoxy-2-[2,4,6-tri(propan-2-yl)phenyl]phenyl]phosphane",
+          "Additive": "5-phenyl-1,2-oxazole",
+          "Base": "2-tert-butyl-1,1,3,3-tetramethylguanidine"
+        },
+        "observed_yield": 29.29795514,
+        "acquisition": "ei",
+        "llm_action": null
+      },
+      {
+        "step": 6,
+        "query_index": 8,
+        "condition": {
+          "Reactant2": "1-bromo-4-ethylbenzene",
+          "Ligand": "ditert-butyl-[3,6-dimethoxy-2-[2,4,6-tri(propan-2-yl)phenyl]phenyl]phosphane",
+          "Additive": "4-phenyl-1,2-oxazole",
+          "Base": "2-tert-butyl-1,1,3,3-tetramethylguanidine"
+        },
+        "observed_yield": 36.54381967,
+        "acquisition": "ei",
+        "llm_action": null
+      },
+      {
+        "step": 7,
+        "query_index": 18,
+        "condition": {
+          "Reactant2": "1-bromo-4-ethylbenzene",
+          "Ligand": "bis(1-adamantyl)-[3,6-dimethoxy-2-[2,4,6-tri(propan-2-yl)phenyl]phenyl]phosphane",
+          "Additive": "5-methyl-3-pyrrol-1-yl-1,2-oxazole",
+          "Base": "1-methyl-2,3,4,6,7,8-hexahydropyrimido[1,2-a]pyrimidine"
+        },
+        "observed_yield": 69.84952946,
+        "acquisition": "ei",
+        "llm_action": null
+      },
+      {
+        "step": 8,
+        "query_index": 514,
+        "condition": {
+          "Reactant2": "1-chloro-4-ethylbenzene",
+          "Ligand": "bis(1-adamantyl)-[3,6-dimethoxy-2-[2,4,6-tri(propan-2-yl)phenyl]phenyl]phosphane",
+          "Additive": "c1ccc(CN(Cc2ccccc2)c2ccno2)cc1",
+          "Base": "2-tert-butyl-1,1,3,3-tetramethylguanidine"
+        },
+        "observed_yield": 0.995077613,
+        "acquisition": "ei",
+        "llm_action": null
+      },
+      {
+        "step": 9,
+        "query_index": 536,
+        "condition": {
+          "Reactant2": "1-ethyl-4-iodobenzene",
+          "Ligand": "ditert-butyl-[2-[2,4,6-tri(propan-2-yl)phenyl]phenyl]phosphane",
+          "Additive": "5-methyl-3-pyrrol-1-yl-1,2-oxazole",
+          "Base": "2-tert-butyl-1,1,3,3-tetramethylguanidine"
+        },
+        "observed_yield": 59.48668549,
+        "acquisition": "ei",
+        "llm_action": null
+      },
+      {
+        "step": 10,
+        "query_index": 782,
+        "condition": {
+          "Reactant2": "1-ethyl-4-iodobenzene",
+          "Ligand": "bis(1-adamantyl)-[3,6-dimethoxy-2-[2,4,6-tri(propan-2-yl)phenyl]phenyl]phosphane",
+          "Additive": "5-phenyl-1,2-oxazole",
+          "Base": "2-tert-butyl-1,1,3,3-tetramethylguanidine"
+        },
+        "observed_yield": 73.73993868,
+        "acquisition": "ei",
+        "llm_action": null
+      },
+      {
+        "step": 11,
+        "query_index": 151,
+        "condition": {
+          "Reactant2": "1-bromo-4-ethylbenzene",
+          "Ligand": "ditert-butyl-[3,6-dimethoxy-2-[2,4,6-tri(propan-2-yl)phenyl]phenyl]phosphane",
+          "Additive": "5-methyl-3-pyrrol-1-yl-1,2-oxazole",
+          "Base": "1-methyl-2,3,4,6,7,8-hexahydropyrimido[1,2-a]pyrimidine"
+        },
+        "observed_yield": 74.97052076,
+        "acquisition": "ei",
+        "llm_action": null
+      },
+      {
+        "step": 12,
+        "query_index": 520,
+        "condition": {
+          "Reactant2": "1-chloro-4-ethylbenzene",
+          "Ligand": "bis(1-adamantyl)-[3,6-dimethoxy-2-[2,4,6-tri(propan-2-yl)phenyl]phenyl]phosphane",
+          "Additive": "5-methyl-1,2-oxazole",
+          "Base": "N-[dimethylamino-ethylimino-[[tris(dimethylamino)-lambda5-phosphanylidene]amino]-lambda5-phosphanyl]-N-methylmethanamine"
+        },
+        "observed_yield": 0.628858286,
+        "acquisition": "ei",
+        "llm_action": null
+      },
+      {
+        "step": 13,
+        "query_index": 186,
+        "condition": {
+          "Reactant2": "1-bromo-4-ethylbenzene",
+          "Ligand": "ditert-butyl-[3,6-dimethoxy-2-[2,4,6-tri(propan-2-yl)phenyl]phenyl]phosphane",
+          "Additive": "5-methyl-3-pyrrol-1-yl-1,2-oxazole",
+          "Base": "N-[dimethylamino-ethylimino-[[tris(dimethylamino)-lambda5-phosphanylidene]amino]-lambda5-phosphanyl]-N-methylmethanamine"
+        },
+        "observed_yield": 68.91825786,
+        "acquisition": "ei",
+        "llm_action": null
+      },
+      {
+        "step": 14,
+        "query_index": 33,
+        "condition": {
+          "Reactant2": "1-bromo-4-ethylbenzene",
+          "Ligand": "dicyclohexyl-[2-[2,4,6-tri(propan-2-yl)phenyl]phenyl]phosphane",
+          "Additive": "5-methyl-3-pyrrol-1-yl-1,2-oxazole",
+          "Base": "1-methyl-2,3,4,6,7,8-hexahydropyrimido[1,2-a]pyrimidine"
+        },
+        "observed_yield": 28.74353219,
+        "acquisition": "ei",
+        "llm_action": null
+      },
+      {
+        "step": 15,
+        "query_index": 266,
+        "condition": {
+          "Reactant2": "1-chloro-4-ethylbenzene",
+          "Ligand": "ditert-butyl-[3,6-dimethoxy-2-[2,4,6-tri(propan-2-yl)phenyl]phenyl]phosphane",
+          "Additive": "5-methyl-3-pyrrol-1-yl-1,2-oxazole",
+          "Base": "1-methyl-2,3,4,6,7,8-hexahydropyrimido[1,2-a]pyrimidine"
+        },
+        "observed_yield": 9.293896224,
+        "acquisition": "ei",
+        "llm_action": null
+      },
+      {
+        "step": 16,
+        "query_index": 522,
+        "condition": {
+          "Reactant2": "1-ethyl-4-iodobenzene",
+          "Ligand": "bis(1-adamantyl)-[3,6-dimethoxy-2-[2,4,6-tri(propan-2-yl)phenyl]phenyl]phosphane",
+          "Additive": "3-methyl-5-phenyl-1,2-oxazole",
+          "Base": "1-methyl-2,3,4,6,7,8-hexahydropyrimido[1,2-a]pyrimidine"
+        },
+        "observed_yield": 73.08177999,
+        "acquisition": "ei",
+        "llm_action": null
+      },
+      {
+        "step": 17,
+        "query_index": 528,
+        "condition": {
+          "Reactant2": "1-ethyl-4-iodobenzene",
+          "Ligand": "bis(1-adamantyl)-[3,6-dimethoxy-2-[2,4,6-tri(propan-2-yl)phenyl]phenyl]phosphane",
+          "Additive": "ethyl 3-methoxy-1,2-oxazole-5-carboxylate",
+          "Base": "1-methyl-2,3,4,6,7,8-hexahydropyrimido[1,2-a]pyrimidine"
+        },
+        "observed_yield": 75.02467082,
+        "acquisition": "ei",
+        "llm_action": null
+      },
+      {
+        "step": 18,
+        "query_index": 533,
+        "condition": {
+          "Reactant2": "1-ethyl-4-iodobenzene",
+          "Ligand": "bis(1-adamantyl)-[3,6-dimethoxy-2-[2,4,6-tri(propan-2-yl)phenyl]phenyl]phosphane",
+          "Additive": "c1ccc(CN(Cc2ccccc2)c2ccon2)cc1",
+          "Base": "1-methyl-2,3,4,6,7,8-hexahydropyrimido[1,2-a]pyrimidine"
+        },
+        "observed_yield": 72.8478499,
+        "acquisition": "ei",
+        "llm_action": null
+      },
+      {
+        "step": 19,
+        "query_index": 2,
+        "condition": {
+          "Reactant2": "1-bromo-4-ethylbenzene",
+          "Ligand": "ditert-butyl-[2-[2,4,6-tri(propan-2-yl)phenyl]phenyl]phosphane",
+          "Additive": "2,1-benzoxazole",
+          "Base": "1-methyl-2,3,4,6,7,8-hexahydropyrimido[1,2-a]pyrimidine"
+        },
+        "observed_yield": 24.59821074,
+        "acquisition": "ei",
+        "llm_action": null
+      },
+      {
+        "step": 20,
+        "query_index": 4,
+        "condition": {
+          "Reactant2": "1-bromo-4-ethylbenzene",
+          "Ligand": "dicyclohexyl-[2-[2,4,6-tri(propan-2-yl)phenyl]phenyl]phosphane",
+          "Additive": "ethyl 3-methyl-1,2-oxazole-5-carboxylate",
+          "Base": "1-methyl-2,3,4,6,7,8-hexahydropyrimido[1,2-a]pyrimidine"
+        },
+        "observed_yield": 35.87055638,
+        "acquisition": "ei",
+        "llm_action": null
+      },
+      {
+        "step": 21,
+        "query_index": 6,
+        "condition": {
+          "Reactant2": "1-bromo-4-ethylbenzene",
+          "Ligand": "bis(1-adamantyl)-[3,6-dimethoxy-2-[2,4,6-tri(propan-2-yl)phenyl]phenyl]phosphane",
+          "Additive": "3-methyl-1,2-oxazole",
+          "Base": "1-methyl-2,3,4,6,7,8-hexahydropyrimido[1,2-a]pyrimidine"
+        },
+        "observed_yield": 80.68492948,
+        "acquisition": "ei",
+        "llm_action": null
+      },
+      {
+        "step": 22,
+        "query_index": 7,
+        "condition": {
+          "Reactant2": "1-bromo-4-ethylbenzene",
+          "Ligand": "ditert-butyl-[2-[2,4,6-tri(propan-2-yl)phenyl]phenyl]phosphane",
+          "Additive": "ethyl 5-methyl-1,2-oxazole-3-carboxylate",
+          "Base": "1-methyl-2,3,4,6,7,8-hexahydropyrimido[1,2-a]pyrimidine"
+        },
+        "observed_yield": 78.80108905,
+        "acquisition": "ei",
+        "llm_action": null
+      },
+      {
+        "step": 23,
+        "query_index": 9,
+        "condition": {
+          "Reactant2": "1-bromo-4-ethylbenzene",
+          "Ligand": "ditert-butyl-[3,6-dimethoxy-2-[2,4,6-tri(propan-2-yl)phenyl]phenyl]phosphane",
+          "Additive": "5-phenyl-1,2-oxazole",
+          "Base": "N-[dimethylamino-ethylimino-[[tris(dimethylamino)-lambda5-phosphanylidene]amino]-lambda5-phosphanyl]-N-methylmethanamine"
+        },
+        "observed_yield": 19.47378974,
+        "acquisition": "ei",
+        "llm_action": null
+      },
+      {
+        "step": 24,
+        "query_index": 10,
+        "condition": {
+          "Reactant2": "1-bromo-4-ethylbenzene",
+          "Ligand": "ditert-butyl-[3,6-dimethoxy-2-[2,4,6-tri(propan-2-yl)phenyl]phenyl]phosphane",
+          "Additive": "c1ccc(CN(Cc2ccccc2)c2ccno2)cc1",
+          "Base": "1-methyl-2,3,4,6,7,8-hexahydropyrimido[1,2-a]pyrimidine"
+        },
+        "observed_yield": 62.86856054,
+        "acquisition": "ei",
+        "llm_action": null
+      },
+      {
+        "step": 25,
+        "query_index": 11,
+        "condition": {
+          "Reactant2": "1-bromo-4-ethylbenzene",
+          "Ligand": "ditert-butyl-[3,6-dimethoxy-2-[2,4,6-tri(propan-2-yl)phenyl]phenyl]phosphane",
+          "Additive": "ethyl 1,2-oxazole-4-carboxylate",
+          "Base": "1-methyl-2,3,4,6,7,8-hexahydropyrimido[1,2-a]pyrimidine"
+        },
+        "observed_yield": 30.87951231,
+        "acquisition": "ei",
+        "llm_action": null
+      },
+      {
+        "step": 26,
+        "query_index": 12,
+        "condition": {
+          "Reactant2": "1-bromo-4-ethylbenzene",
+          "Ligand": "ditert-butyl-[3,6-dimethoxy-2-[2,4,6-tri(propan-2-yl)phenyl]phenyl]phosphane",
+          "Additive": "ethyl 1,2-oxazole-4-carboxylate",
+          "Base": "N-[dimethylamino-ethylimino-[[tris(dimethylamino)-lambda5-phosphanylidene]amino]-lambda5-phosphanyl]-N-methylmethanamine"
+        },
+        "observed_yield": 13.59760256,
+        "acquisition": "ei",
+        "llm_action": null
+      },
+      {
+        "step": 27,
+        "query_index": 13,
+        "condition": {
+          "Reactant2": "1-bromo-4-ethylbenzene",
+          "Ligand": "dicyclohexyl-[2-[2,4,6-tri(propan-2-yl)phenyl]phenyl]phosphane",
+          "Additive": "3-methyl-1,2-oxazole",
+          "Base": "N-[dimethylamino-ethylimino-[[tris(dimethylamino)-lambda5-phosphanylidene]amino]-lambda5-phosphanyl]-N-methylmethanamine"
+        },
+        "observed_yield": 64.27233548,
+        "acquisition": "ei",
+        "llm_action": null
+      },
+      {
+        "step": 28,
+        "query_index": 14,
+        "condition": {
+          "Reactant2": "1-bromo-4-ethylbenzene",
+          "Ligand": "ditert-butyl-[2-[2,4,6-tri(propan-2-yl)phenyl]phenyl]phosphane",
+          "Additive": "c1ccc(CN(Cc2ccccc2)c2ccon2)cc1",
+          "Base": "1-methyl-2,3,4,6,7,8-hexahydropyrimido[1,2-a]pyrimidine"
+        },
+        "observed_yield": 69.07936453,
+        "acquisition": "ei",
+        "llm_action": null
+      },
+      {
+        "step": 29,
+        "query_index": 15,
+        "condition": {
+          "Reactant2": "1-bromo-4-ethylbenzene",
+          "Ligand": "ditert-butyl-[2-[2,4,6-tri(propan-2-yl)phenyl]phenyl]phosphane",
+          "Additive": "ethyl 3-methyl-1,2-oxazole-5-carboxylate",
+          "Base": "N-[dimethylamino-ethylimino-[[tris(dimethylamino)-lambda5-phosphanylidene]amino]-lambda5-phosphanyl]-N-methylmethanamine"
+        },
+        "observed_yield": 70.86219062,
+        "acquisition": "ei",
+        "llm_action": null
+      },
+      {
+        "step": 30,
+        "query_index": 16,
+        "condition": {
+          "Reactant2": "1-bromo-4-ethylbenzene",
+          "Ligand": "ditert-butyl-[3,6-dimethoxy-2-[2,4,6-tri(propan-2-yl)phenyl]phenyl]phosphane",
+          "Additive": "ethyl 1,2-oxazole-3-carboxylate",
+          "Base": "1-methyl-2,3,4,6,7,8-hexahydropyrimido[1,2-a]pyrimidine"
+        },
+        "observed_yield": 79.8902752,
+        "acquisition": "ei",
+        "llm_action": null
+      },
+      {
+        "step": 31,
+        "query_index": 17,
+        "condition": {
+          "Reactant2": "1-bromo-4-ethylbenzene",
+          "Ligand": "bis(1-adamantyl)-[3,6-dimethoxy-2-[2,4,6-tri(propan-2-yl)phenyl]phenyl]phosphane",
+          "Additive": "ethyl 5-methyl-1,2-oxazole-4-carboxylate",
+          "Base": "1-methyl-2,3,4,6,7,8-hexahydropyrimido[1,2-a]pyrimidine"
+        },
+        "observed_yield": 43.35191306,
+        "acquisition": "ei",
+        "llm_action": null
+      },
+      {
+        "step": 32,
+        "query_index": 19,
+        "condition": {
+          "Reactant2": "1-bromo-4-ethylbenzene",
+          "Ligand": "bis(1-adamantyl)-[3,6-dimethoxy-2-[2,4,6-tri(propan-2-yl)phenyl]phenyl]phosphane",
+          "Additive": "5-methyl-1,2-oxazole",
+          "Base": "1-methyl-2,3,4,6,7,8-hexahydropyrimido[1,2-a]pyrimidine"
+        },
+        "observed_yield": 66.71317285,
+        "acquisition": "ei",
+        "llm_action": null
+      },
+      {
+        "step": 33,
+        "query_index": 20,
+        "condition": {
+          "Reactant2": "1-bromo-4-ethylbenzene",
+          "Ligand": "ditert-butyl-[3,6-dimethoxy-2-[2,4,6-tri(propan-2-yl)phenyl]phenyl]phosphane",
+          "Additive": "5-phenyl-1,2-oxazole",
+          "Base": "2-tert-butyl-1,1,3,3-tetramethylguanidine"
+        },
+        "observed_yield": 27.79577337,
+        "acquisition": "ei",
+        "llm_action": null
+      },
+      {
+        "step": 34,
+        "query_index": 21,
+        "condition": {
+          "Reactant2": "1-bromo-4-ethylbenzene",
+          "Ligand": "ditert-butyl-[3,6-dimethoxy-2-[2,4,6-tri(propan-2-yl)phenyl]phenyl]phosphane",
+          "Additive": "3-methyl-1,2-oxazole",
+          "Base": "1-methyl-2,3,4,6,7,8-hexahydropyrimido[1,2-a]pyrimidine"
+        },
+        "observed_yield": 79.45834404,
+        "acquisition": "ei",
+        "llm_action": null
+      },
+      {
+        "step": 35,
+        "query_index": 22,
+        "condition": {
+          "Reactant2": "1-bromo-4-ethylbenzene",
+          "Ligand": "ditert-butyl-[3,6-dimethoxy-2-[2,4,6-tri(propan-2-yl)phenyl]phenyl]phosphane",
+          "Additive": "c1ccc(CN(Cc2ccccc2)c2ccon2)cc1",
+          "Base": "1-methyl-2,3,4,6,7,8-hexahydropyrimido[1,2-a]pyrimidine"
+        },
+        "observed_yield": 74.21032846,
+        "acquisition": "ei",
+        "llm_action": null
+      },
+      {
+        "step": 36,
+        "query_index": 23,
+        "condition": {
+          "Reactant2": "1-bromo-4-ethylbenzene",
+          "Ligand": "ditert-butyl-[3,6-dimethoxy-2-[2,4,6-tri(propan-2-yl)phenyl]phenyl]phosphane",
+          "Additive": "5-methyl-1,2-oxazole",
+          "Base": "N-[dimethylamino-ethylimino-[[tris(dimethylamino)-lambda5-phosphanylidene]amino]-lambda5-phosphanyl]-N-methylmethanamine"
+        },
+        "observed_yield": 14.46737016,
+        "acquisition": "ei",
+        "llm_action": null
+      },
+      {
+        "step": 37,
+        "query_index": 24,
+        "condition": {
+          "Reactant2": "1-bromo-4-ethylbenzene",
+          "Ligand": "ditert-butyl-[2-[2,4,6-tri(propan-2-yl)phenyl]phenyl]phosphane",
+          "Additive": "methyl 5-thiophen-2-yl-1,2-oxazole-3-carboxylate",
+          "Base": "1-methyl-2,3,4,6,7,8-hexahydropyrimido[1,2-a]pyrimidine"
+        },
+        "observed_yield": 69.58481273,
+        "acquisition": "ei",
+        "llm_action": null
+      },
+      {
+        "step": 38,
+        "query_index": 25,
+        "condition": {
+          "Reactant2": "1-bromo-4-ethylbenzene",
+          "Ligand": "bis(1-adamantyl)-[3,6-dimethoxy-2-[2,4,6-tri(propan-2-yl)phenyl]phenyl]phosphane",
+          "Additive": "methyl 5-(furan-2-yl)-1,2-oxazole-3-carboxylate",
+          "Base": "N-[dimethylamino-ethylimino-[[tris(dimethylamino)-lambda5-phosphanylidene]amino]-lambda5-phosphanyl]-N-methylmethanamine"
+        },
+        "observed_yield": 47.34816594,
+        "acquisition": "ei",
+        "llm_action": null
+      },
+      {
+        "step": 39,
+        "query_index": 26,
+        "condition": {
+          "Reactant2": "1-bromo-4-ethylbenzene",
+          "Ligand": "ditert-butyl-[2-[2,4,6-tri(propan-2-yl)phenyl]phenyl]phosphane",
+          "Additive": "4-phenyl-1,2-oxazole",
+          "Base": "1-methyl-2,3,4,6,7,8-hexahydropyrimido[1,2-a]pyrimidine"
+        },
+        "observed_yield": 79.87241595,
+        "acquisition": "ei",
+        "llm_action": null
+      },
+      {
+        "step": 40,
+        "query_index": 27,
+        "condition": {
+          "Reactant2": "1-bromo-4-ethylbenzene",
+          "Ligand": "dicyclohexyl-[2-[2,4,6-tri(propan-2-yl)phenyl]phenyl]phosphane",
+          "Additive": "ethyl 5-methyl-1,2-oxazole-3-carboxylate",
+          "Base": "N-[dimethylamino-ethylimino-[[tris(dimethylamino)-lambda5-phosphanylidene]amino]-lambda5-phosphanyl]-N-methylmethanamine"
+        },
+        "observed_yield": 53.99699311,
+        "acquisition": "ei",
+        "llm_action": null
+      }
+    ]
+  },
+  {
+    "dataset": "buchwald_sub4",
+    "seed": 200,
+    "encoding": "fingerprint",
+    "prior_protocol": "seeded_subsample",
+    "n_initial": 5,
+    "initial_indices": [
+      18,
+      33,
+      13,
+      32,
+      29
+    ],
+    "best_found": 85.89473594,
+    "t95": 23,
+    "elapsed_s": 8.885636329650879,
+    "trajectory": [
+      {
+        "step": 1,
+        "query_index": 727,
+        "condition": {
+          "Reactant2": "1-ethyl-4-iodobenzene",
+          "Ligand": "ditert-butyl-[3,6-dimethoxy-2-[2,4,6-tri(propan-2-yl)phenyl]phenyl]phosphane",
+          "Additive": "5-methyl-3-pyrrol-1-yl-1,2-oxazole",
+          "Base": "N-[dimethylamino-ethylimino-[[tris(dimethylamino)-lambda5-phosphanylidene]amino]-lambda5-phosphanyl]-N-methylmethanamine"
+        },
+        "observed_yield": 69.27632316,
+        "acquisition": "ei",
+        "llm_action": null
+      },
+      {
+        "step": 2,
+        "query_index": 523,
+        "condition": {
+          "Reactant2": "1-ethyl-4-iodobenzene",
+          "Ligand": "ditert-butyl-[3,6-dimethoxy-2-[2,4,6-tri(propan-2-yl)phenyl]phenyl]phosphane",
+          "Additive": "5-methyl-3-pyrrol-1-yl-1,2-oxazole",
+          "Base": "1-methyl-2,3,4,6,7,8-hexahydropyrimido[1,2-a]pyrimidine"
+        },
+        "observed_yield": 75.97219172,
+        "acquisition": "ei",
+        "llm_action": null
+      },
+      {
+        "step": 3,
+        "query_index": 1,
+        "condition": {
+          "Reactant2": "1-bromo-4-ethylbenzene",
+          "Ligand": "ditert-butyl-[2-[2,4,6-tri(propan-2-yl)phenyl]phenyl]phosphane",
+          "Additive": "5-methyl-3-pyrrol-1-yl-1,2-oxazole",
+          "Base": "1-methyl-2,3,4,6,7,8-hexahydropyrimido[1,2-a]pyrimidine"
+        },
+        "observed_yield": 71.55294754,
+        "acquisition": "ei",
+        "llm_action": null
+      },
+      {
+        "step": 4,
+        "query_index": 18,
+        "condition": {
+          "Reactant2": "1-bromo-4-ethylbenzene",
+          "Ligand": "bis(1-adamantyl)-[3,6-dimethoxy-2-[2,4,6-tri(propan-2-yl)phenyl]phenyl]phosphane",
+          "Additive": "5-methyl-3-pyrrol-1-yl-1,2-oxazole",
+          "Base": "1-methyl-2,3,4,6,7,8-hexahydropyrimido[1,2-a]pyrimidine"
+        },
+        "observed_yield": 69.84952946,
+        "acquisition": "ei",
+        "llm_action": null
+      },
+      {
+        "step": 5,
+        "query_index": 36,
+        "condition": {
+          "Reactant2": "1-bromo-4-ethylbenzene",
+          "Ligand": "ditert-butyl-[2-[2,4,6-tri(propan-2-yl)phenyl]phenyl]phosphane",
+          "Additive": "5-methyl-3-pyrrol-1-yl-1,2-oxazole",
+          "Base": "2-tert-butyl-1,1,3,3-tetramethylguanidine"
+        },
+        "observed_yield": 57.74229286,
+        "acquisition": "ei",
+        "llm_action": null
+      },
+      {
+        "step": 6,
+        "query_index": 395,
+        "condition": {
+          "Reactant2": "1-chloro-4-ethylbenzene",
+          "Ligand": "dicyclohexyl-[2-[2,4,6-tri(propan-2-yl)phenyl]phenyl]phosphane",
+          "Additive": "5-methyl-3-pyrrol-1-yl-1,2-oxazole",
+          "Base": "N-[dimethylamino-ethylimino-[[tris(dimethylamino)-lambda5-phosphanylidene]amino]-lambda5-phosphanyl]-N-methylmethanamine"
+        },
+        "observed_yield": 11.25218088,
+        "acquisition": "ei",
+        "llm_action": null
+      },
+      {
+        "step": 7,
+        "query_index": 8,
+        "condition": {
+          "Reactant2": "1-bromo-4-ethylbenzene",
+          "Ligand": "ditert-butyl-[3,6-dimethoxy-2-[2,4,6-tri(propan-2-yl)phenyl]phenyl]phosphane",
+          "Additive": "4-phenyl-1,2-oxazole",
+          "Base": "2-tert-butyl-1,1,3,3-tetramethylguanidine"
+        },
+        "observed_yield": 36.54381967,
+        "acquisition": "ei",
+        "llm_action": null
+      },
+      {
+        "step": 8,
+        "query_index": 781,
+        "condition": {
+          "Reactant2": "1-ethyl-4-iodobenzene",
+          "Ligand": "ditert-butyl-[2-[2,4,6-tri(propan-2-yl)phenyl]phenyl]phosphane",
+          "Additive": "3,5-dimethyl-1,2-oxazole",
+          "Base": "N-[dimethylamino-ethylimino-[[tris(dimethylamino)-lambda5-phosphanylidene]amino]-lambda5-phosphanyl]-N-methylmethanamine"
+        },
+        "observed_yield": 69.38989345,
+        "acquisition": "ei",
+        "llm_action": null
+      },
+      {
+        "step": 9,
+        "query_index": 677,
+        "condition": {
+          "Reactant2": "1-ethyl-4-iodobenzene",
+          "Ligand": "bis(1-adamantyl)-[3,6-dimethoxy-2-[2,4,6-tri(propan-2-yl)phenyl]phenyl]phosphane",
+          "Additive": "3,5-dimethyl-1,2-oxazole",
+          "Base": "N-[dimethylamino-ethylimino-[[tris(dimethylamino)-lambda5-phosphanylidene]amino]-lambda5-phosphanyl]-N-methylmethanamine"
+        },
+        "observed_yield": 68.3339655,
+        "acquisition": "ei",
+        "llm_action": null
+      },
+      {
+        "step": 10,
+        "query_index": 708,
+        "condition": {
+          "Reactant2": "1-ethyl-4-iodobenzene",
+          "Ligand": "ditert-butyl-[2-[2,4,6-tri(propan-2-yl)phenyl]phenyl]phosphane",
+          "Additive": "3,5-dimethyl-1,2-oxazole",
+          "Base": "1-methyl-2,3,4,6,7,8-hexahydropyrimido[1,2-a]pyrimidine"
+        },
+        "observed_yield": 75.59377488,
+        "acquisition": "ei",
+        "llm_action": null
+      },
+      {
+        "step": 11,
+        "query_index": 600,
+        "condition": {
+          "Reactant2": "1-ethyl-4-iodobenzene",
+          "Ligand": "bis(1-adamantyl)-[3,6-dimethoxy-2-[2,4,6-tri(propan-2-yl)phenyl]phenyl]phosphane",
+          "Additive": "3,5-dimethyl-1,2-oxazole",
+          "Base": "1-methyl-2,3,4,6,7,8-hexahydropyrimido[1,2-a]pyrimidine"
+        },
+        "observed_yield": 76.98654081,
+        "acquisition": "ei",
+        "llm_action": null
+      },
+      {
+        "step": 12,
+        "query_index": 777,
+        "condition": {
+          "Reactant2": "1-ethyl-4-iodobenzene",
+          "Ligand": "bis(1-adamantyl)-[3,6-dimethoxy-2-[2,4,6-tri(propan-2-yl)phenyl]phenyl]phosphane",
+          "Additive": "5-(2,6-difluorophenyl)-1,2-oxazole",
+          "Base": "1-methyl-2,3,4,6,7,8-hexahydropyrimido[1,2-a]pyrimidine"
+        },
+        "observed_yield": 73.39202626,
+        "acquisition": "ei",
+        "llm_action": null
+      },
+      {
+        "step": 13,
+        "query_index": 557,
+        "condition": {
+          "Reactant2": "1-ethyl-4-iodobenzene",
+          "Ligand": "ditert-butyl-[2-[2,4,6-tri(propan-2-yl)phenyl]phenyl]phosphane",
+          "Additive": "ethyl 5-methyl-1,2-oxazole-4-carboxylate",
+          "Base": "1-methyl-2,3,4,6,7,8-hexahydropyrimido[1,2-a]pyrimidine"
+        },
+        "observed_yield": 61.5016932,
+        "acquisition": "ei",
+        "llm_action": null
+      },
+      {
+        "step": 14,
+        "query_index": 599,
+        "condition": {
+          "Reactant2": "1-ethyl-4-iodobenzene",
+          "Ligand": "bis(1-adamantyl)-[3,6-dimethoxy-2-[2,4,6-tri(propan-2-yl)phenyl]phenyl]phosphane",
+          "Additive": "5-(2,6-difluorophenyl)-1,2-oxazole",
+          "Base": "2-tert-butyl-1,1,3,3-tetramethylguanidine"
+        },
+        "observed_yield": 60.8676331,
+        "acquisition": "ei",
+        "llm_action": null
+      },
+      {
+        "step": 15,
+        "query_index": 601,
+        "condition": {
+          "Reactant2": "1-ethyl-4-iodobenzene",
+          "Ligand": "bis(1-adamantyl)-[3,6-dimethoxy-2-[2,4,6-tri(propan-2-yl)phenyl]phenyl]phosphane",
+          "Additive": "ethyl 1,2-oxazole-4-carboxylate",
+          "Base": "1-methyl-2,3,4,6,7,8-hexahydropyrimido[1,2-a]pyrimidine"
+        },
+        "observed_yield": 33.47151562,
+        "acquisition": "ei",
+        "llm_action": null
+      },
+      {
+        "step": 16,
+        "query_index": 771,
+        "condition": {
+          "Reactant2": "1-ethyl-4-iodobenzene",
+          "Ligand": "bis(1-adamantyl)-[3,6-dimethoxy-2-[2,4,6-tri(propan-2-yl)phenyl]phenyl]phosphane",
+          "Additive": "c1ccc(CN(Cc2ccccc2)c2ccno2)cc1",
+          "Base": "1-methyl-2,3,4,6,7,8-hexahydropyrimido[1,2-a]pyrimidine"
+        },
+        "observed_yield": 72.29221067,
+        "acquisition": "ei",
+        "llm_action": null
+      },
+      {
+        "step": 17,
+        "query_index": 528,
+        "condition": {
+          "Reactant2": "1-ethyl-4-iodobenzene",
+          "Ligand": "bis(1-adamantyl)-[3,6-dimethoxy-2-[2,4,6-tri(propan-2-yl)phenyl]phenyl]phosphane",
+          "Additive": "ethyl 3-methoxy-1,2-oxazole-5-carboxylate",
+          "Base": "1-methyl-2,3,4,6,7,8-hexahydropyrimido[1,2-a]pyrimidine"
+        },
+        "observed_yield": 75.02467082,
+        "acquisition": "ei",
+        "llm_action": null
+      },
+      {
+        "step": 18,
+        "query_index": 332,
+        "condition": {
+          "Reactant2": "1-chloro-4-ethylbenzene",
+          "Ligand": "ditert-butyl-[2-[2,4,6-tri(propan-2-yl)phenyl]phenyl]phosphane",
+          "Additive": "ethyl 3-methoxy-1,2-oxazole-5-carboxylate",
+          "Base": "1-methyl-2,3,4,6,7,8-hexahydropyrimido[1,2-a]pyrimidine"
+        },
+        "observed_yield": 1.442502721,
+        "acquisition": "ei",
+        "llm_action": null
+      },
+      {
+        "step": 19,
+        "query_index": 678,
+        "condition": {
+          "Reactant2": "1-ethyl-4-iodobenzene",
+          "Ligand": "bis(1-adamantyl)-[3,6-dimethoxy-2-[2,4,6-tri(propan-2-yl)phenyl]phenyl]phosphane",
+          "Additive": "5-phenyl-1,2-oxazole",
+          "Base": "1-methyl-2,3,4,6,7,8-hexahydropyrimido[1,2-a]pyrimidine"
+        },
+        "observed_yield": 80.9780499,
+        "acquisition": "ei",
+        "llm_action": null
+      },
+      {
+        "step": 20,
+        "query_index": 772,
+        "condition": {
+          "Reactant2": "1-ethyl-4-iodobenzene",
+          "Ligand": "dicyclohexyl-[2-[2,4,6-tri(propan-2-yl)phenyl]phenyl]phosphane",
+          "Additive": "5-phenyl-1,2-oxazole",
+          "Base": "N-[dimethylamino-ethylimino-[[tris(dimethylamino)-lambda5-phosphanylidene]amino]-lambda5-phosphanyl]-N-methylmethanamine"
+        },
+        "observed_yield": 15.41389344,
+        "acquisition": "ei",
+        "llm_action": null
+      },
+      {
+        "step": 21,
+        "query_index": 674,
+        "condition": {
+          "Reactant2": "1-ethyl-4-iodobenzene",
+          "Ligand": "bis(1-adamantyl)-[3,6-dimethoxy-2-[2,4,6-tri(propan-2-yl)phenyl]phenyl]phosphane",
+          "Additive": "methyl 5-thiophen-2-yl-1,2-oxazole-3-carboxylate",
+          "Base": "1-methyl-2,3,4,6,7,8-hexahydropyrimido[1,2-a]pyrimidine"
+        },
+        "observed_yield": 69.61841713,
+        "acquisition": "ei",
+        "llm_action": null
+      },
+      {
+        "step": 22,
+        "query_index": 752,
+        "condition": {
+          "Reactant2": "1-ethyl-4-iodobenzene",
+          "Ligand": "bis(1-adamantyl)-[3,6-dimethoxy-2-[2,4,6-tri(propan-2-yl)phenyl]phenyl]phosphane",
+          "Additive": "2,1-benzoxazole",
+          "Base": "1-methyl-2,3,4,6,7,8-hexahydropyrimido[1,2-a]pyrimidine"
+        },
+        "observed_yield": 70.2716235,
+        "acquisition": "ei",
+        "llm_action": null
+      },
+      {
+        "step": 23,
+        "query_index": 664,
+        "condition": {
+          "Reactant2": "1-ethyl-4-iodobenzene",
+          "Ligand": "bis(1-adamantyl)-[3,6-dimethoxy-2-[2,4,6-tri(propan-2-yl)phenyl]phenyl]phosphane",
+          "Additive": "3-methyl-1,2-oxazole",
+          "Base": "1-methyl-2,3,4,6,7,8-hexahydropyrimido[1,2-a]pyrimidine"
+        },
+        "observed_yield": 83.05466982,
+        "acquisition": "ei",
+        "llm_action": null
+      },
+      {
+        "step": 24,
+        "query_index": 539,
+        "condition": {
+          "Reactant2": "1-ethyl-4-iodobenzene",
+          "Ligand": "bis(1-adamantyl)-[3,6-dimethoxy-2-[2,4,6-tri(propan-2-yl)phenyl]phenyl]phosphane",
+          "Additive": "3-phenyl-1,2-oxazole",
+          "Base": "1-methyl-2,3,4,6,7,8-hexahydropyrimido[1,2-a]pyrimidine"
+        },
+        "observed_yield": 82.63071562,
+        "acquisition": "ei",
+        "llm_action": null
+      },
+      {
+        "step": 25,
+        "query_index": 547,
+        "condition": {
+          "Reactant2": "1-ethyl-4-iodobenzene",
+          "Ligand": "bis(1-adamantyl)-[3,6-dimethoxy-2-[2,4,6-tri(propan-2-yl)phenyl]phenyl]phosphane",
+          "Additive": "1,2-benzoxazole",
+          "Base": "1-methyl-2,3,4,6,7,8-hexahydropyrimido[1,2-a]pyrimidine"
+        },
+        "observed_yield": 68.58213231,
+        "acquisition": "ei",
+        "llm_action": null
+      },
+      {
+        "step": 26,
+        "query_index": 522,
+        "condition": {
+          "Reactant2": "1-ethyl-4-iodobenzene",
+          "Ligand": "bis(1-adamantyl)-[3,6-dimethoxy-2-[2,4,6-tri(propan-2-yl)phenyl]phenyl]phosphane",
+          "Additive": "3-methyl-5-phenyl-1,2-oxazole",
+          "Base": "1-methyl-2,3,4,6,7,8-hexahydropyrimido[1,2-a]pyrimidine"
+        },
+        "observed_yield": 73.08177999,
+        "acquisition": "ei",
+        "llm_action": null
+      },
+      {
+        "step": 27,
+        "query_index": 757,
+        "condition": {
+          "Reactant2": "1-ethyl-4-iodobenzene",
+          "Ligand": "bis(1-adamantyl)-[3,6-dimethoxy-2-[2,4,6-tri(propan-2-yl)phenyl]phenyl]phosphane",
+          "Additive": "methyl 1,2-oxazole-5-carboxylate",
+          "Base": "1-methyl-2,3,4,6,7,8-hexahydropyrimido[1,2-a]pyrimidine"
+        },
+        "observed_yield": 68.1907703,
+        "acquisition": "ei",
+        "llm_action": null
+      },
+      {
+        "step": 28,
+        "query_index": 638,
+        "condition": {
+          "Reactant2": "1-ethyl-4-iodobenzene",
+          "Ligand": "bis(1-adamantyl)-[3,6-dimethoxy-2-[2,4,6-tri(propan-2-yl)phenyl]phenyl]phosphane",
+          "Additive": "5-methyl-1,2-oxazole",
+          "Base": "1-methyl-2,3,4,6,7,8-hexahydropyrimido[1,2-a]pyrimidine"
+        },
+        "observed_yield": 76.22505116,
+        "acquisition": "ei",
+        "llm_action": null
+      },
+      {
+        "step": 29,
+        "query_index": 672,
+        "condition": {
+          "Reactant2": "1-ethyl-4-iodobenzene",
+          "Ligand": "bis(1-adamantyl)-[3,6-dimethoxy-2-[2,4,6-tri(propan-2-yl)phenyl]phenyl]phosphane",
+          "Additive": "4-phenyl-1,2-oxazole",
+          "Base": "1-methyl-2,3,4,6,7,8-hexahydropyrimido[1,2-a]pyrimidine"
+        },
+        "observed_yield": 74.16554821,
+        "acquisition": "ei",
+        "llm_action": null
+      },
+      {
+        "step": 30,
+        "query_index": 615,
+        "condition": {
+          "Reactant2": "1-ethyl-4-iodobenzene",
+          "Ligand": "bis(1-adamantyl)-[3,6-dimethoxy-2-[2,4,6-tri(propan-2-yl)phenyl]phenyl]phosphane",
+          "Additive": "methyl 5-(furan-2-yl)-1,2-oxazole-3-carboxylate",
+          "Base": "1-methyl-2,3,4,6,7,8-hexahydropyrimido[1,2-a]pyrimidine"
+        },
+        "observed_yield": 69.71995068,
+        "acquisition": "ei",
+        "llm_action": null
+      },
+      {
+        "step": 31,
+        "query_index": 657,
+        "condition": {
+          "Reactant2": "1-ethyl-4-iodobenzene",
+          "Ligand": "bis(1-adamantyl)-[3,6-dimethoxy-2-[2,4,6-tri(propan-2-yl)phenyl]phenyl]phosphane",
+          "Additive": "ethyl 3-methyl-1,2-oxazole-5-carboxylate",
+          "Base": "1-methyl-2,3,4,6,7,8-hexahydropyrimido[1,2-a]pyrimidine"
+        },
+        "observed_yield": 85.89473594,
+        "acquisition": "ei",
+        "llm_action": null
+      },
+      {
+        "step": 32,
+        "query_index": 711,
+        "condition": {
+          "Reactant2": "1-ethyl-4-iodobenzene",
+          "Ligand": "bis(1-adamantyl)-[3,6-dimethoxy-2-[2,4,6-tri(propan-2-yl)phenyl]phenyl]phosphane",
+          "Additive": "ethyl 5-methyl-1,2-oxazole-3-carboxylate",
+          "Base": "1-methyl-2,3,4,6,7,8-hexahydropyrimido[1,2-a]pyrimidine"
+        },
+        "observed_yield": 80.71099803,
+        "acquisition": "ei",
+        "llm_action": null
+      },
+      {
+        "step": 33,
+        "query_index": 676,
+        "condition": {
+          "Reactant2": "1-ethyl-4-iodobenzene",
+          "Ligand": "bis(1-adamantyl)-[3,6-dimethoxy-2-[2,4,6-tri(propan-2-yl)phenyl]phenyl]phosphane",
+          "Additive": "ethyl 1,2-oxazole-3-carboxylate",
+          "Base": "1-methyl-2,3,4,6,7,8-hexahydropyrimido[1,2-a]pyrimidine"
+        },
+        "observed_yield": 79.19714754,
+        "acquisition": "ei",
+        "llm_action": null
+      },
+      {
+        "step": 34,
+        "query_index": 515,
+        "condition": {
+          "Reactant2": "1-chloro-4-ethylbenzene",
+          "Ligand": "ditert-butyl-[2-[2,4,6-tri(propan-2-yl)phenyl]phenyl]phosphane",
+          "Additive": "ethyl 5-methyl-1,2-oxazole-3-carboxylate",
+          "Base": "2-tert-butyl-1,1,3,3-tetramethylguanidine"
+        },
+        "observed_yield": 2.74612364,
+        "acquisition": "ei",
+        "llm_action": null
+      },
+      {
+        "step": 35,
+        "query_index": 534,
+        "condition": {
+          "Reactant2": "1-ethyl-4-iodobenzene",
+          "Ligand": "bis(1-adamantyl)-[3,6-dimethoxy-2-[2,4,6-tri(propan-2-yl)phenyl]phenyl]phosphane",
+          "Additive": "ethyl 3-methoxy-1,2-oxazole-5-carboxylate",
+          "Base": "N-[dimethylamino-ethylimino-[[tris(dimethylamino)-lambda5-phosphanylidene]amino]-lambda5-phosphanyl]-N-methylmethanamine"
+        },
+        "observed_yield": 69.97034068,
+        "acquisition": "ei",
+        "llm_action": null
+      },
+      {
+        "step": 36,
+        "query_index": 736,
+        "condition": {
+          "Reactant2": "1-ethyl-4-iodobenzene",
+          "Ligand": "bis(1-adamantyl)-[3,6-dimethoxy-2-[2,4,6-tri(propan-2-yl)phenyl]phenyl]phosphane",
+          "Additive": "ethyl 5-methyl-1,2-oxazole-3-carboxylate",
+          "Base": "2-tert-butyl-1,1,3,3-tetramethylguanidine"
+        },
+        "observed_yield": 78.61961971,
+        "acquisition": "ei",
+        "llm_action": null
+      },
+      {
+        "step": 37,
+        "query_index": 722,
+        "condition": {
+          "Reactant2": "1-ethyl-4-iodobenzene",
+          "Ligand": "ditert-butyl-[2-[2,4,6-tri(propan-2-yl)phenyl]phenyl]phosphane",
+          "Additive": "5-phenyl-1,2-oxazole",
+          "Base": "N-[dimethylamino-ethylimino-[[tris(dimethylamino)-lambda5-phosphanylidene]amino]-lambda5-phosphanyl]-N-methylmethanamine"
+        },
+        "observed_yield": 26.6748995,
+        "acquisition": "ei",
+        "llm_action": null
+      },
+      {
+        "step": 38,
+        "query_index": 11,
+        "condition": {
+          "Reactant2": "1-bromo-4-ethylbenzene",
+          "Ligand": "ditert-butyl-[3,6-dimethoxy-2-[2,4,6-tri(propan-2-yl)phenyl]phenyl]phosphane",
+          "Additive": "ethyl 1,2-oxazole-4-carboxylate",
+          "Base": "1-methyl-2,3,4,6,7,8-hexahydropyrimido[1,2-a]pyrimidine"
+        },
+        "observed_yield": 30.87951231,
+        "acquisition": "ei",
+        "llm_action": null
+      },
+      {
+        "step": 39,
+        "query_index": 35,
+        "condition": {
+          "Reactant2": "1-bromo-4-ethylbenzene",
+          "Ligand": "ditert-butyl-[2-[2,4,6-tri(propan-2-yl)phenyl]phenyl]phosphane",
+          "Additive": "ethyl 1,2-oxazole-4-carboxylate",
+          "Base": "N-[dimethylamino-ethylimino-[[tris(dimethylamino)-lambda5-phosphanylidene]amino]-lambda5-phosphanyl]-N-methylmethanamine"
+        },
+        "observed_yield": 5.425616594,
+        "acquisition": "ei",
+        "llm_action": null
+      },
+      {
+        "step": 40,
+        "query_index": 80,
+        "condition": {
+          "Reactant2": "1-bromo-4-ethylbenzene",
+          "Ligand": "ditert-butyl-[3,6-dimethoxy-2-[2,4,6-tri(propan-2-yl)phenyl]phenyl]phosphane",
+          "Additive": "ethyl 5-methyl-1,2-oxazole-3-carboxylate",
+          "Base": "2-tert-butyl-1,1,3,3-tetramethylguanidine"
+        },
+        "observed_yield": 68.06627781,
+        "acquisition": "ei",
+        "llm_action": null
+      }
+    ]
+  },
+  {
+    "dataset": "buchwald_sub4",
+    "seed": 300,
+    "encoding": "one_hot",
+    "prior_protocol": "seeded_subsample",
+    "n_initial": 5,
+    "initial_indices": [
+      8,
+      30,
+      34,
+      15,
+      16
+    ],
+    "best_found": 86.59757822,
+    "t95": 13,
+    "elapsed_s": 6.552175045013428,
+    "trajectory": [
+      {
+        "step": 1,
+        "query_index": 320,
+        "condition": {
+          "Reactant2": "1-chloro-4-ethylbenzene",
+          "Ligand": "ditert-butyl-[2-[2,4,6-tri(propan-2-yl)phenyl]phenyl]phosphane",
+          "Additive": "ethyl 5-methyl-1,2-oxazole-4-carboxylate",
+          "Base": "1-methyl-2,3,4,6,7,8-hexahydropyrimido[1,2-a]pyrimidine"
+        },
+        "observed_yield": 13.56968075,
+        "acquisition": "ei",
+        "llm_action": null
+      },
+      {
+        "step": 2,
+        "query_index": 557,
+        "condition": {
+          "Reactant2": "1-ethyl-4-iodobenzene",
+          "Ligand": "ditert-butyl-[2-[2,4,6-tri(propan-2-yl)phenyl]phenyl]phosphane",
+          "Additive": "ethyl 5-methyl-1,2-oxazole-4-carboxylate",
+          "Base": "1-methyl-2,3,4,6,7,8-hexahydropyrimido[1,2-a]pyrimidine"
+        },
+        "observed_yield": 61.5016932,
+        "acquisition": "ei",
+        "llm_action": null
+      },
+      {
+        "step": 3,
+        "query_index": 594,
+        "condition": {
+          "Reactant2": "1-ethyl-4-iodobenzene",
+          "Ligand": "ditert-butyl-[2-[2,4,6-tri(propan-2-yl)phenyl]phenyl]phosphane",
+          "Additive": "ethyl 5-methyl-1,2-oxazole-4-carboxylate",
+          "Base": "2-tert-butyl-1,1,3,3-tetramethylguanidine"
+        },
+        "observed_yield": 41.96736477,
+        "acquisition": "ei",
+        "llm_action": null
+      },
+      {
+        "step": 4,
+        "query_index": 176,
+        "condition": {
+          "Reactant2": "1-bromo-4-ethylbenzene",
+          "Ligand": "ditert-butyl-[2-[2,4,6-tri(propan-2-yl)phenyl]phenyl]phosphane",
+          "Additive": "ethyl 5-methyl-1,2-oxazole-4-carboxylate",
+          "Base": "1-methyl-2,3,4,6,7,8-hexahydropyrimido[1,2-a]pyrimidine"
+        },
+        "observed_yield": 44.1778543,
+        "acquisition": "ei",
+        "llm_action": null
+      },
+      {
+        "step": 5,
+        "query_index": 0,
+        "condition": {
+          "Reactant2": "1-bromo-4-ethylbenzene",
+          "Ligand": "bis(1-adamantyl)-[3,6-dimethoxy-2-[2,4,6-tri(propan-2-yl)phenyl]phenyl]phosphane",
+          "Additive": "ethyl 1,2-oxazole-3-carboxylate",
+          "Base": "N-[dimethylamino-ethylimino-[[tris(dimethylamino)-lambda5-phosphanylidene]amino]-lambda5-phosphanyl]-N-methylmethanamine"
+        },
+        "observed_yield": 1.023181291,
+        "acquisition": "ei",
+        "llm_action": null
+      },
+      {
+        "step": 6,
+        "query_index": 1,
+        "condition": {
+          "Reactant2": "1-bromo-4-ethylbenzene",
+          "Ligand": "ditert-butyl-[2-[2,4,6-tri(propan-2-yl)phenyl]phenyl]phosphane",
+          "Additive": "5-methyl-3-pyrrol-1-yl-1,2-oxazole",
+          "Base": "1-methyl-2,3,4,6,7,8-hexahydropyrimido[1,2-a]pyrimidine"
+        },
+        "observed_yield": 71.55294754,
+        "acquisition": "ei",
+        "llm_action": null
+      },
+      {
+        "step": 7,
+        "query_index": 36,
+        "condition": {
+          "Reactant2": "1-bromo-4-ethylbenzene",
+          "Ligand": "ditert-butyl-[2-[2,4,6-tri(propan-2-yl)phenyl]phenyl]phosphane",
+          "Additive": "5-methyl-3-pyrrol-1-yl-1,2-oxazole",
+          "Base": "2-tert-butyl-1,1,3,3-tetramethylguanidine"
+        },
+        "observed_yield": 57.74229286,
+        "acquisition": "ei",
+        "llm_action": null
+      },
+      {
+        "step": 8,
+        "query_index": 629,
+        "condition": {
+          "Reactant2": "1-ethyl-4-iodobenzene",
+          "Ligand": "ditert-butyl-[2-[2,4,6-tri(propan-2-yl)phenyl]phenyl]phosphane",
+          "Additive": "5-methyl-3-pyrrol-1-yl-1,2-oxazole",
+          "Base": "1-methyl-2,3,4,6,7,8-hexahydropyrimido[1,2-a]pyrimidine"
+        },
+        "observed_yield": 72.58292155,
+        "acquisition": "ei",
+        "llm_action": null
+      },
+      {
+        "step": 9,
+        "query_index": 634,
+        "condition": {
+          "Reactant2": "1-ethyl-4-iodobenzene",
+          "Ligand": "ditert-butyl-[2-[2,4,6-tri(propan-2-yl)phenyl]phenyl]phosphane",
+          "Additive": "methyl 1,2-oxazole-5-carboxylate",
+          "Base": "1-methyl-2,3,4,6,7,8-hexahydropyrimido[1,2-a]pyrimidine"
+        },
+        "observed_yield": 61.87528527,
+        "acquisition": "ei",
+        "llm_action": null
+      },
+      {
+        "step": 10,
+        "query_index": 96,
+        "condition": {
+          "Reactant2": "1-bromo-4-ethylbenzene",
+          "Ligand": "ditert-butyl-[2-[2,4,6-tri(propan-2-yl)phenyl]phenyl]phosphane",
+          "Additive": "c1ccc(CN(Cc2ccccc2)c2ccno2)cc1",
+          "Base": "1-methyl-2,3,4,6,7,8-hexahydropyrimido[1,2-a]pyrimidine"
+        },
+        "observed_yield": 39.55034963,
+        "acquisition": "ei",
+        "llm_action": null
+      },
+      {
+        "step": 11,
+        "query_index": 536,
+        "condition": {
+          "Reactant2": "1-ethyl-4-iodobenzene",
+          "Ligand": "ditert-butyl-[2-[2,4,6-tri(propan-2-yl)phenyl]phenyl]phosphane",
+          "Additive": "5-methyl-3-pyrrol-1-yl-1,2-oxazole",
+          "Base": "2-tert-butyl-1,1,3,3-tetramethylguanidine"
+        },
+        "observed_yield": 59.48668549,
+        "acquisition": "ei",
+        "llm_action": null
+      },
+      {
+        "step": 12,
+        "query_index": 529,
+        "condition": {
+          "Reactant2": "1-ethyl-4-iodobenzene",
+          "Ligand": "ditert-butyl-[2-[2,4,6-tri(propan-2-yl)phenyl]phenyl]phosphane",
+          "Additive": "ethyl 5-methyl-1,2-oxazole-3-carboxylate",
+          "Base": "1-methyl-2,3,4,6,7,8-hexahydropyrimido[1,2-a]pyrimidine"
+        },
+        "observed_yield": 79.44483195,
+        "acquisition": "ei",
+        "llm_action": null
+      },
+      {
+        "step": 13,
+        "query_index": 721,
+        "condition": {
+          "Reactant2": "1-ethyl-4-iodobenzene",
+          "Ligand": "ditert-butyl-[2-[2,4,6-tri(propan-2-yl)phenyl]phenyl]phosphane",
+          "Additive": "ethyl 5-methyl-1,2-oxazole-3-carboxylate",
+          "Base": "2-tert-butyl-1,1,3,3-tetramethylguanidine"
+        },
+        "observed_yield": 82.32885806,
+        "acquisition": "ei",
+        "llm_action": null
+      },
+      {
+        "step": 14,
+        "query_index": 128,
+        "condition": {
+          "Reactant2": "1-bromo-4-ethylbenzene",
+          "Ligand": "ditert-butyl-[2-[2,4,6-tri(propan-2-yl)phenyl]phenyl]phosphane",
+          "Additive": "ethyl 5-methyl-1,2-oxazole-3-carboxylate",
+          "Base": "2-tert-butyl-1,1,3,3-tetramethylguanidine"
+        },
+        "observed_yield": 72.63770939,
+        "acquisition": "ei",
+        "llm_action": null
+      },
+      {
+        "step": 15,
+        "query_index": 640,
+        "condition": {
+          "Reactant2": "1-ethyl-4-iodobenzene",
+          "Ligand": "ditert-butyl-[2-[2,4,6-tri(propan-2-yl)phenyl]phenyl]phosphane",
+          "Additive": "c1ccc(CN(Cc2ccccc2)c2ccon2)cc1",
+          "Base": "1-methyl-2,3,4,6,7,8-hexahydropyrimido[1,2-a]pyrimidine"
+        },
+        "observed_yield": 67.52036403,
+        "acquisition": "ei",
+        "llm_action": null
+      },
+      {
+        "step": 16,
+        "query_index": 7,
+        "condition": {
+          "Reactant2": "1-bromo-4-ethylbenzene",
+          "Ligand": "ditert-butyl-[2-[2,4,6-tri(propan-2-yl)phenyl]phenyl]phosphane",
+          "Additive": "ethyl 5-methyl-1,2-oxazole-3-carboxylate",
+          "Base": "1-methyl-2,3,4,6,7,8-hexahydropyrimido[1,2-a]pyrimidine"
+        },
+        "observed_yield": 78.80108905,
+        "acquisition": "ei",
+        "llm_action": null
+      },
+      {
+        "step": 17,
+        "query_index": 14,
+        "condition": {
+          "Reactant2": "1-bromo-4-ethylbenzene",
+          "Ligand": "ditert-butyl-[2-[2,4,6-tri(propan-2-yl)phenyl]phenyl]phosphane",
+          "Additive": "c1ccc(CN(Cc2ccccc2)c2ccon2)cc1",
+          "Base": "1-methyl-2,3,4,6,7,8-hexahydropyrimido[1,2-a]pyrimidine"
+        },
+        "observed_yield": 69.07936453,
+        "acquisition": "ei",
+        "llm_action": null
+      },
+      {
+        "step": 18,
+        "query_index": 565,
+        "condition": {
+          "Reactant2": "1-ethyl-4-iodobenzene",
+          "Ligand": "ditert-butyl-[2-[2,4,6-tri(propan-2-yl)phenyl]phenyl]phosphane",
+          "Additive": "ethyl 3-methyl-1,2-oxazole-5-carboxylate",
+          "Base": "1-methyl-2,3,4,6,7,8-hexahydropyrimido[1,2-a]pyrimidine"
+        },
+        "observed_yield": 84.89551287,
+        "acquisition": "ei",
+        "llm_action": null
+      },
+      {
+        "step": 19,
+        "query_index": 666,
+        "condition": {
+          "Reactant2": "1-ethyl-4-iodobenzene",
+          "Ligand": "ditert-butyl-[2-[2,4,6-tri(propan-2-yl)phenyl]phenyl]phosphane",
+          "Additive": "ethyl 3-methyl-1,2-oxazole-5-carboxylate",
+          "Base": "2-tert-butyl-1,1,3,3-tetramethylguanidine"
+        },
+        "observed_yield": 80.90409924,
+        "acquisition": "ei",
+        "llm_action": null
+      },
+      {
+        "step": 20,
+        "query_index": 84,
+        "condition": {
+          "Reactant2": "1-bromo-4-ethylbenzene",
+          "Ligand": "ditert-butyl-[2-[2,4,6-tri(propan-2-yl)phenyl]phenyl]phosphane",
+          "Additive": "ethyl 3-methyl-1,2-oxazole-5-carboxylate",
+          "Base": "2-tert-butyl-1,1,3,3-tetramethylguanidine"
+        },
+        "observed_yield": 70.54955286,
+        "acquisition": "ei",
+        "llm_action": null
+      },
+      {
+        "step": 21,
+        "query_index": 535,
+        "condition": {
+          "Reactant2": "1-ethyl-4-iodobenzene",
+          "Ligand": "ditert-butyl-[2-[2,4,6-tri(propan-2-yl)phenyl]phenyl]phosphane",
+          "Additive": "3-methyl-5-phenyl-1,2-oxazole",
+          "Base": "1-methyl-2,3,4,6,7,8-hexahydropyrimido[1,2-a]pyrimidine"
+        },
+        "observed_yield": 68.71737558,
+        "acquisition": "ei",
+        "llm_action": null
+      },
+      {
+        "step": 22,
+        "query_index": 695,
+        "condition": {
+          "Reactant2": "1-ethyl-4-iodobenzene",
+          "Ligand": "ditert-butyl-[2-[2,4,6-tri(propan-2-yl)phenyl]phenyl]phosphane",
+          "Additive": "1,2-benzoxazole",
+          "Base": "1-methyl-2,3,4,6,7,8-hexahydropyrimido[1,2-a]pyrimidine"
+        },
+        "observed_yield": 60.28741502,
+        "acquisition": "ei",
+        "llm_action": null
+      },
+      {
+        "step": 23,
+        "query_index": 581,
+        "condition": {
+          "Reactant2": "1-ethyl-4-iodobenzene",
+          "Ligand": "ditert-butyl-[2-[2,4,6-tri(propan-2-yl)phenyl]phenyl]phosphane",
+          "Additive": "5-methyl-1,2-oxazole",
+          "Base": "1-methyl-2,3,4,6,7,8-hexahydropyrimido[1,2-a]pyrimidine"
+        },
+        "observed_yield": 67.19924832,
+        "acquisition": "ei",
+        "llm_action": null
+      },
+      {
+        "step": 24,
+        "query_index": 617,
+        "condition": {
+          "Reactant2": "1-ethyl-4-iodobenzene",
+          "Ligand": "ditert-butyl-[2-[2,4,6-tri(propan-2-yl)phenyl]phenyl]phosphane",
+          "Additive": "3-phenyl-1,2-oxazole",
+          "Base": "1-methyl-2,3,4,6,7,8-hexahydropyrimido[1,2-a]pyrimidine"
+        },
+        "observed_yield": 79.26160687,
+        "acquisition": "ei",
+        "llm_action": null
+      },
+      {
+        "step": 25,
+        "query_index": 178,
+        "condition": {
+          "Reactant2": "1-bromo-4-ethylbenzene",
+          "Ligand": "ditert-butyl-[2-[2,4,6-tri(propan-2-yl)phenyl]phenyl]phosphane",
+          "Additive": "3-phenyl-1,2-oxazole",
+          "Base": "1-methyl-2,3,4,6,7,8-hexahydropyrimido[1,2-a]pyrimidine"
+        },
+        "observed_yield": 83.09647392,
+        "acquisition": "ei",
+        "llm_action": null
+      },
+      {
+        "step": 26,
+        "query_index": 571,
+        "condition": {
+          "Reactant2": "1-ethyl-4-iodobenzene",
+          "Ligand": "ditert-butyl-[2-[2,4,6-tri(propan-2-yl)phenyl]phenyl]phosphane",
+          "Additive": "5-phenyl-1,2-oxazole",
+          "Base": "1-methyl-2,3,4,6,7,8-hexahydropyrimido[1,2-a]pyrimidine"
+        },
+        "observed_yield": 77.57371189,
+        "acquisition": "ei",
+        "llm_action": null
+      },
+      {
+        "step": 27,
+        "query_index": 689,
+        "condition": {
+          "Reactant2": "1-ethyl-4-iodobenzene",
+          "Ligand": "ditert-butyl-[2-[2,4,6-tri(propan-2-yl)phenyl]phenyl]phosphane",
+          "Additive": "5-phenyl-1,2-oxazole",
+          "Base": "2-tert-butyl-1,1,3,3-tetramethylguanidine"
+        },
+        "observed_yield": 72.39052533,
+        "acquisition": "ei",
+        "llm_action": null
+      },
+      {
+        "step": 28,
+        "query_index": 655,
+        "condition": {
+          "Reactant2": "1-ethyl-4-iodobenzene",
+          "Ligand": "ditert-butyl-[2-[2,4,6-tri(propan-2-yl)phenyl]phenyl]phosphane",
+          "Additive": "methyl 5-(furan-2-yl)-1,2-oxazole-3-carboxylate",
+          "Base": "1-methyl-2,3,4,6,7,8-hexahydropyrimido[1,2-a]pyrimidine"
+        },
+        "observed_yield": 65.42133393,
+        "acquisition": "ei",
+        "llm_action": null
+      },
+      {
+        "step": 29,
+        "query_index": 632,
+        "condition": {
+          "Reactant2": "1-ethyl-4-iodobenzene",
+          "Ligand": "ditert-butyl-[2-[2,4,6-tri(propan-2-yl)phenyl]phenyl]phosphane",
+          "Additive": "2,1-benzoxazole",
+          "Base": "1-methyl-2,3,4,6,7,8-hexahydropyrimido[1,2-a]pyrimidine"
+        },
+        "observed_yield": 66.86881109,
+        "acquisition": "ei",
+        "llm_action": null
+      },
+      {
+        "step": 30,
+        "query_index": 684,
+        "condition": {
+          "Reactant2": "1-ethyl-4-iodobenzene",
+          "Ligand": "ditert-butyl-[2-[2,4,6-tri(propan-2-yl)phenyl]phenyl]phosphane",
+          "Additive": "5-(2,6-difluorophenyl)-1,2-oxazole",
+          "Base": "1-methyl-2,3,4,6,7,8-hexahydropyrimido[1,2-a]pyrimidine"
+        },
+        "observed_yield": 72.13959481,
+        "acquisition": "ei",
+        "llm_action": null
+      },
+      {
+        "step": 31,
+        "query_index": 703,
+        "condition": {
+          "Reactant2": "1-ethyl-4-iodobenzene",
+          "Ligand": "ditert-butyl-[2-[2,4,6-tri(propan-2-yl)phenyl]phenyl]phosphane",
+          "Additive": "ethyl 1,2-oxazole-3-carboxylate",
+          "Base": "1-methyl-2,3,4,6,7,8-hexahydropyrimido[1,2-a]pyrimidine"
+        },
+        "observed_yield": 74.44046437,
+        "acquisition": "ei",
+        "llm_action": null
+      },
+      {
+        "step": 32,
+        "query_index": 88,
+        "condition": {
+          "Reactant2": "1-bromo-4-ethylbenzene",
+          "Ligand": "ditert-butyl-[2-[2,4,6-tri(propan-2-yl)phenyl]phenyl]phosphane",
+          "Additive": "3-phenyl-1,2-oxazole",
+          "Base": "2-tert-butyl-1,1,3,3-tetramethylguanidine"
+        },
+        "observed_yield": 77.85802389,
+        "acquisition": "ei",
+        "llm_action": null
+      },
+      {
+        "step": 33,
+        "query_index": 220,
+        "condition": {
+          "Reactant2": "1-bromo-4-ethylbenzene",
+          "Ligand": "ditert-butyl-[2-[2,4,6-tri(propan-2-yl)phenyl]phenyl]phosphane",
+          "Additive": "5-phenyl-1,2-oxazole",
+          "Base": "2-tert-butyl-1,1,3,3-tetramethylguanidine"
+        },
+        "observed_yield": 66.02401389,
+        "acquisition": "ei",
+        "llm_action": null
+      },
+      {
+        "step": 34,
+        "query_index": 127,
+        "condition": {
+          "Reactant2": "1-bromo-4-ethylbenzene",
+          "Ligand": "ditert-butyl-[2-[2,4,6-tri(propan-2-yl)phenyl]phenyl]phosphane",
+          "Additive": "ethyl 1,2-oxazole-4-carboxylate",
+          "Base": "1-methyl-2,3,4,6,7,8-hexahydropyrimido[1,2-a]pyrimidine"
+        },
+        "observed_yield": 28.13311375,
+        "acquisition": "ei",
+        "llm_action": null
+      },
+      {
+        "step": 35,
+        "query_index": 200,
+        "condition": {
+          "Reactant2": "1-bromo-4-ethylbenzene",
+          "Ligand": "ditert-butyl-[2-[2,4,6-tri(propan-2-yl)phenyl]phenyl]phosphane",
+          "Additive": "ethyl 3-methyl-1,2-oxazole-5-carboxylate",
+          "Base": "1-methyl-2,3,4,6,7,8-hexahydropyrimido[1,2-a]pyrimidine"
+        },
+        "observed_yield": 86.59757822,
+        "acquisition": "ei",
+        "llm_action": null
+      },
+      {
+        "step": 36,
+        "query_index": 72,
+        "condition": {
+          "Reactant2": "1-bromo-4-ethylbenzene",
+          "Ligand": "ditert-butyl-[2-[2,4,6-tri(propan-2-yl)phenyl]phenyl]phosphane",
+          "Additive": "3,5-dimethyl-1,2-oxazole",
+          "Base": "1-methyl-2,3,4,6,7,8-hexahydropyrimido[1,2-a]pyrimidine"
+        },
+        "observed_yield": 73.06292012,
+        "acquisition": "ei",
+        "llm_action": null
+      },
+      {
+        "step": 37,
+        "query_index": 26,
+        "condition": {
+          "Reactant2": "1-bromo-4-ethylbenzene",
+          "Ligand": "ditert-butyl-[2-[2,4,6-tri(propan-2-yl)phenyl]phenyl]phosphane",
+          "Additive": "4-phenyl-1,2-oxazole",
+          "Base": "1-methyl-2,3,4,6,7,8-hexahydropyrimido[1,2-a]pyrimidine"
+        },
+        "observed_yield": 79.87241595,
+        "acquisition": "ei",
+        "llm_action": null
+      },
+      {
+        "step": 38,
+        "query_index": 190,
+        "condition": {
+          "Reactant2": "1-bromo-4-ethylbenzene",
+          "Ligand": "ditert-butyl-[2-[2,4,6-tri(propan-2-yl)phenyl]phenyl]phosphane",
+          "Additive": "5-phenyl-1,2-oxazole",
+          "Base": "1-methyl-2,3,4,6,7,8-hexahydropyrimido[1,2-a]pyrimidine"
+        },
+        "observed_yield": 81.56943098,
+        "acquisition": "ei",
+        "llm_action": null
+      },
+      {
+        "step": 39,
+        "query_index": 551,
+        "condition": {
+          "Reactant2": "1-ethyl-4-iodobenzene",
+          "Ligand": "ditert-butyl-[2-[2,4,6-tri(propan-2-yl)phenyl]phenyl]phosphane",
+          "Additive": "4-phenyl-1,2-oxazole",
+          "Base": "2-tert-butyl-1,1,3,3-tetramethylguanidine"
+        },
+        "observed_yield": 77.78682066,
+        "acquisition": "ei",
+        "llm_action": null
+      },
+      {
+        "step": 40,
+        "query_index": 168,
+        "condition": {
+          "Reactant2": "1-bromo-4-ethylbenzene",
+          "Ligand": "ditert-butyl-[2-[2,4,6-tri(propan-2-yl)phenyl]phenyl]phosphane",
+          "Additive": "ethyl 1,2-oxazole-3-carboxylate",
+          "Base": "1-methyl-2,3,4,6,7,8-hexahydropyrimido[1,2-a]pyrimidine"
+        },
+        "observed_yield": 73.31932313,
+        "acquisition": "ei",
+        "llm_action": null
+      }
+    ]
+  },
+  {
+    "dataset": "buchwald_sub4",
+    "seed": 300,
+    "encoding": "fingerprint",
+    "prior_protocol": "seeded_subsample",
+    "n_initial": 5,
+    "initial_indices": [
+      8,
+      30,
+      34,
+      15,
+      16
+    ],
+    "best_found": 86.59757822,
+    "t95": 17,
+    "elapsed_s": 16.46379566192627,
+    "trajectory": [
+      {
+        "step": 1,
+        "query_index": 176,
+        "condition": {
+          "Reactant2": "1-bromo-4-ethylbenzene",
+          "Ligand": "ditert-butyl-[2-[2,4,6-tri(propan-2-yl)phenyl]phenyl]phosphane",
+          "Additive": "ethyl 5-methyl-1,2-oxazole-4-carboxylate",
+          "Base": "1-methyl-2,3,4,6,7,8-hexahydropyrimido[1,2-a]pyrimidine"
+        },
+        "observed_yield": 44.1778543,
+        "acquisition": "ei",
+        "llm_action": null
+      },
+      {
+        "step": 2,
+        "query_index": 96,
+        "condition": {
+          "Reactant2": "1-bromo-4-ethylbenzene",
+          "Ligand": "ditert-butyl-[2-[2,4,6-tri(propan-2-yl)phenyl]phenyl]phosphane",
+          "Additive": "c1ccc(CN(Cc2ccccc2)c2ccno2)cc1",
+          "Base": "1-methyl-2,3,4,6,7,8-hexahydropyrimido[1,2-a]pyrimidine"
+        },
+        "observed_yield": 39.55034963,
+        "acquisition": "ei",
+        "llm_action": null
+      },
+      {
+        "step": 3,
+        "query_index": 24,
+        "condition": {
+          "Reactant2": "1-bromo-4-ethylbenzene",
+          "Ligand": "ditert-butyl-[2-[2,4,6-tri(propan-2-yl)phenyl]phenyl]phosphane",
+          "Additive": "methyl 5-thiophen-2-yl-1,2-oxazole-3-carboxylate",
+          "Base": "1-methyl-2,3,4,6,7,8-hexahydropyrimido[1,2-a]pyrimidine"
+        },
+        "observed_yield": 69.58481273,
+        "acquisition": "ei",
+        "llm_action": null
+      },
+      {
+        "step": 4,
+        "query_index": 226,
+        "condition": {
+          "Reactant2": "1-bromo-4-ethylbenzene",
+          "Ligand": "dicyclohexyl-[2-[2,4,6-tri(propan-2-yl)phenyl]phenyl]phosphane",
+          "Additive": "methyl 5-thiophen-2-yl-1,2-oxazole-3-carboxylate",
+          "Base": "1-methyl-2,3,4,6,7,8-hexahydropyrimido[1,2-a]pyrimidine"
+        },
+        "observed_yield": 16.69067663,
+        "acquisition": "ei",
+        "llm_action": null
+      },
+      {
+        "step": 5,
+        "query_index": 293,
+        "condition": {
+          "Reactant2": "1-chloro-4-ethylbenzene",
+          "Ligand": "ditert-butyl-[2-[2,4,6-tri(propan-2-yl)phenyl]phenyl]phosphane",
+          "Additive": "methyl 5-thiophen-2-yl-1,2-oxazole-3-carboxylate",
+          "Base": "1-methyl-2,3,4,6,7,8-hexahydropyrimido[1,2-a]pyrimidine"
+        },
+        "observed_yield": 0.745430861,
+        "acquisition": "ei",
+        "llm_action": null
+      },
+      {
+        "step": 6,
+        "query_index": 52,
+        "condition": {
+          "Reactant2": "1-bromo-4-ethylbenzene",
+          "Ligand": "ditert-butyl-[2-[2,4,6-tri(propan-2-yl)phenyl]phenyl]phosphane",
+          "Additive": "methyl 5-thiophen-2-yl-1,2-oxazole-3-carboxylate",
+          "Base": "N-[dimethylamino-ethylimino-[[tris(dimethylamino)-lambda5-phosphanylidene]amino]-lambda5-phosphanyl]-N-methylmethanamine"
+        },
+        "observed_yield": 63.69608906,
+        "acquisition": "ei",
+        "llm_action": null
+      },
+      {
+        "step": 7,
+        "query_index": 141,
+        "condition": {
+          "Reactant2": "1-bromo-4-ethylbenzene",
+          "Ligand": "ditert-butyl-[2-[2,4,6-tri(propan-2-yl)phenyl]phenyl]phosphane",
+          "Additive": "ethyl 3-methoxy-1,2-oxazole-5-carboxylate",
+          "Base": "1-methyl-2,3,4,6,7,8-hexahydropyrimido[1,2-a]pyrimidine"
+        },
+        "observed_yield": 67.97015702,
+        "acquisition": "ei",
+        "llm_action": null
+      },
+      {
+        "step": 8,
+        "query_index": 44,
+        "condition": {
+          "Reactant2": "1-bromo-4-ethylbenzene",
+          "Ligand": "ditert-butyl-[2-[2,4,6-tri(propan-2-yl)phenyl]phenyl]phosphane",
+          "Additive": "ethyl 3-methoxy-1,2-oxazole-5-carboxylate",
+          "Base": "2-tert-butyl-1,1,3,3-tetramethylguanidine"
+        },
+        "observed_yield": 57.33300234,
+        "acquisition": "ei",
+        "llm_action": null
+      },
+      {
+        "step": 9,
+        "query_index": 190,
+        "condition": {
+          "Reactant2": "1-bromo-4-ethylbenzene",
+          "Ligand": "ditert-butyl-[2-[2,4,6-tri(propan-2-yl)phenyl]phenyl]phosphane",
+          "Additive": "5-phenyl-1,2-oxazole",
+          "Base": "1-methyl-2,3,4,6,7,8-hexahydropyrimido[1,2-a]pyrimidine"
+        },
+        "observed_yield": 81.56943098,
+        "acquisition": "ei",
+        "llm_action": null
+      },
+      {
+        "step": 10,
+        "query_index": 58,
+        "condition": {
+          "Reactant2": "1-bromo-4-ethylbenzene",
+          "Ligand": "ditert-butyl-[2-[2,4,6-tri(propan-2-yl)phenyl]phenyl]phosphane",
+          "Additive": "5-phenyl-1,2-oxazole",
+          "Base": "N-[dimethylamino-ethylimino-[[tris(dimethylamino)-lambda5-phosphanylidene]amino]-lambda5-phosphanyl]-N-methylmethanamine"
+        },
+        "observed_yield": 28.39231834,
+        "acquisition": "ei",
+        "llm_action": null
+      },
+      {
+        "step": 11,
+        "query_index": 72,
+        "condition": {
+          "Reactant2": "1-bromo-4-ethylbenzene",
+          "Ligand": "ditert-butyl-[2-[2,4,6-tri(propan-2-yl)phenyl]phenyl]phosphane",
+          "Additive": "3,5-dimethyl-1,2-oxazole",
+          "Base": "1-methyl-2,3,4,6,7,8-hexahydropyrimido[1,2-a]pyrimidine"
+        },
+        "observed_yield": 73.06292012,
+        "acquisition": "ei",
+        "llm_action": null
+      },
+      {
+        "step": 12,
+        "query_index": 81,
+        "condition": {
+          "Reactant2": "1-bromo-4-ethylbenzene",
+          "Ligand": "ditert-butyl-[2-[2,4,6-tri(propan-2-yl)phenyl]phenyl]phosphane",
+          "Additive": "3,5-dimethyl-1,2-oxazole",
+          "Base": "2-tert-butyl-1,1,3,3-tetramethylguanidine"
+        },
+        "observed_yield": 61.04819615,
+        "acquisition": "ei",
+        "llm_action": null
+      },
+      {
+        "step": 13,
+        "query_index": 7,
+        "condition": {
+          "Reactant2": "1-bromo-4-ethylbenzene",
+          "Ligand": "ditert-butyl-[2-[2,4,6-tri(propan-2-yl)phenyl]phenyl]phosphane",
+          "Additive": "ethyl 5-methyl-1,2-oxazole-3-carboxylate",
+          "Base": "1-methyl-2,3,4,6,7,8-hexahydropyrimido[1,2-a]pyrimidine"
+        },
+        "observed_yield": 78.80108905,
+        "acquisition": "ei",
+        "llm_action": null
+      },
+      {
+        "step": 14,
+        "query_index": 128,
+        "condition": {
+          "Reactant2": "1-bromo-4-ethylbenzene",
+          "Ligand": "ditert-butyl-[2-[2,4,6-tri(propan-2-yl)phenyl]phenyl]phosphane",
+          "Additive": "ethyl 5-methyl-1,2-oxazole-3-carboxylate",
+          "Base": "2-tert-butyl-1,1,3,3-tetramethylguanidine"
+        },
+        "observed_yield": 72.63770939,
+        "acquisition": "ei",
+        "llm_action": null
+      },
+      {
+        "step": 15,
+        "query_index": 174,
+        "condition": {
+          "Reactant2": "1-bromo-4-ethylbenzene",
+          "Ligand": "ditert-butyl-[2-[2,4,6-tri(propan-2-yl)phenyl]phenyl]phosphane",
+          "Additive": "3-methyl-5-phenyl-1,2-oxazole",
+          "Base": "1-methyl-2,3,4,6,7,8-hexahydropyrimido[1,2-a]pyrimidine"
+        },
+        "observed_yield": 69.25619095,
+        "acquisition": "ei",
+        "llm_action": null
+      },
+      {
+        "step": 16,
+        "query_index": 56,
+        "condition": {
+          "Reactant2": "1-bromo-4-ethylbenzene",
+          "Ligand": "ditert-butyl-[2-[2,4,6-tri(propan-2-yl)phenyl]phenyl]phosphane",
+          "Additive": "3-methyl-5-phenyl-1,2-oxazole",
+          "Base": "2-tert-butyl-1,1,3,3-tetramethylguanidine"
+        },
+        "observed_yield": 54.46826622,
+        "acquisition": "ei",
+        "llm_action": null
+      },
+      {
+        "step": 17,
+        "query_index": 178,
+        "condition": {
+          "Reactant2": "1-bromo-4-ethylbenzene",
+          "Ligand": "ditert-butyl-[2-[2,4,6-tri(propan-2-yl)phenyl]phenyl]phosphane",
+          "Additive": "3-phenyl-1,2-oxazole",
+          "Base": "1-methyl-2,3,4,6,7,8-hexahydropyrimido[1,2-a]pyrimidine"
+        },
+        "observed_yield": 83.09647392,
+        "acquisition": "ei",
+        "llm_action": null
+      },
+      {
+        "step": 18,
+        "query_index": 88,
+        "condition": {
+          "Reactant2": "1-bromo-4-ethylbenzene",
+          "Ligand": "ditert-butyl-[2-[2,4,6-tri(propan-2-yl)phenyl]phenyl]phosphane",
+          "Additive": "3-phenyl-1,2-oxazole",
+          "Base": "2-tert-butyl-1,1,3,3-tetramethylguanidine"
+        },
+        "observed_yield": 77.85802389,
+        "acquisition": "ei",
+        "llm_action": null
+      },
+      {
+        "step": 19,
+        "query_index": 14,
+        "condition": {
+          "Reactant2": "1-bromo-4-ethylbenzene",
+          "Ligand": "ditert-butyl-[2-[2,4,6-tri(propan-2-yl)phenyl]phenyl]phosphane",
+          "Additive": "c1ccc(CN(Cc2ccccc2)c2ccon2)cc1",
+          "Base": "1-methyl-2,3,4,6,7,8-hexahydropyrimido[1,2-a]pyrimidine"
+        },
+        "observed_yield": 69.07936453,
+        "acquisition": "ei",
+        "llm_action": null
+      },
+      {
+        "step": 20,
+        "query_index": 26,
+        "condition": {
+          "Reactant2": "1-bromo-4-ethylbenzene",
+          "Ligand": "ditert-butyl-[2-[2,4,6-tri(propan-2-yl)phenyl]phenyl]phosphane",
+          "Additive": "4-phenyl-1,2-oxazole",
+          "Base": "1-methyl-2,3,4,6,7,8-hexahydropyrimido[1,2-a]pyrimidine"
+        },
+        "observed_yield": 79.87241595,
+        "acquisition": "ei",
+        "llm_action": null
+      },
+      {
+        "step": 21,
+        "query_index": 42,
+        "condition": {
+          "Reactant2": "1-bromo-4-ethylbenzene",
+          "Ligand": "ditert-butyl-[2-[2,4,6-tri(propan-2-yl)phenyl]phenyl]phosphane",
+          "Additive": "4-phenyl-1,2-oxazole",
+          "Base": "2-tert-butyl-1,1,3,3-tetramethylguanidine"
+        },
+        "observed_yield": 73.2728017,
+        "acquisition": "ei",
+        "llm_action": null
+      },
+      {
+        "step": 22,
+        "query_index": 237,
+        "condition": {
+          "Reactant2": "1-bromo-4-ethylbenzene",
+          "Ligand": "ditert-butyl-[2-[2,4,6-tri(propan-2-yl)phenyl]phenyl]phosphane",
+          "Additive": "3-methyl-1,2-oxazole",
+          "Base": "1-methyl-2,3,4,6,7,8-hexahydropyrimido[1,2-a]pyrimidine"
+        },
+        "observed_yield": 79.05542624,
+        "acquisition": "ei",
+        "llm_action": null
+      },
+      {
+        "step": 23,
+        "query_index": 180,
+        "condition": {
+          "Reactant2": "1-bromo-4-ethylbenzene",
+          "Ligand": "ditert-butyl-[2-[2,4,6-tri(propan-2-yl)phenyl]phenyl]phosphane",
+          "Additive": "3-methyl-1,2-oxazole",
+          "Base": "2-tert-butyl-1,1,3,3-tetramethylguanidine"
+        },
+        "observed_yield": 80.58281911,
+        "acquisition": "ei",
+        "llm_action": null
+      },
+      {
+        "step": 24,
+        "query_index": 1,
+        "condition": {
+          "Reactant2": "1-bromo-4-ethylbenzene",
+          "Ligand": "ditert-butyl-[2-[2,4,6-tri(propan-2-yl)phenyl]phenyl]phosphane",
+          "Additive": "5-methyl-3-pyrrol-1-yl-1,2-oxazole",
+          "Base": "1-methyl-2,3,4,6,7,8-hexahydropyrimido[1,2-a]pyrimidine"
+        },
+        "observed_yield": 71.55294754,
+        "acquisition": "ei",
+        "llm_action": null
+      },
+      {
+        "step": 25,
+        "query_index": 43,
+        "condition": {
+          "Reactant2": "1-bromo-4-ethylbenzene",
+          "Ligand": "ditert-butyl-[2-[2,4,6-tri(propan-2-yl)phenyl]phenyl]phosphane",
+          "Additive": "5-methyl-1,2-oxazole",
+          "Base": "1-methyl-2,3,4,6,7,8-hexahydropyrimido[1,2-a]pyrimidine"
+        },
+        "observed_yield": 68.26027768,
+        "acquisition": "ei",
+        "llm_action": null
+      },
+      {
+        "step": 26,
+        "query_index": 2,
+        "condition": {
+          "Reactant2": "1-bromo-4-ethylbenzene",
+          "Ligand": "ditert-butyl-[2-[2,4,6-tri(propan-2-yl)phenyl]phenyl]phosphane",
+          "Additive": "2,1-benzoxazole",
+          "Base": "1-methyl-2,3,4,6,7,8-hexahydropyrimido[1,2-a]pyrimidine"
+        },
+        "observed_yield": 24.59821074,
+        "acquisition": "ei",
+        "llm_action": null
+      },
+      {
+        "step": 27,
+        "query_index": 51,
+        "condition": {
+          "Reactant2": "1-bromo-4-ethylbenzene",
+          "Ligand": "ditert-butyl-[2-[2,4,6-tri(propan-2-yl)phenyl]phenyl]phosphane",
+          "Additive": "1,2-benzoxazole",
+          "Base": "1-methyl-2,3,4,6,7,8-hexahydropyrimido[1,2-a]pyrimidine"
+        },
+        "observed_yield": 62.64758393,
+        "acquisition": "ei",
+        "llm_action": null
+      },
+      {
+        "step": 28,
+        "query_index": 231,
+        "condition": {
+          "Reactant2": "1-bromo-4-ethylbenzene",
+          "Ligand": "ditert-butyl-[2-[2,4,6-tri(propan-2-yl)phenyl]phenyl]phosphane",
+          "Additive": "5-(2,6-difluorophenyl)-1,2-oxazole",
+          "Base": "1-methyl-2,3,4,6,7,8-hexahydropyrimido[1,2-a]pyrimidine"
+        },
+        "observed_yield": 71.70514407,
+        "acquisition": "ei",
+        "llm_action": null
+      },
+      {
+        "step": 29,
+        "query_index": 127,
+        "condition": {
+          "Reactant2": "1-bromo-4-ethylbenzene",
+          "Ligand": "ditert-butyl-[2-[2,4,6-tri(propan-2-yl)phenyl]phenyl]phosphane",
+          "Additive": "ethyl 1,2-oxazole-4-carboxylate",
+          "Base": "1-methyl-2,3,4,6,7,8-hexahydropyrimido[1,2-a]pyrimidine"
+        },
+        "observed_yield": 28.13311375,
+        "acquisition": "ei",
+        "llm_action": null
+      },
+      {
+        "step": 30,
+        "query_index": 167,
+        "condition": {
+          "Reactant2": "1-bromo-4-ethylbenzene",
+          "Ligand": "ditert-butyl-[2-[2,4,6-tri(propan-2-yl)phenyl]phenyl]phosphane",
+          "Additive": "methyl 5-(furan-2-yl)-1,2-oxazole-3-carboxylate",
+          "Base": "1-methyl-2,3,4,6,7,8-hexahydropyrimido[1,2-a]pyrimidine"
+        },
+        "observed_yield": 70.19925962,
+        "acquisition": "ei",
+        "llm_action": null
+      },
+      {
+        "step": 31,
+        "query_index": 168,
+        "condition": {
+          "Reactant2": "1-bromo-4-ethylbenzene",
+          "Ligand": "ditert-butyl-[2-[2,4,6-tri(propan-2-yl)phenyl]phenyl]phosphane",
+          "Additive": "ethyl 1,2-oxazole-3-carboxylate",
+          "Base": "1-methyl-2,3,4,6,7,8-hexahydropyrimido[1,2-a]pyrimidine"
+        },
+        "observed_yield": 73.31932313,
+        "acquisition": "ei",
+        "llm_action": null
+      },
+      {
+        "step": 32,
+        "query_index": 200,
+        "condition": {
+          "Reactant2": "1-bromo-4-ethylbenzene",
+          "Ligand": "ditert-butyl-[2-[2,4,6-tri(propan-2-yl)phenyl]phenyl]phosphane",
+          "Additive": "ethyl 3-methyl-1,2-oxazole-5-carboxylate",
+          "Base": "1-methyl-2,3,4,6,7,8-hexahydropyrimido[1,2-a]pyrimidine"
+        },
+        "observed_yield": 86.59757822,
+        "acquisition": "ei",
+        "llm_action": null
+      },
+      {
+        "step": 33,
+        "query_index": 84,
+        "condition": {
+          "Reactant2": "1-bromo-4-ethylbenzene",
+          "Ligand": "ditert-butyl-[2-[2,4,6-tri(propan-2-yl)phenyl]phenyl]phosphane",
+          "Additive": "ethyl 3-methyl-1,2-oxazole-5-carboxylate",
+          "Base": "2-tert-butyl-1,1,3,3-tetramethylguanidine"
+        },
+        "observed_yield": 70.54955286,
+        "acquisition": "ei",
+        "llm_action": null
+      },
+      {
+        "step": 34,
+        "query_index": 123,
+        "condition": {
+          "Reactant2": "1-bromo-4-ethylbenzene",
+          "Ligand": "ditert-butyl-[2-[2,4,6-tri(propan-2-yl)phenyl]phenyl]phosphane",
+          "Additive": "ethyl 1,2-oxazole-3-carboxylate",
+          "Base": "2-tert-butyl-1,1,3,3-tetramethylguanidine"
+        },
+        "observed_yield": 56.8433722,
+        "acquisition": "ei",
+        "llm_action": null
+      },
+      {
+        "step": 35,
+        "query_index": 320,
+        "condition": {
+          "Reactant2": "1-chloro-4-ethylbenzene",
+          "Ligand": "ditert-butyl-[2-[2,4,6-tri(propan-2-yl)phenyl]phenyl]phosphane",
+          "Additive": "ethyl 5-methyl-1,2-oxazole-4-carboxylate",
+          "Base": "1-methyl-2,3,4,6,7,8-hexahydropyrimido[1,2-a]pyrimidine"
+        },
+        "observed_yield": 13.56968075,
+        "acquisition": "ei",
+        "llm_action": null
+      },
+      {
+        "step": 36,
+        "query_index": 38,
+        "condition": {
+          "Reactant2": "1-bromo-4-ethylbenzene",
+          "Ligand": "bis(1-adamantyl)-[3,6-dimethoxy-2-[2,4,6-tri(propan-2-yl)phenyl]phenyl]phosphane",
+          "Additive": "2,1-benzoxazole",
+          "Base": "2-tert-butyl-1,1,3,3-tetramethylguanidine"
+        },
+        "observed_yield": 4.677881799,
+        "acquisition": "ei",
+        "llm_action": null
+      },
+      {
+        "step": 37,
+        "query_index": 567,
+        "condition": {
+          "Reactant2": "1-ethyl-4-iodobenzene",
+          "Ligand": "dicyclohexyl-[2-[2,4,6-tri(propan-2-yl)phenyl]phenyl]phosphane",
+          "Additive": "ethyl 1,2-oxazole-4-carboxylate",
+          "Base": "1-methyl-2,3,4,6,7,8-hexahydropyrimido[1,2-a]pyrimidine"
+        },
+        "observed_yield": 21.48672588,
+        "acquisition": "ei",
+        "llm_action": null
+      },
+      {
+        "step": 38,
+        "query_index": 55,
+        "condition": {
+          "Reactant2": "1-bromo-4-ethylbenzene",
+          "Ligand": "bis(1-adamantyl)-[3,6-dimethoxy-2-[2,4,6-tri(propan-2-yl)phenyl]phenyl]phosphane",
+          "Additive": "5-phenyl-1,2-oxazole",
+          "Base": "N-[dimethylamino-ethylimino-[[tris(dimethylamino)-lambda5-phosphanylidene]amino]-lambda5-phosphanyl]-N-methylmethanamine"
+        },
+        "observed_yield": 19.90273024,
+        "acquisition": "ei",
+        "llm_action": null
+      },
+      {
+        "step": 39,
+        "query_index": 339,
+        "condition": {
+          "Reactant2": "1-chloro-4-ethylbenzene",
+          "Ligand": "ditert-butyl-[3,6-dimethoxy-2-[2,4,6-tri(propan-2-yl)phenyl]phenyl]phosphane",
+          "Additive": "3-methyl-1,2-oxazole",
+          "Base": "1-methyl-2,3,4,6,7,8-hexahydropyrimido[1,2-a]pyrimidine"
+        },
+        "observed_yield": 4.228381568,
+        "acquisition": "ei",
+        "llm_action": null
+      },
+      {
+        "step": 40,
+        "query_index": 691,
+        "condition": {
+          "Reactant2": "1-ethyl-4-iodobenzene",
+          "Ligand": "ditert-butyl-[2-[2,4,6-tri(propan-2-yl)phenyl]phenyl]phosphane",
+          "Additive": "2,1-benzoxazole",
+          "Base": "N-[dimethylamino-ethylimino-[[tris(dimethylamino)-lambda5-phosphanylidene]amino]-lambda5-phosphanyl]-N-methylmethanamine"
+        },
+        "observed_yield": 13.95628888,
+        "acquisition": "ei",
+        "llm_action": null
+      }
+    ]
+  },
+  {
+    "dataset": "buchwald_sub4",
+    "seed": 400,
+    "encoding": "one_hot",
+    "prior_protocol": "seeded_subsample",
+    "n_initial": 5,
+    "initial_indices": [
+      27,
+      24,
+      34,
+      0,
+      9
+    ],
+    "best_found": 85.89473594,
+    "t95": 12,
+    "elapsed_s": 5.545459032058716,
+    "trajectory": [
+      {
+        "step": 1,
+        "query_index": 319,
+        "condition": {
+          "Reactant2": "1-chloro-4-ethylbenzene",
+          "Ligand": "ditert-butyl-[3,6-dimethoxy-2-[2,4,6-tri(propan-2-yl)phenyl]phenyl]phosphane",
+          "Additive": "3-phenyl-1,2-oxazole",
+          "Base": "1-methyl-2,3,4,6,7,8-hexahydropyrimido[1,2-a]pyrimidine"
+        },
+        "observed_yield": 9.034825048,
+        "acquisition": "ei",
+        "llm_action": null
+      },
+      {
+        "step": 2,
+        "query_index": 118,
+        "condition": {
+          "Reactant2": "1-bromo-4-ethylbenzene",
+          "Ligand": "dicyclohexyl-[2-[2,4,6-tri(propan-2-yl)phenyl]phenyl]phosphane",
+          "Additive": "3-phenyl-1,2-oxazole",
+          "Base": "2-tert-butyl-1,1,3,3-tetramethylguanidine"
+        },
+        "observed_yield": 37.71186321,
+        "acquisition": "ei",
+        "llm_action": null
+      },
+      {
+        "step": 3,
+        "query_index": 88,
+        "condition": {
+          "Reactant2": "1-bromo-4-ethylbenzene",
+          "Ligand": "ditert-butyl-[2-[2,4,6-tri(propan-2-yl)phenyl]phenyl]phosphane",
+          "Additive": "3-phenyl-1,2-oxazole",
+          "Base": "2-tert-butyl-1,1,3,3-tetramethylguanidine"
+        },
+        "observed_yield": 77.85802389,
+        "acquisition": "ei",
+        "llm_action": null
+      },
+      {
+        "step": 4,
+        "query_index": 18,
+        "condition": {
+          "Reactant2": "1-bromo-4-ethylbenzene",
+          "Ligand": "bis(1-adamantyl)-[3,6-dimethoxy-2-[2,4,6-tri(propan-2-yl)phenyl]phenyl]phosphane",
+          "Additive": "5-methyl-3-pyrrol-1-yl-1,2-oxazole",
+          "Base": "1-methyl-2,3,4,6,7,8-hexahydropyrimido[1,2-a]pyrimidine"
+        },
+        "observed_yield": 69.84952946,
+        "acquisition": "ei",
+        "llm_action": null
+      },
+      {
+        "step": 5,
+        "query_index": 109,
+        "condition": {
+          "Reactant2": "1-bromo-4-ethylbenzene",
+          "Ligand": "bis(1-adamantyl)-[3,6-dimethoxy-2-[2,4,6-tri(propan-2-yl)phenyl]phenyl]phosphane",
+          "Additive": "5-(2,6-difluorophenyl)-1,2-oxazole",
+          "Base": "1-methyl-2,3,4,6,7,8-hexahydropyrimido[1,2-a]pyrimidine"
+        },
+        "observed_yield": 34.67021781,
+        "acquisition": "ei",
+        "llm_action": null
+      },
+      {
+        "step": 6,
+        "query_index": 612,
+        "condition": {
+          "Reactant2": "1-ethyl-4-iodobenzene",
+          "Ligand": "bis(1-adamantyl)-[3,6-dimethoxy-2-[2,4,6-tri(propan-2-yl)phenyl]phenyl]phosphane",
+          "Additive": "5-methyl-3-pyrrol-1-yl-1,2-oxazole",
+          "Base": "1-methyl-2,3,4,6,7,8-hexahydropyrimido[1,2-a]pyrimidine"
+        },
+        "observed_yield": 74.90352783,
+        "acquisition": "ei",
+        "llm_action": null
+      },
+      {
+        "step": 7,
+        "query_index": 762,
+        "condition": {
+          "Reactant2": "1-ethyl-4-iodobenzene",
+          "Ligand": "ditert-butyl-[2-[2,4,6-tri(propan-2-yl)phenyl]phenyl]phosphane",
+          "Additive": "3-phenyl-1,2-oxazole",
+          "Base": "2-tert-butyl-1,1,3,3-tetramethylguanidine"
+        },
+        "observed_yield": 80.13587028,
+        "acquisition": "ei",
+        "llm_action": null
+      },
+      {
+        "step": 8,
+        "query_index": 380,
+        "condition": {
+          "Reactant2": "1-chloro-4-ethylbenzene",
+          "Ligand": "ditert-butyl-[2-[2,4,6-tri(propan-2-yl)phenyl]phenyl]phosphane",
+          "Additive": "3-phenyl-1,2-oxazole",
+          "Base": "N-[dimethylamino-ethylimino-[[tris(dimethylamino)-lambda5-phosphanylidene]amino]-lambda5-phosphanyl]-N-methylmethanamine"
+        },
+        "observed_yield": 4.695061055,
+        "acquisition": "ei",
+        "llm_action": null
+      },
+      {
+        "step": 9,
+        "query_index": 609,
+        "condition": {
+          "Reactant2": "1-ethyl-4-iodobenzene",
+          "Ligand": "dicyclohexyl-[2-[2,4,6-tri(propan-2-yl)phenyl]phenyl]phosphane",
+          "Additive": "5-methyl-3-pyrrol-1-yl-1,2-oxazole",
+          "Base": "1-methyl-2,3,4,6,7,8-hexahydropyrimido[1,2-a]pyrimidine"
+        },
+        "observed_yield": 53.88645108,
+        "acquisition": "ei",
+        "llm_action": null
+      },
+      {
+        "step": 10,
+        "query_index": 484,
+        "condition": {
+          "Reactant2": "1-chloro-4-ethylbenzene",
+          "Ligand": "bis(1-adamantyl)-[3,6-dimethoxy-2-[2,4,6-tri(propan-2-yl)phenyl]phenyl]phosphane",
+          "Additive": "5-methyl-3-pyrrol-1-yl-1,2-oxazole",
+          "Base": "2-tert-butyl-1,1,3,3-tetramethylguanidine"
+        },
+        "observed_yield": 1.666950752,
+        "acquisition": "ei",
+        "llm_action": null
+      },
+      {
+        "step": 11,
+        "query_index": 643,
+        "condition": {
+          "Reactant2": "1-ethyl-4-iodobenzene",
+          "Ligand": "bis(1-adamantyl)-[3,6-dimethoxy-2-[2,4,6-tri(propan-2-yl)phenyl]phenyl]phosphane",
+          "Additive": "3-phenyl-1,2-oxazole",
+          "Base": "2-tert-butyl-1,1,3,3-tetramethylguanidine"
+        },
+        "observed_yield": 78.46972259,
+        "acquisition": "ei",
+        "llm_action": null
+      },
+      {
+        "step": 12,
+        "query_index": 147,
+        "condition": {
+          "Reactant2": "1-bromo-4-ethylbenzene",
+          "Ligand": "bis(1-adamantyl)-[3,6-dimethoxy-2-[2,4,6-tri(propan-2-yl)phenyl]phenyl]phosphane",
+          "Additive": "3-phenyl-1,2-oxazole",
+          "Base": "N-[dimethylamino-ethylimino-[[tris(dimethylamino)-lambda5-phosphanylidene]amino]-lambda5-phosphanyl]-N-methylmethanamine"
+        },
+        "observed_yield": 82.46360414,
+        "acquisition": "ei",
+        "llm_action": null
+      },
+      {
+        "step": 13,
+        "query_index": 3,
+        "condition": {
+          "Reactant2": "1-bromo-4-ethylbenzene",
+          "Ligand": "bis(1-adamantyl)-[3,6-dimethoxy-2-[2,4,6-tri(propan-2-yl)phenyl]phenyl]phosphane",
+          "Additive": "3-phenyl-1,2-oxazole",
+          "Base": "2-tert-butyl-1,1,3,3-tetramethylguanidine"
+        },
+        "observed_yield": 73.85492194,
+        "acquisition": "ei",
+        "llm_action": null
+      },
+      {
+        "step": 14,
+        "query_index": 539,
+        "condition": {
+          "Reactant2": "1-ethyl-4-iodobenzene",
+          "Ligand": "bis(1-adamantyl)-[3,6-dimethoxy-2-[2,4,6-tri(propan-2-yl)phenyl]phenyl]phosphane",
+          "Additive": "3-phenyl-1,2-oxazole",
+          "Base": "1-methyl-2,3,4,6,7,8-hexahydropyrimido[1,2-a]pyrimidine"
+        },
+        "observed_yield": 82.63071562,
+        "acquisition": "ei",
+        "llm_action": null
+      },
+      {
+        "step": 15,
+        "query_index": 522,
+        "condition": {
+          "Reactant2": "1-ethyl-4-iodobenzene",
+          "Ligand": "bis(1-adamantyl)-[3,6-dimethoxy-2-[2,4,6-tri(propan-2-yl)phenyl]phenyl]phosphane",
+          "Additive": "3-methyl-5-phenyl-1,2-oxazole",
+          "Base": "1-methyl-2,3,4,6,7,8-hexahydropyrimido[1,2-a]pyrimidine"
+        },
+        "observed_yield": 73.08177999,
+        "acquisition": "ei",
+        "llm_action": null
+      },
+      {
+        "step": 16,
+        "query_index": 664,
+        "condition": {
+          "Reactant2": "1-ethyl-4-iodobenzene",
+          "Ligand": "bis(1-adamantyl)-[3,6-dimethoxy-2-[2,4,6-tri(propan-2-yl)phenyl]phenyl]phosphane",
+          "Additive": "3-methyl-1,2-oxazole",
+          "Base": "1-methyl-2,3,4,6,7,8-hexahydropyrimido[1,2-a]pyrimidine"
+        },
+        "observed_yield": 83.05466982,
+        "acquisition": "ei",
+        "llm_action": null
+      },
+      {
+        "step": 17,
+        "query_index": 132,
+        "condition": {
+          "Reactant2": "1-bromo-4-ethylbenzene",
+          "Ligand": "bis(1-adamantyl)-[3,6-dimethoxy-2-[2,4,6-tri(propan-2-yl)phenyl]phenyl]phosphane",
+          "Additive": "3-methyl-1,2-oxazole",
+          "Base": "2-tert-butyl-1,1,3,3-tetramethylguanidine"
+        },
+        "observed_yield": 72.1822742,
+        "acquisition": "ei",
+        "llm_action": null
+      },
+      {
+        "step": 18,
+        "query_index": 600,
+        "condition": {
+          "Reactant2": "1-ethyl-4-iodobenzene",
+          "Ligand": "bis(1-adamantyl)-[3,6-dimethoxy-2-[2,4,6-tri(propan-2-yl)phenyl]phenyl]phosphane",
+          "Additive": "3,5-dimethyl-1,2-oxazole",
+          "Base": "1-methyl-2,3,4,6,7,8-hexahydropyrimido[1,2-a]pyrimidine"
+        },
+        "observed_yield": 76.98654081,
+        "acquisition": "ei",
+        "llm_action": null
+      },
+      {
+        "step": 19,
+        "query_index": 533,
+        "condition": {
+          "Reactant2": "1-ethyl-4-iodobenzene",
+          "Ligand": "bis(1-adamantyl)-[3,6-dimethoxy-2-[2,4,6-tri(propan-2-yl)phenyl]phenyl]phosphane",
+          "Additive": "c1ccc(CN(Cc2ccccc2)c2ccon2)cc1",
+          "Base": "1-methyl-2,3,4,6,7,8-hexahydropyrimido[1,2-a]pyrimidine"
+        },
+        "observed_yield": 72.8478499,
+        "acquisition": "ei",
+        "llm_action": null
+      },
+      {
+        "step": 20,
+        "query_index": 547,
+        "condition": {
+          "Reactant2": "1-ethyl-4-iodobenzene",
+          "Ligand": "bis(1-adamantyl)-[3,6-dimethoxy-2-[2,4,6-tri(propan-2-yl)phenyl]phenyl]phosphane",
+          "Additive": "1,2-benzoxazole",
+          "Base": "1-methyl-2,3,4,6,7,8-hexahydropyrimido[1,2-a]pyrimidine"
+        },
+        "observed_yield": 68.58213231,
+        "acquisition": "ei",
+        "llm_action": null
+      },
+      {
+        "step": 21,
+        "query_index": 601,
+        "condition": {
+          "Reactant2": "1-ethyl-4-iodobenzene",
+          "Ligand": "bis(1-adamantyl)-[3,6-dimethoxy-2-[2,4,6-tri(propan-2-yl)phenyl]phenyl]phosphane",
+          "Additive": "ethyl 1,2-oxazole-4-carboxylate",
+          "Base": "1-methyl-2,3,4,6,7,8-hexahydropyrimido[1,2-a]pyrimidine"
+        },
+        "observed_yield": 33.47151562,
+        "acquisition": "ei",
+        "llm_action": null
+      },
+      {
+        "step": 22,
+        "query_index": 164,
+        "condition": {
+          "Reactant2": "1-bromo-4-ethylbenzene",
+          "Ligand": "bis(1-adamantyl)-[3,6-dimethoxy-2-[2,4,6-tri(propan-2-yl)phenyl]phenyl]phosphane",
+          "Additive": "3-methyl-1,2-oxazole",
+          "Base": "N-[dimethylamino-ethylimino-[[tris(dimethylamino)-lambda5-phosphanylidene]amino]-lambda5-phosphanyl]-N-methylmethanamine"
+        },
+        "observed_yield": 83.14947865,
+        "acquisition": "ei",
+        "llm_action": null
+      },
+      {
+        "step": 23,
+        "query_index": 347,
+        "condition": {
+          "Reactant2": "1-chloro-4-ethylbenzene",
+          "Ligand": "bis(1-adamantyl)-[3,6-dimethoxy-2-[2,4,6-tri(propan-2-yl)phenyl]phenyl]phosphane",
+          "Additive": "3-phenyl-1,2-oxazole",
+          "Base": "1-methyl-2,3,4,6,7,8-hexahydropyrimido[1,2-a]pyrimidine"
+        },
+        "observed_yield": 3.135484875,
+        "acquisition": "ei",
+        "llm_action": null
+      },
+      {
+        "step": 24,
+        "query_index": 434,
+        "condition": {
+          "Reactant2": "1-chloro-4-ethylbenzene",
+          "Ligand": "bis(1-adamantyl)-[3,6-dimethoxy-2-[2,4,6-tri(propan-2-yl)phenyl]phenyl]phosphane",
+          "Additive": "3-methyl-1,2-oxazole",
+          "Base": "N-[dimethylamino-ethylimino-[[tris(dimethylamino)-lambda5-phosphanylidene]amino]-lambda5-phosphanyl]-N-methylmethanamine"
+        },
+        "observed_yield": 1.117675591,
+        "acquisition": "ei",
+        "llm_action": null
+      },
+      {
+        "step": 25,
+        "query_index": 413,
+        "condition": {
+          "Reactant2": "1-chloro-4-ethylbenzene",
+          "Ligand": "bis(1-adamantyl)-[3,6-dimethoxy-2-[2,4,6-tri(propan-2-yl)phenyl]phenyl]phosphane",
+          "Additive": "3-phenyl-1,2-oxazole",
+          "Base": "2-tert-butyl-1,1,3,3-tetramethylguanidine"
+        },
+        "observed_yield": 2.615785832,
+        "acquisition": "ei",
+        "llm_action": null
+      },
+      {
+        "step": 26,
+        "query_index": 615,
+        "condition": {
+          "Reactant2": "1-ethyl-4-iodobenzene",
+          "Ligand": "bis(1-adamantyl)-[3,6-dimethoxy-2-[2,4,6-tri(propan-2-yl)phenyl]phenyl]phosphane",
+          "Additive": "methyl 5-(furan-2-yl)-1,2-oxazole-3-carboxylate",
+          "Base": "1-methyl-2,3,4,6,7,8-hexahydropyrimido[1,2-a]pyrimidine"
+        },
+        "observed_yield": 69.71995068,
+        "acquisition": "ei",
+        "llm_action": null
+      },
+      {
+        "step": 27,
+        "query_index": 657,
+        "condition": {
+          "Reactant2": "1-ethyl-4-iodobenzene",
+          "Ligand": "bis(1-adamantyl)-[3,6-dimethoxy-2-[2,4,6-tri(propan-2-yl)phenyl]phenyl]phosphane",
+          "Additive": "ethyl 3-methyl-1,2-oxazole-5-carboxylate",
+          "Base": "1-methyl-2,3,4,6,7,8-hexahydropyrimido[1,2-a]pyrimidine"
+        },
+        "observed_yield": 85.89473594,
+        "acquisition": "ei",
+        "llm_action": null
+      },
+      {
+        "step": 28,
+        "query_index": 53,
+        "condition": {
+          "Reactant2": "1-bromo-4-ethylbenzene",
+          "Ligand": "bis(1-adamantyl)-[3,6-dimethoxy-2-[2,4,6-tri(propan-2-yl)phenyl]phenyl]phosphane",
+          "Additive": "ethyl 3-methyl-1,2-oxazole-5-carboxylate",
+          "Base": "1-methyl-2,3,4,6,7,8-hexahydropyrimido[1,2-a]pyrimidine"
+        },
+        "observed_yield": 57.85208433,
+        "acquisition": "ei",
+        "llm_action": null
+      },
+      {
+        "step": 29,
+        "query_index": 711,
+        "condition": {
+          "Reactant2": "1-ethyl-4-iodobenzene",
+          "Ligand": "bis(1-adamantyl)-[3,6-dimethoxy-2-[2,4,6-tri(propan-2-yl)phenyl]phenyl]phosphane",
+          "Additive": "ethyl 5-methyl-1,2-oxazole-3-carboxylate",
+          "Base": "1-methyl-2,3,4,6,7,8-hexahydropyrimido[1,2-a]pyrimidine"
+        },
+        "observed_yield": 80.71099803,
+        "acquisition": "ei",
+        "llm_action": null
+      },
+      {
+        "step": 30,
+        "query_index": 144,
+        "condition": {
+          "Reactant2": "1-bromo-4-ethylbenzene",
+          "Ligand": "bis(1-adamantyl)-[3,6-dimethoxy-2-[2,4,6-tri(propan-2-yl)phenyl]phenyl]phosphane",
+          "Additive": "ethyl 5-methyl-1,2-oxazole-3-carboxylate",
+          "Base": "1-methyl-2,3,4,6,7,8-hexahydropyrimido[1,2-a]pyrimidine"
+        },
+        "observed_yield": 81.22830675,
+        "acquisition": "ei",
+        "llm_action": null
+      },
+      {
+        "step": 31,
+        "query_index": 605,
+        "condition": {
+          "Reactant2": "1-ethyl-4-iodobenzene",
+          "Ligand": "bis(1-adamantyl)-[3,6-dimethoxy-2-[2,4,6-tri(propan-2-yl)phenyl]phenyl]phosphane",
+          "Additive": "ethyl 5-methyl-1,2-oxazole-3-carboxylate",
+          "Base": "N-[dimethylamino-ethylimino-[[tris(dimethylamino)-lambda5-phosphanylidene]amino]-lambda5-phosphanyl]-N-methylmethanamine"
+        },
+        "observed_yield": 71.26504827,
+        "acquisition": "ei",
+        "llm_action": null
+      },
+      {
+        "step": 32,
+        "query_index": 638,
+        "condition": {
+          "Reactant2": "1-ethyl-4-iodobenzene",
+          "Ligand": "bis(1-adamantyl)-[3,6-dimethoxy-2-[2,4,6-tri(propan-2-yl)phenyl]phenyl]phosphane",
+          "Additive": "5-methyl-1,2-oxazole",
+          "Base": "1-methyl-2,3,4,6,7,8-hexahydropyrimido[1,2-a]pyrimidine"
+        },
+        "observed_yield": 76.22505116,
+        "acquisition": "ei",
+        "llm_action": null
+      },
+      {
+        "step": 33,
+        "query_index": 19,
+        "condition": {
+          "Reactant2": "1-bromo-4-ethylbenzene",
+          "Ligand": "bis(1-adamantyl)-[3,6-dimethoxy-2-[2,4,6-tri(propan-2-yl)phenyl]phenyl]phosphane",
+          "Additive": "5-methyl-1,2-oxazole",
+          "Base": "1-methyl-2,3,4,6,7,8-hexahydropyrimido[1,2-a]pyrimidine"
+        },
+        "observed_yield": 66.71317285,
+        "acquisition": "ei",
+        "llm_action": null
+      },
+      {
+        "step": 34,
+        "query_index": 672,
+        "condition": {
+          "Reactant2": "1-ethyl-4-iodobenzene",
+          "Ligand": "bis(1-adamantyl)-[3,6-dimethoxy-2-[2,4,6-tri(propan-2-yl)phenyl]phenyl]phosphane",
+          "Additive": "4-phenyl-1,2-oxazole",
+          "Base": "1-methyl-2,3,4,6,7,8-hexahydropyrimido[1,2-a]pyrimidine"
+        },
+        "observed_yield": 74.16554821,
+        "acquisition": "ei",
+        "llm_action": null
+      },
+      {
+        "step": 35,
+        "query_index": 752,
+        "condition": {
+          "Reactant2": "1-ethyl-4-iodobenzene",
+          "Ligand": "bis(1-adamantyl)-[3,6-dimethoxy-2-[2,4,6-tri(propan-2-yl)phenyl]phenyl]phosphane",
+          "Additive": "2,1-benzoxazole",
+          "Base": "1-methyl-2,3,4,6,7,8-hexahydropyrimido[1,2-a]pyrimidine"
+        },
+        "observed_yield": 70.2716235,
+        "acquisition": "ei",
+        "llm_action": null
+      },
+      {
+        "step": 36,
+        "query_index": 528,
+        "condition": {
+          "Reactant2": "1-ethyl-4-iodobenzene",
+          "Ligand": "bis(1-adamantyl)-[3,6-dimethoxy-2-[2,4,6-tri(propan-2-yl)phenyl]phenyl]phosphane",
+          "Additive": "ethyl 3-methoxy-1,2-oxazole-5-carboxylate",
+          "Base": "1-methyl-2,3,4,6,7,8-hexahydropyrimido[1,2-a]pyrimidine"
+        },
+        "observed_yield": 75.02467082,
+        "acquisition": "ei",
+        "llm_action": null
+      },
+      {
+        "step": 37,
+        "query_index": 678,
+        "condition": {
+          "Reactant2": "1-ethyl-4-iodobenzene",
+          "Ligand": "bis(1-adamantyl)-[3,6-dimethoxy-2-[2,4,6-tri(propan-2-yl)phenyl]phenyl]phosphane",
+          "Additive": "5-phenyl-1,2-oxazole",
+          "Base": "1-methyl-2,3,4,6,7,8-hexahydropyrimido[1,2-a]pyrimidine"
+        },
+        "observed_yield": 80.9780499,
+        "acquisition": "ei",
+        "llm_action": null
+      },
+      {
+        "step": 38,
+        "query_index": 103,
+        "condition": {
+          "Reactant2": "1-bromo-4-ethylbenzene",
+          "Ligand": "bis(1-adamantyl)-[3,6-dimethoxy-2-[2,4,6-tri(propan-2-yl)phenyl]phenyl]phosphane",
+          "Additive": "5-phenyl-1,2-oxazole",
+          "Base": "1-methyl-2,3,4,6,7,8-hexahydropyrimido[1,2-a]pyrimidine"
+        },
+        "observed_yield": 59.96800012,
+        "acquisition": "ei",
+        "llm_action": null
+      },
+      {
+        "step": 39,
+        "query_index": 731,
+        "condition": {
+          "Reactant2": "1-ethyl-4-iodobenzene",
+          "Ligand": "bis(1-adamantyl)-[3,6-dimethoxy-2-[2,4,6-tri(propan-2-yl)phenyl]phenyl]phosphane",
+          "Additive": "ethyl 5-methyl-1,2-oxazole-4-carboxylate",
+          "Base": "1-methyl-2,3,4,6,7,8-hexahydropyrimido[1,2-a]pyrimidine"
+        },
+        "observed_yield": 51.5902696,
+        "acquisition": "ei",
+        "llm_action": null
+      },
+      {
+        "step": 40,
+        "query_index": 34,
+        "condition": {
+          "Reactant2": "1-bromo-4-ethylbenzene",
+          "Ligand": "bis(1-adamantyl)-[3,6-dimethoxy-2-[2,4,6-tri(propan-2-yl)phenyl]phenyl]phosphane",
+          "Additive": "ethyl 5-methyl-1,2-oxazole-3-carboxylate",
+          "Base": "N-[dimethylamino-ethylimino-[[tris(dimethylamino)-lambda5-phosphanylidene]amino]-lambda5-phosphanyl]-N-methylmethanamine"
+        },
+        "observed_yield": 74.13888356,
+        "acquisition": "ei",
+        "llm_action": null
+      }
+    ]
+  },
+  {
+    "dataset": "buchwald_sub4",
+    "seed": 400,
+    "encoding": "fingerprint",
+    "prior_protocol": "seeded_subsample",
+    "n_initial": 5,
+    "initial_indices": [
+      27,
+      24,
+      34,
+      0,
+      9
+    ],
+    "best_found": 80.58281911,
+    "t95": 41,
+    "elapsed_s": 13.459892988204956,
+    "trajectory": [
+      {
+        "step": 1,
+        "query_index": 118,
+        "condition": {
+          "Reactant2": "1-bromo-4-ethylbenzene",
+          "Ligand": "dicyclohexyl-[2-[2,4,6-tri(propan-2-yl)phenyl]phenyl]phosphane",
+          "Additive": "3-phenyl-1,2-oxazole",
+          "Base": "2-tert-butyl-1,1,3,3-tetramethylguanidine"
+        },
+        "observed_yield": 37.71186321,
+        "acquisition": "ei",
+        "llm_action": null
+      },
+      {
+        "step": 2,
+        "query_index": 0,
+        "condition": {
+          "Reactant2": "1-bromo-4-ethylbenzene",
+          "Ligand": "bis(1-adamantyl)-[3,6-dimethoxy-2-[2,4,6-tri(propan-2-yl)phenyl]phenyl]phosphane",
+          "Additive": "ethyl 1,2-oxazole-3-carboxylate",
+          "Base": "N-[dimethylamino-ethylimino-[[tris(dimethylamino)-lambda5-phosphanylidene]amino]-lambda5-phosphanyl]-N-methylmethanamine"
+        },
+        "observed_yield": 1.023181291,
+        "acquisition": "ei",
+        "llm_action": null
+      },
+      {
+        "step": 3,
+        "query_index": 3,
+        "condition": {
+          "Reactant2": "1-bromo-4-ethylbenzene",
+          "Ligand": "bis(1-adamantyl)-[3,6-dimethoxy-2-[2,4,6-tri(propan-2-yl)phenyl]phenyl]phosphane",
+          "Additive": "3-phenyl-1,2-oxazole",
+          "Base": "2-tert-butyl-1,1,3,3-tetramethylguanidine"
+        },
+        "observed_yield": 73.85492194,
+        "acquisition": "ei",
+        "llm_action": null
+      },
+      {
+        "step": 4,
+        "query_index": 88,
+        "condition": {
+          "Reactant2": "1-bromo-4-ethylbenzene",
+          "Ligand": "ditert-butyl-[2-[2,4,6-tri(propan-2-yl)phenyl]phenyl]phosphane",
+          "Additive": "3-phenyl-1,2-oxazole",
+          "Base": "2-tert-butyl-1,1,3,3-tetramethylguanidine"
+        },
+        "observed_yield": 77.85802389,
+        "acquisition": "ei",
+        "llm_action": null
+      },
+      {
+        "step": 5,
+        "query_index": 36,
+        "condition": {
+          "Reactant2": "1-bromo-4-ethylbenzene",
+          "Ligand": "ditert-butyl-[2-[2,4,6-tri(propan-2-yl)phenyl]phenyl]phosphane",
+          "Additive": "5-methyl-3-pyrrol-1-yl-1,2-oxazole",
+          "Base": "2-tert-butyl-1,1,3,3-tetramethylguanidine"
+        },
+        "observed_yield": 57.74229286,
+        "acquisition": "ei",
+        "llm_action": null
+      },
+      {
+        "step": 6,
+        "query_index": 169,
+        "condition": {
+          "Reactant2": "1-bromo-4-ethylbenzene",
+          "Ligand": "ditert-butyl-[2-[2,4,6-tri(propan-2-yl)phenyl]phenyl]phosphane",
+          "Additive": "c1ccc(CN(Cc2ccccc2)c2ccno2)cc1",
+          "Base": "2-tert-butyl-1,1,3,3-tetramethylguanidine"
+        },
+        "observed_yield": 22.74107385,
+        "acquisition": "ei",
+        "llm_action": null
+      },
+      {
+        "step": 7,
+        "query_index": 257,
+        "condition": {
+          "Reactant2": "1-bromo-4-ethylbenzene",
+          "Ligand": "bis(1-adamantyl)-[3,6-dimethoxy-2-[2,4,6-tri(propan-2-yl)phenyl]phenyl]phosphane",
+          "Additive": "5-methyl-3-pyrrol-1-yl-1,2-oxazole",
+          "Base": "2-tert-butyl-1,1,3,3-tetramethylguanidine"
+        },
+        "observed_yield": 57.55922845,
+        "acquisition": "ei",
+        "llm_action": null
+      },
+      {
+        "step": 8,
+        "query_index": 66,
+        "condition": {
+          "Reactant2": "1-bromo-4-ethylbenzene",
+          "Ligand": "bis(1-adamantyl)-[3,6-dimethoxy-2-[2,4,6-tri(propan-2-yl)phenyl]phenyl]phosphane",
+          "Additive": "c1ccc(CN(Cc2ccccc2)c2ccno2)cc1",
+          "Base": "2-tert-butyl-1,1,3,3-tetramethylguanidine"
+        },
+        "observed_yield": 30.16614104,
+        "acquisition": "ei",
+        "llm_action": null
+      },
+      {
+        "step": 9,
+        "query_index": 197,
+        "condition": {
+          "Reactant2": "1-bromo-4-ethylbenzene",
+          "Ligand": "bis(1-adamantyl)-[3,6-dimethoxy-2-[2,4,6-tri(propan-2-yl)phenyl]phenyl]phosphane",
+          "Additive": "methyl 5-thiophen-2-yl-1,2-oxazole-3-carboxylate",
+          "Base": "2-tert-butyl-1,1,3,3-tetramethylguanidine"
+        },
+        "observed_yield": 35.20097749,
+        "acquisition": "ei",
+        "llm_action": null
+      },
+      {
+        "step": 10,
+        "query_index": 194,
+        "condition": {
+          "Reactant2": "1-bromo-4-ethylbenzene",
+          "Ligand": "ditert-butyl-[2-[2,4,6-tri(propan-2-yl)phenyl]phenyl]phosphane",
+          "Additive": "methyl 5-thiophen-2-yl-1,2-oxazole-3-carboxylate",
+          "Base": "2-tert-butyl-1,1,3,3-tetramethylguanidine"
+        },
+        "observed_yield": 55.17541483,
+        "acquisition": "ei",
+        "llm_action": null
+      },
+      {
+        "step": 11,
+        "query_index": 5,
+        "condition": {
+          "Reactant2": "1-bromo-4-ethylbenzene",
+          "Ligand": "bis(1-adamantyl)-[3,6-dimethoxy-2-[2,4,6-tri(propan-2-yl)phenyl]phenyl]phosphane",
+          "Additive": "5-phenyl-1,2-oxazole",
+          "Base": "2-tert-butyl-1,1,3,3-tetramethylguanidine"
+        },
+        "observed_yield": 29.29795514,
+        "acquisition": "ei",
+        "llm_action": null
+      },
+      {
+        "step": 12,
+        "query_index": 4,
+        "condition": {
+          "Reactant2": "1-bromo-4-ethylbenzene",
+          "Ligand": "dicyclohexyl-[2-[2,4,6-tri(propan-2-yl)phenyl]phenyl]phosphane",
+          "Additive": "ethyl 3-methyl-1,2-oxazole-5-carboxylate",
+          "Base": "1-methyl-2,3,4,6,7,8-hexahydropyrimido[1,2-a]pyrimidine"
+        },
+        "observed_yield": 35.87055638,
+        "acquisition": "ei",
+        "llm_action": null
+      },
+      {
+        "step": 13,
+        "query_index": 33,
+        "condition": {
+          "Reactant2": "1-bromo-4-ethylbenzene",
+          "Ligand": "dicyclohexyl-[2-[2,4,6-tri(propan-2-yl)phenyl]phenyl]phosphane",
+          "Additive": "5-methyl-3-pyrrol-1-yl-1,2-oxazole",
+          "Base": "1-methyl-2,3,4,6,7,8-hexahydropyrimido[1,2-a]pyrimidine"
+        },
+        "observed_yield": 28.74353219,
+        "acquisition": "ei",
+        "llm_action": null
+      },
+      {
+        "step": 14,
+        "query_index": 45,
+        "condition": {
+          "Reactant2": "1-bromo-4-ethylbenzene",
+          "Ligand": "dicyclohexyl-[2-[2,4,6-tri(propan-2-yl)phenyl]phenyl]phosphane",
+          "Additive": "3-methyl-5-phenyl-1,2-oxazole",
+          "Base": "1-methyl-2,3,4,6,7,8-hexahydropyrimido[1,2-a]pyrimidine"
+        },
+        "observed_yield": 25.83582864,
+        "acquisition": "ei",
+        "llm_action": null
+      },
+      {
+        "step": 15,
+        "query_index": 75,
+        "condition": {
+          "Reactant2": "1-bromo-4-ethylbenzene",
+          "Ligand": "bis(1-adamantyl)-[3,6-dimethoxy-2-[2,4,6-tri(propan-2-yl)phenyl]phenyl]phosphane",
+          "Additive": "5-(2,6-difluorophenyl)-1,2-oxazole",
+          "Base": "2-tert-butyl-1,1,3,3-tetramethylguanidine"
+        },
+        "observed_yield": 24.05265274,
+        "acquisition": "ei",
+        "llm_action": null
+      },
+      {
+        "step": 16,
+        "query_index": 38,
+        "condition": {
+          "Reactant2": "1-bromo-4-ethylbenzene",
+          "Ligand": "bis(1-adamantyl)-[3,6-dimethoxy-2-[2,4,6-tri(propan-2-yl)phenyl]phenyl]phosphane",
+          "Additive": "2,1-benzoxazole",
+          "Base": "2-tert-butyl-1,1,3,3-tetramethylguanidine"
+        },
+        "observed_yield": 4.677881799,
+        "acquisition": "ei",
+        "llm_action": null
+      },
+      {
+        "step": 17,
+        "query_index": 54,
+        "condition": {
+          "Reactant2": "1-bromo-4-ethylbenzene",
+          "Ligand": "dicyclohexyl-[2-[2,4,6-tri(propan-2-yl)phenyl]phenyl]phosphane",
+          "Additive": "5-(2,6-difluorophenyl)-1,2-oxazole",
+          "Base": "1-methyl-2,3,4,6,7,8-hexahydropyrimido[1,2-a]pyrimidine"
+        },
+        "observed_yield": 9.241578451,
+        "acquisition": "ei",
+        "llm_action": null
+      },
+      {
+        "step": 18,
+        "query_index": 44,
+        "condition": {
+          "Reactant2": "1-bromo-4-ethylbenzene",
+          "Ligand": "ditert-butyl-[2-[2,4,6-tri(propan-2-yl)phenyl]phenyl]phosphane",
+          "Additive": "ethyl 3-methoxy-1,2-oxazole-5-carboxylate",
+          "Base": "2-tert-butyl-1,1,3,3-tetramethylguanidine"
+        },
+        "observed_yield": 57.33300234,
+        "acquisition": "ei",
+        "llm_action": null
+      },
+      {
+        "step": 19,
+        "query_index": 128,
+        "condition": {
+          "Reactant2": "1-bromo-4-ethylbenzene",
+          "Ligand": "ditert-butyl-[2-[2,4,6-tri(propan-2-yl)phenyl]phenyl]phosphane",
+          "Additive": "ethyl 5-methyl-1,2-oxazole-3-carboxylate",
+          "Base": "2-tert-butyl-1,1,3,3-tetramethylguanidine"
+        },
+        "observed_yield": 72.63770939,
+        "acquisition": "ei",
+        "llm_action": null
+      },
+      {
+        "step": 20,
+        "query_index": 67,
+        "condition": {
+          "Reactant2": "1-bromo-4-ethylbenzene",
+          "Ligand": "bis(1-adamantyl)-[3,6-dimethoxy-2-[2,4,6-tri(propan-2-yl)phenyl]phenyl]phosphane",
+          "Additive": "ethyl 5-methyl-1,2-oxazole-3-carboxylate",
+          "Base": "2-tert-butyl-1,1,3,3-tetramethylguanidine"
+        },
+        "observed_yield": 65.05218409,
+        "acquisition": "ei",
+        "llm_action": null
+      },
+      {
+        "step": 21,
+        "query_index": 251,
+        "condition": {
+          "Reactant2": "1-bromo-4-ethylbenzene",
+          "Ligand": "bis(1-adamantyl)-[3,6-dimethoxy-2-[2,4,6-tri(propan-2-yl)phenyl]phenyl]phosphane",
+          "Additive": "ethyl 3-methoxy-1,2-oxazole-5-carboxylate",
+          "Base": "2-tert-butyl-1,1,3,3-tetramethylguanidine"
+        },
+        "observed_yield": 39.03126202,
+        "acquisition": "ei",
+        "llm_action": null
+      },
+      {
+        "step": 22,
+        "query_index": 42,
+        "condition": {
+          "Reactant2": "1-bromo-4-ethylbenzene",
+          "Ligand": "ditert-butyl-[2-[2,4,6-tri(propan-2-yl)phenyl]phenyl]phosphane",
+          "Additive": "4-phenyl-1,2-oxazole",
+          "Base": "2-tert-butyl-1,1,3,3-tetramethylguanidine"
+        },
+        "observed_yield": 73.2728017,
+        "acquisition": "ei",
+        "llm_action": null
+      },
+      {
+        "step": 23,
+        "query_index": 241,
+        "condition": {
+          "Reactant2": "1-bromo-4-ethylbenzene",
+          "Ligand": "bis(1-adamantyl)-[3,6-dimethoxy-2-[2,4,6-tri(propan-2-yl)phenyl]phenyl]phosphane",
+          "Additive": "4-phenyl-1,2-oxazole",
+          "Base": "2-tert-butyl-1,1,3,3-tetramethylguanidine"
+        },
+        "observed_yield": 27.30055458,
+        "acquisition": "ei",
+        "llm_action": null
+      },
+      {
+        "step": 24,
+        "query_index": 56,
+        "condition": {
+          "Reactant2": "1-bromo-4-ethylbenzene",
+          "Ligand": "ditert-butyl-[2-[2,4,6-tri(propan-2-yl)phenyl]phenyl]phosphane",
+          "Additive": "3-methyl-5-phenyl-1,2-oxazole",
+          "Base": "2-tert-butyl-1,1,3,3-tetramethylguanidine"
+        },
+        "observed_yield": 54.46826622,
+        "acquisition": "ei",
+        "llm_action": null
+      },
+      {
+        "step": 25,
+        "query_index": 123,
+        "condition": {
+          "Reactant2": "1-bromo-4-ethylbenzene",
+          "Ligand": "ditert-butyl-[2-[2,4,6-tri(propan-2-yl)phenyl]phenyl]phosphane",
+          "Additive": "ethyl 1,2-oxazole-3-carboxylate",
+          "Base": "2-tert-butyl-1,1,3,3-tetramethylguanidine"
+        },
+        "observed_yield": 56.8433722,
+        "acquisition": "ei",
+        "llm_action": null
+      },
+      {
+        "step": 26,
+        "query_index": 81,
+        "condition": {
+          "Reactant2": "1-bromo-4-ethylbenzene",
+          "Ligand": "ditert-butyl-[2-[2,4,6-tri(propan-2-yl)phenyl]phenyl]phosphane",
+          "Additive": "3,5-dimethyl-1,2-oxazole",
+          "Base": "2-tert-butyl-1,1,3,3-tetramethylguanidine"
+        },
+        "observed_yield": 61.04819615,
+        "acquisition": "ei",
+        "llm_action": null
+      },
+      {
+        "step": 27,
+        "query_index": 182,
+        "condition": {
+          "Reactant2": "1-bromo-4-ethylbenzene",
+          "Ligand": "ditert-butyl-[2-[2,4,6-tri(propan-2-yl)phenyl]phenyl]phosphane",
+          "Additive": "5-methyl-1,2-oxazole",
+          "Base": "2-tert-butyl-1,1,3,3-tetramethylguanidine"
+        },
+        "observed_yield": 52.43953497,
+        "acquisition": "ei",
+        "llm_action": null
+      },
+      {
+        "step": 28,
+        "query_index": 258,
+        "condition": {
+          "Reactant2": "1-bromo-4-ethylbenzene",
+          "Ligand": "ditert-butyl-[2-[2,4,6-tri(propan-2-yl)phenyl]phenyl]phosphane",
+          "Additive": "methyl 5-(furan-2-yl)-1,2-oxazole-3-carboxylate",
+          "Base": "2-tert-butyl-1,1,3,3-tetramethylguanidine"
+        },
+        "observed_yield": 57.71086681,
+        "acquisition": "ei",
+        "llm_action": null
+      },
+      {
+        "step": 29,
+        "query_index": 131,
+        "condition": {
+          "Reactant2": "1-bromo-4-ethylbenzene",
+          "Ligand": "ditert-butyl-[2-[2,4,6-tri(propan-2-yl)phenyl]phenyl]phosphane",
+          "Additive": "ethyl 1,2-oxazole-4-carboxylate",
+          "Base": "2-tert-butyl-1,1,3,3-tetramethylguanidine"
+        },
+        "observed_yield": 2.39251025,
+        "acquisition": "ei",
+        "llm_action": null
+      },
+      {
+        "step": 30,
+        "query_index": 254,
+        "condition": {
+          "Reactant2": "1-bromo-4-ethylbenzene",
+          "Ligand": "ditert-butyl-[2-[2,4,6-tri(propan-2-yl)phenyl]phenyl]phosphane",
+          "Additive": "ethyl 5-methyl-1,2-oxazole-4-carboxylate",
+          "Base": "2-tert-butyl-1,1,3,3-tetramethylguanidine"
+        },
+        "observed_yield": 14.43583555,
+        "acquisition": "ei",
+        "llm_action": null
+      },
+      {
+        "step": 31,
+        "query_index": 84,
+        "condition": {
+          "Reactant2": "1-bromo-4-ethylbenzene",
+          "Ligand": "ditert-butyl-[2-[2,4,6-tri(propan-2-yl)phenyl]phenyl]phosphane",
+          "Additive": "ethyl 3-methyl-1,2-oxazole-5-carboxylate",
+          "Base": "2-tert-butyl-1,1,3,3-tetramethylguanidine"
+        },
+        "observed_yield": 70.54955286,
+        "acquisition": "ei",
+        "llm_action": null
+      },
+      {
+        "step": 32,
+        "query_index": 180,
+        "condition": {
+          "Reactant2": "1-bromo-4-ethylbenzene",
+          "Ligand": "ditert-butyl-[2-[2,4,6-tri(propan-2-yl)phenyl]phenyl]phosphane",
+          "Additive": "3-methyl-1,2-oxazole",
+          "Base": "2-tert-butyl-1,1,3,3-tetramethylguanidine"
+        },
+        "observed_yield": 80.58281911,
+        "acquisition": "ei",
+        "llm_action": null
+      },
+      {
+        "step": 33,
+        "query_index": 195,
+        "condition": {
+          "Reactant2": "1-bromo-4-ethylbenzene",
+          "Ligand": "ditert-butyl-[2-[2,4,6-tri(propan-2-yl)phenyl]phenyl]phosphane",
+          "Additive": "c1ccc(CN(Cc2ccccc2)c2ccon2)cc1",
+          "Base": "2-tert-butyl-1,1,3,3-tetramethylguanidine"
+        },
+        "observed_yield": 57.19204969,
+        "acquisition": "ei",
+        "llm_action": null
+      },
+      {
+        "step": 34,
+        "query_index": 249,
+        "condition": {
+          "Reactant2": "1-bromo-4-ethylbenzene",
+          "Ligand": "ditert-butyl-[2-[2,4,6-tri(propan-2-yl)phenyl]phenyl]phosphane",
+          "Additive": "1,2-benzoxazole",
+          "Base": "2-tert-butyl-1,1,3,3-tetramethylguanidine"
+        },
+        "observed_yield": 32.63137063,
+        "acquisition": "ei",
+        "llm_action": null
+      },
+      {
+        "step": 35,
+        "query_index": 132,
+        "condition": {
+          "Reactant2": "1-bromo-4-ethylbenzene",
+          "Ligand": "bis(1-adamantyl)-[3,6-dimethoxy-2-[2,4,6-tri(propan-2-yl)phenyl]phenyl]phosphane",
+          "Additive": "3-methyl-1,2-oxazole",
+          "Base": "2-tert-butyl-1,1,3,3-tetramethylguanidine"
+        },
+        "observed_yield": 72.1822742,
+        "acquisition": "ei",
+        "llm_action": null
+      },
+      {
+        "step": 36,
+        "query_index": 247,
+        "condition": {
+          "Reactant2": "1-bromo-4-ethylbenzene",
+          "Ligand": "bis(1-adamantyl)-[3,6-dimethoxy-2-[2,4,6-tri(propan-2-yl)phenyl]phenyl]phosphane",
+          "Additive": "ethyl 3-methyl-1,2-oxazole-5-carboxylate",
+          "Base": "2-tert-butyl-1,1,3,3-tetramethylguanidine"
+        },
+        "observed_yield": 39.83155733,
+        "acquisition": "ei",
+        "llm_action": null
+      },
+      {
+        "step": 37,
+        "query_index": 220,
+        "condition": {
+          "Reactant2": "1-bromo-4-ethylbenzene",
+          "Ligand": "ditert-butyl-[2-[2,4,6-tri(propan-2-yl)phenyl]phenyl]phosphane",
+          "Additive": "5-phenyl-1,2-oxazole",
+          "Base": "2-tert-butyl-1,1,3,3-tetramethylguanidine"
+        },
+        "observed_yield": 66.02401389,
+        "acquisition": "ei",
+        "llm_action": null
+      },
+      {
+        "step": 38,
+        "query_index": 30,
+        "condition": {
+          "Reactant2": "1-bromo-4-ethylbenzene",
+          "Ligand": "ditert-butyl-[3,6-dimethoxy-2-[2,4,6-tri(propan-2-yl)phenyl]phenyl]phosphane",
+          "Additive": "5-(2,6-difluorophenyl)-1,2-oxazole",
+          "Base": "2-tert-butyl-1,1,3,3-tetramethylguanidine"
+        },
+        "observed_yield": 24.96800216,
+        "acquisition": "ei",
+        "llm_action": null
+      },
+      {
+        "step": 39,
+        "query_index": 229,
+        "condition": {
+          "Reactant2": "1-bromo-4-ethylbenzene",
+          "Ligand": "ditert-butyl-[2-[2,4,6-tri(propan-2-yl)phenyl]phenyl]phosphane",
+          "Additive": "5-(2,6-difluorophenyl)-1,2-oxazole",
+          "Base": "2-tert-butyl-1,1,3,3-tetramethylguanidine"
+        },
+        "observed_yield": 55.96431027,
+        "acquisition": "ei",
+        "llm_action": null
+      },
+      {
+        "step": 40,
+        "query_index": 181,
+        "condition": {
+          "Reactant2": "1-bromo-4-ethylbenzene",
+          "Ligand": "bis(1-adamantyl)-[3,6-dimethoxy-2-[2,4,6-tri(propan-2-yl)phenyl]phenyl]phosphane",
+          "Additive": "3,5-dimethyl-1,2-oxazole",
+          "Base": "2-tert-butyl-1,1,3,3-tetramethylguanidine"
+        },
+        "observed_yield": 50.41927701,
+        "acquisition": "ei",
+        "llm_action": null
+      }
+    ]
+  },
+  {
+    "dataset": "buchwald_sub4",
+    "seed": 500,
+    "encoding": "one_hot",
+    "prior_protocol": "seeded_subsample",
+    "n_initial": 5,
+    "initial_indices": [
+      0,
+      4,
+      24,
+      31,
+      5
+    ],
+    "best_found": 86.59757822,
+    "t95": 16,
+    "elapsed_s": 10.560873031616211,
+    "trajectory": [
+      {
+        "step": 1,
+        "query_index": 93,
+        "condition": {
+          "Reactant2": "1-bromo-4-ethylbenzene",
+          "Ligand": "bis(1-adamantyl)-[3,6-dimethoxy-2-[2,4,6-tri(propan-2-yl)phenyl]phenyl]phosphane",
+          "Additive": "ethyl 3-methoxy-1,2-oxazole-5-carboxylate",
+          "Base": "1-methyl-2,3,4,6,7,8-hexahydropyrimido[1,2-a]pyrimidine"
+        },
+        "observed_yield": 50.28049867,
+        "acquisition": "ei",
+        "llm_action": null
+      },
+      {
+        "step": 2,
+        "query_index": 528,
+        "condition": {
+          "Reactant2": "1-ethyl-4-iodobenzene",
+          "Ligand": "bis(1-adamantyl)-[3,6-dimethoxy-2-[2,4,6-tri(propan-2-yl)phenyl]phenyl]phosphane",
+          "Additive": "ethyl 3-methoxy-1,2-oxazole-5-carboxylate",
+          "Base": "1-methyl-2,3,4,6,7,8-hexahydropyrimido[1,2-a]pyrimidine"
+        },
+        "observed_yield": 75.02467082,
+        "acquisition": "ei",
+        "llm_action": null
+      },
+      {
+        "step": 3,
+        "query_index": 304,
+        "condition": {
+          "Reactant2": "1-chloro-4-ethylbenzene",
+          "Ligand": "bis(1-adamantyl)-[3,6-dimethoxy-2-[2,4,6-tri(propan-2-yl)phenyl]phenyl]phosphane",
+          "Additive": "ethyl 3-methoxy-1,2-oxazole-5-carboxylate",
+          "Base": "1-methyl-2,3,4,6,7,8-hexahydropyrimido[1,2-a]pyrimidine"
+        },
+        "observed_yield": 0.665471445,
+        "acquisition": "ei",
+        "llm_action": null
+      },
+      {
+        "step": 4,
+        "query_index": 591,
+        "condition": {
+          "Reactant2": "1-ethyl-4-iodobenzene",
+          "Ligand": "dicyclohexyl-[2-[2,4,6-tri(propan-2-yl)phenyl]phenyl]phosphane",
+          "Additive": "ethyl 3-methoxy-1,2-oxazole-5-carboxylate",
+          "Base": "1-methyl-2,3,4,6,7,8-hexahydropyrimido[1,2-a]pyrimidine"
+        },
+        "observed_yield": 53.28001638,
+        "acquisition": "ei",
+        "llm_action": null
+      },
+      {
+        "step": 5,
+        "query_index": 726,
+        "condition": {
+          "Reactant2": "1-ethyl-4-iodobenzene",
+          "Ligand": "ditert-butyl-[2-[2,4,6-tri(propan-2-yl)phenyl]phenyl]phosphane",
+          "Additive": "ethyl 3-methoxy-1,2-oxazole-5-carboxylate",
+          "Base": "1-methyl-2,3,4,6,7,8-hexahydropyrimido[1,2-a]pyrimidine"
+        },
+        "observed_yield": 67.99152053,
+        "acquisition": "ei",
+        "llm_action": null
+      },
+      {
+        "step": 6,
+        "query_index": 661,
+        "condition": {
+          "Reactant2": "1-ethyl-4-iodobenzene",
+          "Ligand": "ditert-butyl-[3,6-dimethoxy-2-[2,4,6-tri(propan-2-yl)phenyl]phenyl]phosphane",
+          "Additive": "ethyl 3-methoxy-1,2-oxazole-5-carboxylate",
+          "Base": "1-methyl-2,3,4,6,7,8-hexahydropyrimido[1,2-a]pyrimidine"
+        },
+        "observed_yield": 71.83207772,
+        "acquisition": "ei",
+        "llm_action": null
+      },
+      {
+        "step": 7,
+        "query_index": 763,
+        "condition": {
+          "Reactant2": "1-ethyl-4-iodobenzene",
+          "Ligand": "bis(1-adamantyl)-[3,6-dimethoxy-2-[2,4,6-tri(propan-2-yl)phenyl]phenyl]phosphane",
+          "Additive": "ethyl 3-methoxy-1,2-oxazole-5-carboxylate",
+          "Base": "2-tert-butyl-1,1,3,3-tetramethylguanidine"
+        },
+        "observed_yield": 61.69857953,
+        "acquisition": "ei",
+        "llm_action": null
+      },
+      {
+        "step": 8,
+        "query_index": 251,
+        "condition": {
+          "Reactant2": "1-bromo-4-ethylbenzene",
+          "Ligand": "bis(1-adamantyl)-[3,6-dimethoxy-2-[2,4,6-tri(propan-2-yl)phenyl]phenyl]phosphane",
+          "Additive": "ethyl 3-methoxy-1,2-oxazole-5-carboxylate",
+          "Base": "2-tert-butyl-1,1,3,3-tetramethylguanidine"
+        },
+        "observed_yield": 39.03126202,
+        "acquisition": "ei",
+        "llm_action": null
+      },
+      {
+        "step": 9,
+        "query_index": 604,
+        "condition": {
+          "Reactant2": "1-ethyl-4-iodobenzene",
+          "Ligand": "dicyclohexyl-[2-[2,4,6-tri(propan-2-yl)phenyl]phenyl]phosphane",
+          "Additive": "ethyl 3-methoxy-1,2-oxazole-5-carboxylate",
+          "Base": "2-tert-butyl-1,1,3,3-tetramethylguanidine"
+        },
+        "observed_yield": 27.27757284,
+        "acquisition": "ei",
+        "llm_action": null
+      },
+      {
+        "step": 10,
+        "query_index": 230,
+        "condition": {
+          "Reactant2": "1-bromo-4-ethylbenzene",
+          "Ligand": "dicyclohexyl-[2-[2,4,6-tri(propan-2-yl)phenyl]phenyl]phosphane",
+          "Additive": "ethyl 3-methoxy-1,2-oxazole-5-carboxylate",
+          "Base": "1-methyl-2,3,4,6,7,8-hexahydropyrimido[1,2-a]pyrimidine"
+        },
+        "observed_yield": 21.77773542,
+        "acquisition": "ei",
+        "llm_action": null
+      },
+      {
+        "step": 11,
+        "query_index": 643,
+        "condition": {
+          "Reactant2": "1-ethyl-4-iodobenzene",
+          "Ligand": "bis(1-adamantyl)-[3,6-dimethoxy-2-[2,4,6-tri(propan-2-yl)phenyl]phenyl]phosphane",
+          "Additive": "3-phenyl-1,2-oxazole",
+          "Base": "2-tert-butyl-1,1,3,3-tetramethylguanidine"
+        },
+        "observed_yield": 78.46972259,
+        "acquisition": "ei",
+        "llm_action": null
+      },
+      {
+        "step": 12,
+        "query_index": 710,
+        "condition": {
+          "Reactant2": "1-ethyl-4-iodobenzene",
+          "Ligand": "ditert-butyl-[3,6-dimethoxy-2-[2,4,6-tri(propan-2-yl)phenyl]phenyl]phosphane",
+          "Additive": "3-phenyl-1,2-oxazole",
+          "Base": "2-tert-butyl-1,1,3,3-tetramethylguanidine"
+        },
+        "observed_yield": 79.18190676,
+        "acquisition": "ei",
+        "llm_action": null
+      },
+      {
+        "step": 13,
+        "query_index": 160,
+        "condition": {
+          "Reactant2": "1-bromo-4-ethylbenzene",
+          "Ligand": "ditert-butyl-[3,6-dimethoxy-2-[2,4,6-tri(propan-2-yl)phenyl]phenyl]phosphane",
+          "Additive": "3-phenyl-1,2-oxazole",
+          "Base": "2-tert-butyl-1,1,3,3-tetramethylguanidine"
+        },
+        "observed_yield": 73.58359974,
+        "acquisition": "ei",
+        "llm_action": null
+      },
+      {
+        "step": 14,
+        "query_index": 762,
+        "condition": {
+          "Reactant2": "1-ethyl-4-iodobenzene",
+          "Ligand": "ditert-butyl-[2-[2,4,6-tri(propan-2-yl)phenyl]phenyl]phosphane",
+          "Additive": "3-phenyl-1,2-oxazole",
+          "Base": "2-tert-butyl-1,1,3,3-tetramethylguanidine"
+        },
+        "observed_yield": 80.13587028,
+        "acquisition": "ei",
+        "llm_action": null
+      },
+      {
+        "step": 15,
+        "query_index": 617,
+        "condition": {
+          "Reactant2": "1-ethyl-4-iodobenzene",
+          "Ligand": "ditert-butyl-[2-[2,4,6-tri(propan-2-yl)phenyl]phenyl]phosphane",
+          "Additive": "3-phenyl-1,2-oxazole",
+          "Base": "1-methyl-2,3,4,6,7,8-hexahydropyrimido[1,2-a]pyrimidine"
+        },
+        "observed_yield": 79.26160687,
+        "acquisition": "ei",
+        "llm_action": null
+      },
+      {
+        "step": 16,
+        "query_index": 178,
+        "condition": {
+          "Reactant2": "1-bromo-4-ethylbenzene",
+          "Ligand": "ditert-butyl-[2-[2,4,6-tri(propan-2-yl)phenyl]phenyl]phosphane",
+          "Additive": "3-phenyl-1,2-oxazole",
+          "Base": "1-methyl-2,3,4,6,7,8-hexahydropyrimido[1,2-a]pyrimidine"
+        },
+        "observed_yield": 83.09647392,
+        "acquisition": "ei",
+        "llm_action": null
+      },
+      {
+        "step": 17,
+        "query_index": 110,
+        "condition": {
+          "Reactant2": "1-bromo-4-ethylbenzene",
+          "Ligand": "dicyclohexyl-[2-[2,4,6-tri(propan-2-yl)phenyl]phenyl]phosphane",
+          "Additive": "3-phenyl-1,2-oxazole",
+          "Base": "1-methyl-2,3,4,6,7,8-hexahydropyrimido[1,2-a]pyrimidine"
+        },
+        "observed_yield": 33.71090461,
+        "acquisition": "ei",
+        "llm_action": null
+      },
+      {
+        "step": 18,
+        "query_index": 209,
+        "condition": {
+          "Reactant2": "1-bromo-4-ethylbenzene",
+          "Ligand": "bis(1-adamantyl)-[3,6-dimethoxy-2-[2,4,6-tri(propan-2-yl)phenyl]phenyl]phosphane",
+          "Additive": "3-phenyl-1,2-oxazole",
+          "Base": "1-methyl-2,3,4,6,7,8-hexahydropyrimido[1,2-a]pyrimidine"
+        },
+        "observed_yield": 80.39591728,
+        "acquisition": "ei",
+        "llm_action": null
+      },
+      {
+        "step": 19,
+        "query_index": 51,
+        "condition": {
+          "Reactant2": "1-bromo-4-ethylbenzene",
+          "Ligand": "ditert-butyl-[2-[2,4,6-tri(propan-2-yl)phenyl]phenyl]phosphane",
+          "Additive": "1,2-benzoxazole",
+          "Base": "1-methyl-2,3,4,6,7,8-hexahydropyrimido[1,2-a]pyrimidine"
+        },
+        "observed_yield": 62.64758393,
+        "acquisition": "ei",
+        "llm_action": null
+      },
+      {
+        "step": 20,
+        "query_index": 162,
+        "condition": {
+          "Reactant2": "1-bromo-4-ethylbenzene",
+          "Ligand": "dicyclohexyl-[2-[2,4,6-tri(propan-2-yl)phenyl]phenyl]phosphane",
+          "Additive": "1,2-benzoxazole",
+          "Base": "1-methyl-2,3,4,6,7,8-hexahydropyrimido[1,2-a]pyrimidine"
+        },
+        "observed_yield": 11.8907701,
+        "acquisition": "ei",
+        "llm_action": null
+      },
+      {
+        "step": 21,
+        "query_index": 174,
+        "condition": {
+          "Reactant2": "1-bromo-4-ethylbenzene",
+          "Ligand": "ditert-butyl-[2-[2,4,6-tri(propan-2-yl)phenyl]phenyl]phosphane",
+          "Additive": "3-methyl-5-phenyl-1,2-oxazole",
+          "Base": "1-methyl-2,3,4,6,7,8-hexahydropyrimido[1,2-a]pyrimidine"
+        },
+        "observed_yield": 69.25619095,
+        "acquisition": "ei",
+        "llm_action": null
+      },
+      {
+        "step": 22,
+        "query_index": 768,
+        "condition": {
+          "Reactant2": "1-ethyl-4-iodobenzene",
+          "Ligand": "bis(1-adamantyl)-[3,6-dimethoxy-2-[2,4,6-tri(propan-2-yl)phenyl]phenyl]phosphane",
+          "Additive": "3-methyl-5-phenyl-1,2-oxazole",
+          "Base": "2-tert-butyl-1,1,3,3-tetramethylguanidine"
+        },
+        "observed_yield": 63.72449893,
+        "acquisition": "ei",
+        "llm_action": null
+      },
+      {
+        "step": 23,
+        "query_index": 7,
+        "condition": {
+          "Reactant2": "1-bromo-4-ethylbenzene",
+          "Ligand": "ditert-butyl-[2-[2,4,6-tri(propan-2-yl)phenyl]phenyl]phosphane",
+          "Additive": "ethyl 5-methyl-1,2-oxazole-3-carboxylate",
+          "Base": "1-methyl-2,3,4,6,7,8-hexahydropyrimido[1,2-a]pyrimidine"
+        },
+        "observed_yield": 78.80108905,
+        "acquisition": "ei",
+        "llm_action": null
+      },
+      {
+        "step": 24,
+        "query_index": 755,
+        "condition": {
+          "Reactant2": "1-ethyl-4-iodobenzene",
+          "Ligand": "ditert-butyl-[3,6-dimethoxy-2-[2,4,6-tri(propan-2-yl)phenyl]phenyl]phosphane",
+          "Additive": "ethyl 5-methyl-1,2-oxazole-3-carboxylate",
+          "Base": "1-methyl-2,3,4,6,7,8-hexahydropyrimido[1,2-a]pyrimidine"
+        },
+        "observed_yield": 80.78664078,
+        "acquisition": "ei",
+        "llm_action": null
+      },
+      {
+        "step": 25,
+        "query_index": 736,
+        "condition": {
+          "Reactant2": "1-ethyl-4-iodobenzene",
+          "Ligand": "bis(1-adamantyl)-[3,6-dimethoxy-2-[2,4,6-tri(propan-2-yl)phenyl]phenyl]phosphane",
+          "Additive": "ethyl 5-methyl-1,2-oxazole-3-carboxylate",
+          "Base": "2-tert-butyl-1,1,3,3-tetramethylguanidine"
+        },
+        "observed_yield": 78.61961971,
+        "acquisition": "ei",
+        "llm_action": null
+      },
+      {
+        "step": 26,
+        "query_index": 80,
+        "condition": {
+          "Reactant2": "1-bromo-4-ethylbenzene",
+          "Ligand": "ditert-butyl-[3,6-dimethoxy-2-[2,4,6-tri(propan-2-yl)phenyl]phenyl]phosphane",
+          "Additive": "ethyl 5-methyl-1,2-oxazole-3-carboxylate",
+          "Base": "2-tert-butyl-1,1,3,3-tetramethylguanidine"
+        },
+        "observed_yield": 68.06627781,
+        "acquisition": "ei",
+        "llm_action": null
+      },
+      {
+        "step": 27,
+        "query_index": 581,
+        "condition": {
+          "Reactant2": "1-ethyl-4-iodobenzene",
+          "Ligand": "ditert-butyl-[2-[2,4,6-tri(propan-2-yl)phenyl]phenyl]phosphane",
+          "Additive": "5-methyl-1,2-oxazole",
+          "Base": "1-methyl-2,3,4,6,7,8-hexahydropyrimido[1,2-a]pyrimidine"
+        },
+        "observed_yield": 67.19924832,
+        "acquisition": "ei",
+        "llm_action": null
+      },
+      {
+        "step": 28,
+        "query_index": 260,
+        "condition": {
+          "Reactant2": "1-bromo-4-ethylbenzene",
+          "Ligand": "bis(1-adamantyl)-[3,6-dimethoxy-2-[2,4,6-tri(propan-2-yl)phenyl]phenyl]phosphane",
+          "Additive": "5-methyl-1,2-oxazole",
+          "Base": "2-tert-butyl-1,1,3,3-tetramethylguanidine"
+        },
+        "observed_yield": 34.22216946,
+        "acquisition": "ei",
+        "llm_action": null
+      },
+      {
+        "step": 29,
+        "query_index": 640,
+        "condition": {
+          "Reactant2": "1-ethyl-4-iodobenzene",
+          "Ligand": "ditert-butyl-[2-[2,4,6-tri(propan-2-yl)phenyl]phenyl]phosphane",
+          "Additive": "c1ccc(CN(Cc2ccccc2)c2ccon2)cc1",
+          "Base": "1-methyl-2,3,4,6,7,8-hexahydropyrimido[1,2-a]pyrimidine"
+        },
+        "observed_yield": 67.52036403,
+        "acquisition": "ei",
+        "llm_action": null
+      },
+      {
+        "step": 30,
+        "query_index": 634,
+        "condition": {
+          "Reactant2": "1-ethyl-4-iodobenzene",
+          "Ligand": "ditert-butyl-[2-[2,4,6-tri(propan-2-yl)phenyl]phenyl]phosphane",
+          "Additive": "methyl 1,2-oxazole-5-carboxylate",
+          "Base": "1-methyl-2,3,4,6,7,8-hexahydropyrimido[1,2-a]pyrimidine"
+        },
+        "observed_yield": 61.87528527,
+        "acquisition": "ei",
+        "llm_action": null
+      },
+      {
+        "step": 31,
+        "query_index": 697,
+        "condition": {
+          "Reactant2": "1-ethyl-4-iodobenzene",
+          "Ligand": "ditert-butyl-[2-[2,4,6-tri(propan-2-yl)phenyl]phenyl]phosphane",
+          "Additive": "ethyl 1,2-oxazole-4-carboxylate",
+          "Base": "1-methyl-2,3,4,6,7,8-hexahydropyrimido[1,2-a]pyrimidine"
+        },
+        "observed_yield": 30.76250124,
+        "acquisition": "ei",
+        "llm_action": null
+      },
+      {
+        "step": 32,
+        "query_index": 557,
+        "condition": {
+          "Reactant2": "1-ethyl-4-iodobenzene",
+          "Ligand": "ditert-butyl-[2-[2,4,6-tri(propan-2-yl)phenyl]phenyl]phosphane",
+          "Additive": "ethyl 5-methyl-1,2-oxazole-4-carboxylate",
+          "Base": "1-methyl-2,3,4,6,7,8-hexahydropyrimido[1,2-a]pyrimidine"
+        },
+        "observed_yield": 61.5016932,
+        "acquisition": "ei",
+        "llm_action": null
+      },
+      {
+        "step": 33,
+        "query_index": 565,
+        "condition": {
+          "Reactant2": "1-ethyl-4-iodobenzene",
+          "Ligand": "ditert-butyl-[2-[2,4,6-tri(propan-2-yl)phenyl]phenyl]phosphane",
+          "Additive": "ethyl 3-methyl-1,2-oxazole-5-carboxylate",
+          "Base": "1-methyl-2,3,4,6,7,8-hexahydropyrimido[1,2-a]pyrimidine"
+        },
+        "observed_yield": 84.89551287,
+        "acquisition": "ei",
+        "llm_action": null
+      },
+      {
+        "step": 34,
+        "query_index": 200,
+        "condition": {
+          "Reactant2": "1-bromo-4-ethylbenzene",
+          "Ligand": "ditert-butyl-[2-[2,4,6-tri(propan-2-yl)phenyl]phenyl]phosphane",
+          "Additive": "ethyl 3-methyl-1,2-oxazole-5-carboxylate",
+          "Base": "1-methyl-2,3,4,6,7,8-hexahydropyrimido[1,2-a]pyrimidine"
+        },
+        "observed_yield": 86.59757822,
+        "acquisition": "ei",
+        "llm_action": null
+      },
+      {
+        "step": 35,
+        "query_index": 247,
+        "condition": {
+          "Reactant2": "1-bromo-4-ethylbenzene",
+          "Ligand": "bis(1-adamantyl)-[3,6-dimethoxy-2-[2,4,6-tri(propan-2-yl)phenyl]phenyl]phosphane",
+          "Additive": "ethyl 3-methyl-1,2-oxazole-5-carboxylate",
+          "Base": "2-tert-butyl-1,1,3,3-tetramethylguanidine"
+        },
+        "observed_yield": 39.83155733,
+        "acquisition": "ei",
+        "llm_action": null
+      },
+      {
+        "step": 36,
+        "query_index": 629,
+        "condition": {
+          "Reactant2": "1-ethyl-4-iodobenzene",
+          "Ligand": "ditert-butyl-[2-[2,4,6-tri(propan-2-yl)phenyl]phenyl]phosphane",
+          "Additive": "5-methyl-3-pyrrol-1-yl-1,2-oxazole",
+          "Base": "1-methyl-2,3,4,6,7,8-hexahydropyrimido[1,2-a]pyrimidine"
+        },
+        "observed_yield": 72.58292155,
+        "acquisition": "ei",
+        "llm_action": null
+      },
+      {
+        "step": 37,
+        "query_index": 738,
+        "condition": {
+          "Reactant2": "1-ethyl-4-iodobenzene",
+          "Ligand": "ditert-butyl-[2-[2,4,6-tri(propan-2-yl)phenyl]phenyl]phosphane",
+          "Additive": "4-phenyl-1,2-oxazole",
+          "Base": "1-methyl-2,3,4,6,7,8-hexahydropyrimido[1,2-a]pyrimidine"
+        },
+        "observed_yield": 81.15116736,
+        "acquisition": "ei",
+        "llm_action": null
+      },
+      {
+        "step": 38,
+        "query_index": 46,
+        "condition": {
+          "Reactant2": "1-bromo-4-ethylbenzene",
+          "Ligand": "ditert-butyl-[3,6-dimethoxy-2-[2,4,6-tri(propan-2-yl)phenyl]phenyl]phosphane",
+          "Additive": "4-phenyl-1,2-oxazole",
+          "Base": "1-methyl-2,3,4,6,7,8-hexahydropyrimido[1,2-a]pyrimidine"
+        },
+        "observed_yield": 52.90774845,
+        "acquisition": "ei",
+        "llm_action": null
+      },
+      {
+        "step": 39,
+        "query_index": 535,
+        "condition": {
+          "Reactant2": "1-ethyl-4-iodobenzene",
+          "Ligand": "ditert-butyl-[2-[2,4,6-tri(propan-2-yl)phenyl]phenyl]phosphane",
+          "Additive": "3-methyl-5-phenyl-1,2-oxazole",
+          "Base": "1-methyl-2,3,4,6,7,8-hexahydropyrimido[1,2-a]pyrimidine"
+        },
+        "observed_yield": 68.71737558,
+        "acquisition": "ei",
+        "llm_action": null
+      },
+      {
+        "step": 40,
+        "query_index": 741,
+        "condition": {
+          "Reactant2": "1-ethyl-4-iodobenzene",
+          "Ligand": "ditert-butyl-[2-[2,4,6-tri(propan-2-yl)phenyl]phenyl]phosphane",
+          "Additive": "3-methyl-1,2-oxazole",
+          "Base": "1-methyl-2,3,4,6,7,8-hexahydropyrimido[1,2-a]pyrimidine"
+        },
+        "observed_yield": 79.63886176,
+        "acquisition": "ei",
+        "llm_action": null
+      }
+    ]
+  },
+  {
+    "dataset": "buchwald_sub4",
+    "seed": 500,
+    "encoding": "fingerprint",
+    "prior_protocol": "seeded_subsample",
+    "n_initial": 5,
+    "initial_indices": [
+      0,
+      4,
+      24,
+      31,
+      5
+    ],
+    "best_found": 79.44483195,
+    "t95": 41,
+    "elapsed_s": 10.632307529449463,
+    "trajectory": [
+      {
+        "step": 1,
+        "query_index": 118,
+        "condition": {
+          "Reactant2": "1-bromo-4-ethylbenzene",
+          "Ligand": "dicyclohexyl-[2-[2,4,6-tri(propan-2-yl)phenyl]phenyl]phosphane",
+          "Additive": "3-phenyl-1,2-oxazole",
+          "Base": "2-tert-butyl-1,1,3,3-tetramethylguanidine"
+        },
+        "observed_yield": 37.71186321,
+        "acquisition": "ei",
+        "llm_action": null
+      },
+      {
+        "step": 2,
+        "query_index": 5,
+        "condition": {
+          "Reactant2": "1-bromo-4-ethylbenzene",
+          "Ligand": "bis(1-adamantyl)-[3,6-dimethoxy-2-[2,4,6-tri(propan-2-yl)phenyl]phenyl]phosphane",
+          "Additive": "5-phenyl-1,2-oxazole",
+          "Base": "2-tert-butyl-1,1,3,3-tetramethylguanidine"
+        },
+        "observed_yield": 29.29795514,
+        "acquisition": "ei",
+        "llm_action": null
+      },
+      {
+        "step": 3,
+        "query_index": 528,
+        "condition": {
+          "Reactant2": "1-ethyl-4-iodobenzene",
+          "Ligand": "bis(1-adamantyl)-[3,6-dimethoxy-2-[2,4,6-tri(propan-2-yl)phenyl]phenyl]phosphane",
+          "Additive": "ethyl 3-methoxy-1,2-oxazole-5-carboxylate",
+          "Base": "1-methyl-2,3,4,6,7,8-hexahydropyrimido[1,2-a]pyrimidine"
+        },
+        "observed_yield": 75.02467082,
+        "acquisition": "ei",
+        "llm_action": null
+      },
+      {
+        "step": 4,
+        "query_index": 9,
+        "condition": {
+          "Reactant2": "1-bromo-4-ethylbenzene",
+          "Ligand": "ditert-butyl-[3,6-dimethoxy-2-[2,4,6-tri(propan-2-yl)phenyl]phenyl]phosphane",
+          "Additive": "5-phenyl-1,2-oxazole",
+          "Base": "N-[dimethylamino-ethylimino-[[tris(dimethylamino)-lambda5-phosphanylidene]amino]-lambda5-phosphanyl]-N-methylmethanamine"
+        },
+        "observed_yield": 19.47378974,
+        "acquisition": "ei",
+        "llm_action": null
+      },
+      {
+        "step": 5,
+        "query_index": 44,
+        "condition": {
+          "Reactant2": "1-bromo-4-ethylbenzene",
+          "Ligand": "ditert-butyl-[2-[2,4,6-tri(propan-2-yl)phenyl]phenyl]phosphane",
+          "Additive": "ethyl 3-methoxy-1,2-oxazole-5-carboxylate",
+          "Base": "2-tert-butyl-1,1,3,3-tetramethylguanidine"
+        },
+        "observed_yield": 57.33300234,
+        "acquisition": "ei",
+        "llm_action": null
+      },
+      {
+        "step": 6,
+        "query_index": 270,
+        "condition": {
+          "Reactant2": "1-chloro-4-ethylbenzene",
+          "Ligand": "dicyclohexyl-[2-[2,4,6-tri(propan-2-yl)phenyl]phenyl]phosphane",
+          "Additive": "5-phenyl-1,2-oxazole",
+          "Base": "N-[dimethylamino-ethylimino-[[tris(dimethylamino)-lambda5-phosphanylidene]amino]-lambda5-phosphanyl]-N-methylmethanamine"
+        },
+        "observed_yield": 7.802080337,
+        "acquisition": "ei",
+        "llm_action": null
+      },
+      {
+        "step": 7,
+        "query_index": 298,
+        "condition": {
+          "Reactant2": "1-chloro-4-ethylbenzene",
+          "Ligand": "bis(1-adamantyl)-[3,6-dimethoxy-2-[2,4,6-tri(propan-2-yl)phenyl]phenyl]phosphane",
+          "Additive": "5-phenyl-1,2-oxazole",
+          "Base": "1-methyl-2,3,4,6,7,8-hexahydropyrimido[1,2-a]pyrimidine"
+        },
+        "observed_yield": 2.173414859,
+        "acquisition": "ei",
+        "llm_action": null
+      },
+      {
+        "step": 8,
+        "query_index": 304,
+        "condition": {
+          "Reactant2": "1-chloro-4-ethylbenzene",
+          "Ligand": "bis(1-adamantyl)-[3,6-dimethoxy-2-[2,4,6-tri(propan-2-yl)phenyl]phenyl]phosphane",
+          "Additive": "ethyl 3-methoxy-1,2-oxazole-5-carboxylate",
+          "Base": "1-methyl-2,3,4,6,7,8-hexahydropyrimido[1,2-a]pyrimidine"
+        },
+        "observed_yield": 0.665471445,
+        "acquisition": "ei",
+        "llm_action": null
+      },
+      {
+        "step": 9,
+        "query_index": 521,
+        "condition": {
+          "Reactant2": "1-ethyl-4-iodobenzene",
+          "Ligand": "dicyclohexyl-[2-[2,4,6-tri(propan-2-yl)phenyl]phenyl]phosphane",
+          "Additive": "methyl 1,2-oxazole-5-carboxylate",
+          "Base": "N-[dimethylamino-ethylimino-[[tris(dimethylamino)-lambda5-phosphanylidene]amino]-lambda5-phosphanyl]-N-methylmethanamine"
+        },
+        "observed_yield": 10.22354965,
+        "acquisition": "ei",
+        "llm_action": null
+      },
+      {
+        "step": 10,
+        "query_index": 74,
+        "condition": {
+          "Reactant2": "1-bromo-4-ethylbenzene",
+          "Ligand": "bis(1-adamantyl)-[3,6-dimethoxy-2-[2,4,6-tri(propan-2-yl)phenyl]phenyl]phosphane",
+          "Additive": "ethyl 3-methoxy-1,2-oxazole-5-carboxylate",
+          "Base": "N-[dimethylamino-ethylimino-[[tris(dimethylamino)-lambda5-phosphanylidene]amino]-lambda5-phosphanyl]-N-methylmethanamine"
+        },
+        "observed_yield": 62.78571552,
+        "acquisition": "ei",
+        "llm_action": null
+      },
+      {
+        "step": 11,
+        "query_index": 534,
+        "condition": {
+          "Reactant2": "1-ethyl-4-iodobenzene",
+          "Ligand": "bis(1-adamantyl)-[3,6-dimethoxy-2-[2,4,6-tri(propan-2-yl)phenyl]phenyl]phosphane",
+          "Additive": "ethyl 3-methoxy-1,2-oxazole-5-carboxylate",
+          "Base": "N-[dimethylamino-ethylimino-[[tris(dimethylamino)-lambda5-phosphanylidene]amino]-lambda5-phosphanyl]-N-methylmethanamine"
+        },
+        "observed_yield": 69.97034068,
+        "acquisition": "ei",
+        "llm_action": null
+      },
+      {
+        "step": 12,
+        "query_index": 93,
+        "condition": {
+          "Reactant2": "1-bromo-4-ethylbenzene",
+          "Ligand": "bis(1-adamantyl)-[3,6-dimethoxy-2-[2,4,6-tri(propan-2-yl)phenyl]phenyl]phosphane",
+          "Additive": "ethyl 3-methoxy-1,2-oxazole-5-carboxylate",
+          "Base": "1-methyl-2,3,4,6,7,8-hexahydropyrimido[1,2-a]pyrimidine"
+        },
+        "observed_yield": 50.28049867,
+        "acquisition": "ei",
+        "llm_action": null
+      },
+      {
+        "step": 13,
+        "query_index": 141,
+        "condition": {
+          "Reactant2": "1-bromo-4-ethylbenzene",
+          "Ligand": "ditert-butyl-[2-[2,4,6-tri(propan-2-yl)phenyl]phenyl]phosphane",
+          "Additive": "ethyl 3-methoxy-1,2-oxazole-5-carboxylate",
+          "Base": "1-methyl-2,3,4,6,7,8-hexahydropyrimido[1,2-a]pyrimidine"
+        },
+        "observed_yield": 67.97015702,
+        "acquisition": "ei",
+        "llm_action": null
+      },
+      {
+        "step": 14,
+        "query_index": 154,
+        "condition": {
+          "Reactant2": "1-bromo-4-ethylbenzene",
+          "Ligand": "ditert-butyl-[3,6-dimethoxy-2-[2,4,6-tri(propan-2-yl)phenyl]phenyl]phosphane",
+          "Additive": "ethyl 3-methoxy-1,2-oxazole-5-carboxylate",
+          "Base": "2-tert-butyl-1,1,3,3-tetramethylguanidine"
+        },
+        "observed_yield": 50.4472159,
+        "acquisition": "ei",
+        "llm_action": null
+      },
+      {
+        "step": 15,
+        "query_index": 561,
+        "condition": {
+          "Reactant2": "1-ethyl-4-iodobenzene",
+          "Ligand": "dicyclohexyl-[2-[2,4,6-tri(propan-2-yl)phenyl]phenyl]phosphane",
+          "Additive": "5-phenyl-1,2-oxazole",
+          "Base": "2-tert-butyl-1,1,3,3-tetramethylguanidine"
+        },
+        "observed_yield": 25.0736586,
+        "acquisition": "ei",
+        "llm_action": null
+      },
+      {
+        "step": 16,
+        "query_index": 158,
+        "condition": {
+          "Reactant2": "1-bromo-4-ethylbenzene",
+          "Ligand": "ditert-butyl-[2-[2,4,6-tri(propan-2-yl)phenyl]phenyl]phosphane",
+          "Additive": "ethyl 3-methoxy-1,2-oxazole-5-carboxylate",
+          "Base": "N-[dimethylamino-ethylimino-[[tris(dimethylamino)-lambda5-phosphanylidene]amino]-lambda5-phosphanyl]-N-methylmethanamine"
+        },
+        "observed_yield": 61.05645885,
+        "acquisition": "ei",
+        "llm_action": null
+      },
+      {
+        "step": 17,
+        "query_index": 166,
+        "condition": {
+          "Reactant2": "1-bromo-4-ethylbenzene",
+          "Ligand": "dicyclohexyl-[2-[2,4,6-tri(propan-2-yl)phenyl]phenyl]phosphane",
+          "Additive": "ethyl 3-methoxy-1,2-oxazole-5-carboxylate",
+          "Base": "2-tert-butyl-1,1,3,3-tetramethylguanidine"
+        },
+        "observed_yield": 32.40012299,
+        "acquisition": "ei",
+        "llm_action": null
+      },
+      {
+        "step": 18,
+        "query_index": 571,
+        "condition": {
+          "Reactant2": "1-ethyl-4-iodobenzene",
+          "Ligand": "ditert-butyl-[2-[2,4,6-tri(propan-2-yl)phenyl]phenyl]phosphane",
+          "Additive": "5-phenyl-1,2-oxazole",
+          "Base": "1-methyl-2,3,4,6,7,8-hexahydropyrimido[1,2-a]pyrimidine"
+        },
+        "observed_yield": 77.57371189,
+        "acquisition": "ei",
+        "llm_action": null
+      },
+      {
+        "step": 19,
+        "query_index": 591,
+        "condition": {
+          "Reactant2": "1-ethyl-4-iodobenzene",
+          "Ligand": "dicyclohexyl-[2-[2,4,6-tri(propan-2-yl)phenyl]phenyl]phosphane",
+          "Additive": "ethyl 3-methoxy-1,2-oxazole-5-carboxylate",
+          "Base": "1-methyl-2,3,4,6,7,8-hexahydropyrimido[1,2-a]pyrimidine"
+        },
+        "observed_yield": 53.28001638,
+        "acquisition": "ei",
+        "llm_action": null
+      },
+      {
+        "step": 20,
+        "query_index": 512,
+        "condition": {
+          "Reactant2": "1-chloro-4-ethylbenzene",
+          "Ligand": "dicyclohexyl-[2-[2,4,6-tri(propan-2-yl)phenyl]phenyl]phosphane",
+          "Additive": "3-methyl-1,2-oxazole",
+          "Base": "2-tert-butyl-1,1,3,3-tetramethylguanidine"
+        },
+        "observed_yield": 2.005732083,
+        "acquisition": "ei",
+        "llm_action": null
+      },
+      {
+        "step": 21,
+        "query_index": 522,
+        "condition": {
+          "Reactant2": "1-ethyl-4-iodobenzene",
+          "Ligand": "bis(1-adamantyl)-[3,6-dimethoxy-2-[2,4,6-tri(propan-2-yl)phenyl]phenyl]phosphane",
+          "Additive": "3-methyl-5-phenyl-1,2-oxazole",
+          "Base": "1-methyl-2,3,4,6,7,8-hexahydropyrimido[1,2-a]pyrimidine"
+        },
+        "observed_yield": 73.08177999,
+        "acquisition": "ei",
+        "llm_action": null
+      },
+      {
+        "step": 22,
+        "query_index": 523,
+        "condition": {
+          "Reactant2": "1-ethyl-4-iodobenzene",
+          "Ligand": "ditert-butyl-[3,6-dimethoxy-2-[2,4,6-tri(propan-2-yl)phenyl]phenyl]phosphane",
+          "Additive": "5-methyl-3-pyrrol-1-yl-1,2-oxazole",
+          "Base": "1-methyl-2,3,4,6,7,8-hexahydropyrimido[1,2-a]pyrimidine"
+        },
+        "observed_yield": 75.97219172,
+        "acquisition": "ei",
+        "llm_action": null
+      },
+      {
+        "step": 23,
+        "query_index": 524,
+        "condition": {
+          "Reactant2": "1-ethyl-4-iodobenzene",
+          "Ligand": "ditert-butyl-[3,6-dimethoxy-2-[2,4,6-tri(propan-2-yl)phenyl]phenyl]phosphane",
+          "Additive": "methyl 5-thiophen-2-yl-1,2-oxazole-3-carboxylate",
+          "Base": "N-[dimethylamino-ethylimino-[[tris(dimethylamino)-lambda5-phosphanylidene]amino]-lambda5-phosphanyl]-N-methylmethanamine"
+        },
+        "observed_yield": 66.89026205,
+        "acquisition": "ei",
+        "llm_action": null
+      },
+      {
+        "step": 24,
+        "query_index": 525,
+        "condition": {
+          "Reactant2": "1-ethyl-4-iodobenzene",
+          "Ligand": "dicyclohexyl-[2-[2,4,6-tri(propan-2-yl)phenyl]phenyl]phosphane",
+          "Additive": "3-methyl-1,2-oxazole",
+          "Base": "1-methyl-2,3,4,6,7,8-hexahydropyrimido[1,2-a]pyrimidine"
+        },
+        "observed_yield": 66.26745697,
+        "acquisition": "ei",
+        "llm_action": null
+      },
+      {
+        "step": 25,
+        "query_index": 526,
+        "condition": {
+          "Reactant2": "1-ethyl-4-iodobenzene",
+          "Ligand": "ditert-butyl-[3,6-dimethoxy-2-[2,4,6-tri(propan-2-yl)phenyl]phenyl]phosphane",
+          "Additive": "methyl 5-(furan-2-yl)-1,2-oxazole-3-carboxylate",
+          "Base": "1-methyl-2,3,4,6,7,8-hexahydropyrimido[1,2-a]pyrimidine"
+        },
+        "observed_yield": 73.57415684,
+        "acquisition": "ei",
+        "llm_action": null
+      },
+      {
+        "step": 26,
+        "query_index": 776,
+        "condition": {
+          "Reactant2": "1-ethyl-4-iodobenzene",
+          "Ligand": "ditert-butyl-[2-[2,4,6-tri(propan-2-yl)phenyl]phenyl]phosphane",
+          "Additive": "5-methyl-1,2-oxazole",
+          "Base": "N-[dimethylamino-ethylimino-[[tris(dimethylamino)-lambda5-phosphanylidene]amino]-lambda5-phosphanyl]-N-methylmethanamine"
+        },
+        "observed_yield": 19.42489921,
+        "acquisition": "ei",
+        "llm_action": null
+      },
+      {
+        "step": 27,
+        "query_index": 777,
+        "condition": {
+          "Reactant2": "1-ethyl-4-iodobenzene",
+          "Ligand": "bis(1-adamantyl)-[3,6-dimethoxy-2-[2,4,6-tri(propan-2-yl)phenyl]phenyl]phosphane",
+          "Additive": "5-(2,6-difluorophenyl)-1,2-oxazole",
+          "Base": "1-methyl-2,3,4,6,7,8-hexahydropyrimido[1,2-a]pyrimidine"
+        },
+        "observed_yield": 73.39202626,
+        "acquisition": "ei",
+        "llm_action": null
+      },
+      {
+        "step": 28,
+        "query_index": 527,
+        "condition": {
+          "Reactant2": "1-ethyl-4-iodobenzene",
+          "Ligand": "ditert-butyl-[3,6-dimethoxy-2-[2,4,6-tri(propan-2-yl)phenyl]phenyl]phosphane",
+          "Additive": "methyl 1,2-oxazole-5-carboxylate",
+          "Base": "N-[dimethylamino-ethylimino-[[tris(dimethylamino)-lambda5-phosphanylidene]amino]-lambda5-phosphanyl]-N-methylmethanamine"
+        },
+        "observed_yield": 16.97838607,
+        "acquisition": "ei",
+        "llm_action": null
+      },
+      {
+        "step": 29,
+        "query_index": 529,
+        "condition": {
+          "Reactant2": "1-ethyl-4-iodobenzene",
+          "Ligand": "ditert-butyl-[2-[2,4,6-tri(propan-2-yl)phenyl]phenyl]phosphane",
+          "Additive": "ethyl 5-methyl-1,2-oxazole-3-carboxylate",
+          "Base": "1-methyl-2,3,4,6,7,8-hexahydropyrimido[1,2-a]pyrimidine"
+        },
+        "observed_yield": 79.44483195,
+        "acquisition": "ei",
+        "llm_action": null
+      },
+      {
+        "step": 30,
+        "query_index": 530,
+        "condition": {
+          "Reactant2": "1-ethyl-4-iodobenzene",
+          "Ligand": "ditert-butyl-[3,6-dimethoxy-2-[2,4,6-tri(propan-2-yl)phenyl]phenyl]phosphane",
+          "Additive": "3-methyl-5-phenyl-1,2-oxazole",
+          "Base": "N-[dimethylamino-ethylimino-[[tris(dimethylamino)-lambda5-phosphanylidene]amino]-lambda5-phosphanyl]-N-methylmethanamine"
+        },
+        "observed_yield": 69.13688603,
+        "acquisition": "ei",
+        "llm_action": null
+      },
+      {
+        "step": 31,
+        "query_index": 531,
+        "condition": {
+          "Reactant2": "1-ethyl-4-iodobenzene",
+          "Ligand": "bis(1-adamantyl)-[3,6-dimethoxy-2-[2,4,6-tri(propan-2-yl)phenyl]phenyl]phosphane",
+          "Additive": "5-methyl-3-pyrrol-1-yl-1,2-oxazole",
+          "Base": "2-tert-butyl-1,1,3,3-tetramethylguanidine"
+        },
+        "observed_yield": 61.4373102,
+        "acquisition": "ei",
+        "llm_action": null
+      },
+      {
+        "step": 32,
+        "query_index": 513,
+        "condition": {
+          "Reactant2": "1-chloro-4-ethylbenzene",
+          "Ligand": "ditert-butyl-[2-[2,4,6-tri(propan-2-yl)phenyl]phenyl]phosphane",
+          "Additive": "3,5-dimethyl-1,2-oxazole",
+          "Base": "N-[dimethylamino-ethylimino-[[tris(dimethylamino)-lambda5-phosphanylidene]amino]-lambda5-phosphanyl]-N-methylmethanamine"
+        },
+        "observed_yield": 13.82100293,
+        "acquisition": "ei",
+        "llm_action": null
+      },
+      {
+        "step": 33,
+        "query_index": 532,
+        "condition": {
+          "Reactant2": "1-ethyl-4-iodobenzene",
+          "Ligand": "ditert-butyl-[2-[2,4,6-tri(propan-2-yl)phenyl]phenyl]phosphane",
+          "Additive": "3-phenyl-1,2-oxazole",
+          "Base": "N-[dimethylamino-ethylimino-[[tris(dimethylamino)-lambda5-phosphanylidene]amino]-lambda5-phosphanyl]-N-methylmethanamine"
+        },
+        "observed_yield": 70.00785114,
+        "acquisition": "ei",
+        "llm_action": null
+      },
+      {
+        "step": 34,
+        "query_index": 602,
+        "condition": {
+          "Reactant2": "1-ethyl-4-iodobenzene",
+          "Ligand": "dicyclohexyl-[2-[2,4,6-tri(propan-2-yl)phenyl]phenyl]phosphane",
+          "Additive": "5-phenyl-1,2-oxazole",
+          "Base": "1-methyl-2,3,4,6,7,8-hexahydropyrimido[1,2-a]pyrimidine"
+        },
+        "observed_yield": 22.45064906,
+        "acquisition": "ei",
+        "llm_action": null
+      },
+      {
+        "step": 35,
+        "query_index": 604,
+        "condition": {
+          "Reactant2": "1-ethyl-4-iodobenzene",
+          "Ligand": "dicyclohexyl-[2-[2,4,6-tri(propan-2-yl)phenyl]phenyl]phosphane",
+          "Additive": "ethyl 3-methoxy-1,2-oxazole-5-carboxylate",
+          "Base": "2-tert-butyl-1,1,3,3-tetramethylguanidine"
+        },
+        "observed_yield": 27.27757284,
+        "acquisition": "ei",
+        "llm_action": null
+      },
+      {
+        "step": 36,
+        "query_index": 610,
+        "condition": {
+          "Reactant2": "1-ethyl-4-iodobenzene",
+          "Ligand": "ditert-butyl-[3,6-dimethoxy-2-[2,4,6-tri(propan-2-yl)phenyl]phenyl]phosphane",
+          "Additive": "ethyl 3-methoxy-1,2-oxazole-5-carboxylate",
+          "Base": "N-[dimethylamino-ethylimino-[[tris(dimethylamino)-lambda5-phosphanylidene]amino]-lambda5-phosphanyl]-N-methylmethanamine"
+        },
+        "observed_yield": 68.43167679,
+        "acquisition": "ei",
+        "llm_action": null
+      },
+      {
+        "step": 37,
+        "query_index": 533,
+        "condition": {
+          "Reactant2": "1-ethyl-4-iodobenzene",
+          "Ligand": "bis(1-adamantyl)-[3,6-dimethoxy-2-[2,4,6-tri(propan-2-yl)phenyl]phenyl]phosphane",
+          "Additive": "c1ccc(CN(Cc2ccccc2)c2ccon2)cc1",
+          "Base": "1-methyl-2,3,4,6,7,8-hexahydropyrimido[1,2-a]pyrimidine"
+        },
+        "observed_yield": 72.8478499,
+        "acquisition": "ei",
+        "llm_action": null
+      },
+      {
+        "step": 38,
+        "query_index": 614,
+        "condition": {
+          "Reactant2": "1-ethyl-4-iodobenzene",
+          "Ligand": "dicyclohexyl-[2-[2,4,6-tri(propan-2-yl)phenyl]phenyl]phosphane",
+          "Additive": "ethyl 3-methoxy-1,2-oxazole-5-carboxylate",
+          "Base": "N-[dimethylamino-ethylimino-[[tris(dimethylamino)-lambda5-phosphanylidene]amino]-lambda5-phosphanyl]-N-methylmethanamine"
+        },
+        "observed_yield": 64.50667156,
+        "acquisition": "ei",
+        "llm_action": null
+      },
+      {
+        "step": 39,
+        "query_index": 535,
+        "condition": {
+          "Reactant2": "1-ethyl-4-iodobenzene",
+          "Ligand": "ditert-butyl-[2-[2,4,6-tri(propan-2-yl)phenyl]phenyl]phosphane",
+          "Additive": "3-methyl-5-phenyl-1,2-oxazole",
+          "Base": "1-methyl-2,3,4,6,7,8-hexahydropyrimido[1,2-a]pyrimidine"
+        },
+        "observed_yield": 68.71737558,
+        "acquisition": "ei",
+        "llm_action": null
+      },
+      {
+        "step": 40,
+        "query_index": 536,
+        "condition": {
+          "Reactant2": "1-ethyl-4-iodobenzene",
+          "Ligand": "ditert-butyl-[2-[2,4,6-tri(propan-2-yl)phenyl]phenyl]phosphane",
+          "Additive": "5-methyl-3-pyrrol-1-yl-1,2-oxazole",
+          "Base": "2-tert-butyl-1,1,3,3-tetramethylguanidine"
+        },
+        "observed_yield": 59.48668549,
+        "acquisition": "ei",
+        "llm_action": null
+      }
+    ]
+  }
+]
