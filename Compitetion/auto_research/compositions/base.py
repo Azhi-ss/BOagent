@@ -102,7 +102,8 @@ BASE_COMPOSITIONS: list[Composition] = [
         llm_strategy="llm_in_loop_pick",
         params={"use_llm": True},
     ),
-    # Hybrid candidates (mixed components)
+    # Hybrid candidates: orthogonal surrogate × LGBO mean-shift
+    # P0: manifold kernel selection + mean-shift (top seeded surrogate)
     Composition(
         name="lgbo_manifold",
         surrogate="botorch_manifold",
@@ -110,6 +111,20 @@ BASE_COMPOSITIONS: list[Composition] = [
         selector="argmax",
         llm_strategy="lgbo_mean_shift",
         params={"use_llm": True, "xi": 0.01, "evolve_interval": 5},
+    ),
+    # P1: DKL deep kernel + mean-shift (Buchwald-strong surrogate × LLM axis)
+    Composition(
+        name="lgbo_dkl",
+        surrogate="botorch_dkl",
+        acquisition="ei",
+        selector="argmax",
+        llm_strategy="lgbo_mean_shift",
+        params={
+            "use_llm": True,
+            "xi": 0.01,
+            "hidden_dim": 16,
+            "n_layers": 2,
+        },
     ),
     Composition(
         name="lgbo_softmax",

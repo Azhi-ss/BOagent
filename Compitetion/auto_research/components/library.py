@@ -229,7 +229,11 @@ def _llm_lgbo(ctx: StepContext) -> dict[str, Any] | None:
     client = ctx.extra.get("_client")
     if client is None:
         client = DeepSeekClient.from_env()
-        client.model = ctx.extra.get("chat_engine", "deepseek-v4-flash")
+        # Only override the model when the composition explicitly sets one;
+        # otherwise keep the model resolved from .env (DEEPSEEK_FLASH_MODEL / MODEL).
+        chat_engine = ctx.extra.get("chat_engine")
+        if chat_engine:
+            client.model = chat_engine
         client.timeout_s = 120
         ctx.extra["_client"] = client
     if not client.is_configured():
@@ -265,7 +269,7 @@ def _llm_lgbo(ctx: StepContext) -> dict[str, Any] | None:
         ctx.extra["_llm_diagnostic"] = {
             "attempted": True,
             "status": "failed",
-            "error": f"LLM response status={getattr(result, 'status', None)!r} or empty content",
+            "error": f"LLM response status={getattr(result, 'status', None)!r} or empty content; detail={getattr(result, 'error', None)!r}",
         }
         return None
 
@@ -303,7 +307,11 @@ def _llm_lmabo(ctx: StepContext) -> dict[str, Any] | None:
     client = ctx.extra.get("_client")
     if client is None:
         client = DeepSeekClient.from_env()
-        client.model = ctx.extra.get("chat_engine", "deepseek-v4-flash")
+        # Only override the model when the composition explicitly sets one;
+        # otherwise keep the model resolved from .env (DEEPSEEK_FLASH_MODEL / MODEL).
+        chat_engine = ctx.extra.get("chat_engine")
+        if chat_engine:
+            client.model = chat_engine
         client.timeout_s = 120
         ctx.extra["_client"] = client
     if not client.is_configured():
@@ -387,7 +395,11 @@ def _llm_llm_in_loop(ctx: StepContext) -> dict[str, Any] | None:
     client = ctx.extra.get("_client")
     if client is None:
         client = DeepSeekClient.from_env()
-        client.model = ctx.extra.get("chat_engine", "deepseek-v4-flash")
+        # Only override the model when the composition explicitly sets one;
+        # otherwise keep the model resolved from .env (DEEPSEEK_FLASH_MODEL / MODEL).
+        chat_engine = ctx.extra.get("chat_engine")
+        if chat_engine:
+            client.model = chat_engine
         client.timeout_s = 120
         ctx.extra["_client"] = client
     if not client.is_configured():
