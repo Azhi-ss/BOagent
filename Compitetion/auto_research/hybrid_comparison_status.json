@@ -1,0 +1,11 @@
+{
+  "state": "done",
+  "mode": "full",
+  "valid_runs": 80,
+  "required_runs": 80,
+  "pending_runs": 0,
+  "result_file": "history/experiments/lgbo_hybrid_fixed_prior_comparison.json",
+  "workers": 1,
+  "updated_at": "2026-07-29T16:02:51.011129+00:00",
+  "report_file": "reports/hybrid_fixed_prior"
+}

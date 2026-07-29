@@ -41,6 +41,36 @@ def test_same_fixed_prior_across_different_compositions() -> None:
     assert e1.initial_indices == e2.initial_indices == tuple(range(35))
 
 
+def test_hybrid_lgbo_manifold_and_dkl_are_registered() -> None:
+    """P0/P1 orthogonal hybrids: strong surrogate × LGBO mean-shift."""
+    by_name = {c.name: c for c in get_base_compositions()}
+
+    manifold = by_name["lgbo_manifold"]
+    assert manifold.surrogate == "botorch_manifold"
+    assert manifold.llm_strategy == "lgbo_mean_shift"
+    assert manifold.params.get("use_llm") is True
+    assert manifold.params.get("evolve_interval") == 5
+
+    dkl = by_name["lgbo_dkl"]
+    assert dkl.surrogate == "botorch_dkl"
+    assert dkl.llm_strategy == "lgbo_mean_shift"
+    assert dkl.params.get("use_llm") is True
+    assert dkl.params.get("hidden_dim") == 16
+    assert dkl.params.get("n_layers") == 2
+
+
+def test_hybrid_params_reach_surrogate() -> None:
+    """Composition params (hidden_dim / evolve_interval) must reach the surrogate."""
+    by_name = {c.name: c for c in get_base_compositions()}
+
+    eng_dkl = HybridEngine(by_name["lgbo_dkl"], "buchwald_sub4", seed=100, n_iters=1)
+    assert eng_dkl.surrogate.hidden_dim == 16
+    assert eng_dkl.surrogate.n_layers == 2
+
+    eng_man = HybridEngine(by_name["lgbo_manifold"], "buchwald_sub4", seed=100, n_iters=1)
+    assert eng_man.surrogate.evolve_interval == 5
+
+
 def test_aggregate_rejects_empty_results() -> None:
     from analyze import aggregate_results
 
