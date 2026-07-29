@@ -562,7 +562,7 @@ class CAKESurrogate(BoTorchSurrogate):
             result = client.chat(
                 [{"role": "system", "content": system_prompt},
                  {"role": "user", "content": prompt}],
-                max_tokens=2048,
+                max_tokens=4096,
                 extra_body={"thinking": {"type": "disabled"}, "temperature": 0.7},
             )
             self._llm_calls += 1
@@ -594,7 +594,7 @@ class CAKESurrogate(BoTorchSurrogate):
             result = client.chat(
                 [{"role": "system", "content": system_prompt},
                  {"role": "user", "content": prompt}],
-                max_tokens=2048,
+                max_tokens=4096,
                 extra_body={"thinking": {"type": "disabled"}, "temperature": 0.7},
             )
             self._llm_calls += 1
