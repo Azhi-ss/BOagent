@@ -73,13 +73,19 @@ class HybridEngine:
 
     def _build_components(self) -> None:
         params = self.composition.params
-        # Surrogate
+        # Surrogate: forward composition params so hybrid knobs
+        # (evolve_interval, hidden_dim, n_layers, population_size, ...) apply.
         sur_factory = SURROGATES[self.composition.surrogate]
         self.surrogate = sur_factory(
             self.backend,
             self.seed,
             n_restarts=params.get("n_restarts", 10),
             alpha=params.get("alpha", 1e-2),
+            **{
+                k: v
+                for k, v in params.items()
+                if k not in {"n_restarts", "alpha"}
+            },
         )
         # Acquisition / Selector / LLM
         self.acq_fn = ACQUISITIONS[self.composition.acquisition]
@@ -116,7 +122,7 @@ class HybridEngine:
                     "target_col": self.target_col,
                     "seed": self.seed,
                     "use_llm": self.composition.params.get("use_llm", False),
-                    "chat_engine": self.composition.params.get("chat_engine", "deepseek-v4-pro"),
+                    "chat_engine": self.composition.params.get("chat_engine"),
                     "reasoning_effort": self.composition.params.get("reasoning_effort", "low"),
                     "xi": self.composition.params.get("xi", 0.01),
                     "kappa": self.composition.params.get("kappa", 2.576),
@@ -221,7 +227,7 @@ class HybridEngine:
         diagnostic = {
             "status": "ok",
             "error": None,
-            "n_observations": int(len(y_obs)),
+            "n_observations": len(y_obs),
         }
         try:
             self.surrogate.fit(X_obs, y_obs)
@@ -380,6 +386,7 @@ class HybridEngine:
             "surrogate_degraded_fits": sum(
                 bool(fit.get("failed_kernels")) for fit in surrogate_fits
             ),
+            "surrogate_fallback_fits": surrogate_summary.get("fallback_fits", 0),
             "surrogate_min_active_kernels": min(
                 (len(fit.get("active_kernels", [])) for fit in surrogate_fits),
                 default=None,
@@ -429,7 +436,19 @@ def _score_statistics(scores: np.ndarray) -> dict[str, Any]:
             "is_degenerate": True,
         }
     score_std = float(np.std(finite))
-    is_constant = bool(score_std <= 1e-12)
+    # Degeneracy must be scale-invariant: an EI distribution whose candidates
+    # sit far below the incumbent best legitimately produces values ~1e-11 with
+    # a single distinguishable spike, yet the absolute 1e-12 threshold flagged
+    # that as "constant" (a false positive on lgbo_dkl/buchwald_sub4/seed1800
+    # step20, where argmax still correctly selected the lone improvable point).
+    # Judge constancy by relative spread (std / max|score|) once the array has a
+    # nonzero scale; fall back to the absolute threshold only when every value
+    # is ~0. The guard at std == 0 keeps genuinely-flat arrays flagged.
+    abs_max = float(np.max(np.abs(finite)))
+    if abs_max > 0.0:
+        is_constant = bool(score_std <= 1e-9 * abs_max or score_std == 0.0)
+    else:
+        is_constant = bool(score_std <= 1e-12)
     return {
         "min": float(np.min(finite)),
         "max": float(np.max(finite)),
