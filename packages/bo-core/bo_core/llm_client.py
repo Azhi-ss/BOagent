@@ -8,7 +8,7 @@ from typing import Any
 
 import requests
 
-DEFAULT_ENV_PATH = Path(__file__).resolve().parent / ".env"
+PROJECT_ENV_PATH = Path(__file__).resolve().parents[3] / ".env"
 PROTECTED_CHAT_PAYLOAD_KEYS = {"model", "messages", "max_tokens", "stream"}
 
 # Retry transient upstream rate-limiting / gateway errors so concurrent workers
@@ -46,8 +46,8 @@ class DeepSeekClient:
         self.timeout_s = timeout_s
 
     @classmethod
-    def from_env(cls, env_path: Path = DEFAULT_ENV_PATH) -> DeepSeekClient:
-        load_env_file(env_path)
+    def from_env(cls) -> DeepSeekClient:
+        load_env_file()
         api_key = os.environ.get("DEEPSEEK_API_KEY", "").strip()
         base_url = os.environ.get("DEEPSEEK_BASE_URL", "https://api.deepseek.com")
         model = (
@@ -157,23 +157,22 @@ class DeepSeekClient:
         )
 
 
-def load_env_file(path: Path = DEFAULT_ENV_PATH) -> None:
-    if not path.exists():
-        root_env = Path(__file__).resolve().parent.parent.parent.parent / ".env"
-        if root_env.exists():
-            path = root_env
-        else:
-            return
+def load_env_file() -> None:
+    if not PROJECT_ENV_PATH.exists():
+        return
 
-            
     # Default high-performance CPU threading for AMD 20-thread CPU if not set
-    for thread_var in ("OMP_NUM_THREADS", "MKL_NUM_THREADS", "OPENBLAS_NUM_THREADS", "NUMEXPR_NUM_THREADS"):
+    for thread_var in (
+        "OMP_NUM_THREADS",
+        "MKL_NUM_THREADS",
+        "OPENBLAS_NUM_THREADS",
+        "NUMEXPR_NUM_THREADS",
+    ):
         os.environ.setdefault(thread_var, "20")
 
-    for raw_line in path.read_text(encoding="utf-8").splitlines():
+    for raw_line in PROJECT_ENV_PATH.read_text(encoding="utf-8").splitlines():
         line = raw_line.strip()
         if not line or line.startswith("#") or "=" not in line:
             continue
         key, value = line.split("=", 1)
-        # Use direct assignment so .env overrides existing env vars (e.g. broken ones)
-        os.environ[key.strip()] = value.strip().strip('"').strip("'")
+        os.environ.setdefault(key.strip(), value.strip().strip('"').strip("'"))

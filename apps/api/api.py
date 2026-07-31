@@ -19,9 +19,8 @@ from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import HTMLResponse, JSONResponse, StreamingResponse
 from pydantic import BaseModel, Field
 
-# Load environment variables from .env (project root, then apps/api fallback)
+# Load environment variables only from the project root.
 load_dotenv(Path(__file__).resolve().parent.parent.parent / ".env")  # project root
-load_dotenv(Path(__file__).resolve().parent / ".env")  # apps/api fallback
 
 app = FastAPI(
     title="BOagent API",

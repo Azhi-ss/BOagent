@@ -15,10 +15,10 @@ import torch
 
 code_root = Path(__file__).resolve().parents[1]
 results_dir = code_root.parent / "results"
-traj_dir = results_dir / "optimization_trajectories"
+traj_dir = results_dir / "optimization_trajectories" / "botorch"
 
 GLOBAL_MAX = {
-    "buchwald": 86.60,
+    "buchwald_sub4": 86.60,
     "suzuki": 99.90,
 }
 
@@ -40,7 +40,7 @@ def evaluate_all():
     rows = []
 
     for ds_name, g_max in GLOBAL_MAX.items():
-        ds_dir = traj_dir / ds_name
+        ds_dir = traj_dir / ds_name / "lgbo"
         if not ds_dir.exists():
             print(f"  [WARNING] Trajectory directory not found: {ds_dir}")
             continue

@@ -7,7 +7,8 @@ from pathlib import Path
 CODE_ROOT = Path(__file__).resolve().parents[1]
 if str(CODE_ROOT) not in sys.path:
     sys.path.insert(0, str(CODE_ROOT))
-
+from bo_core import llm_client
+from bo_core.llm_client import DeepSeekClient
 from main import run_submission
 
 
@@ -52,3 +53,24 @@ def test_main_runs_lgbo_with_40_query_budget(monkeypatch, tmp_path) -> None:
             "backend": "botorch",
         }
     ]
+
+
+def test_project_env_is_the_only_file_source_and_process_env_wins(
+    monkeypatch, tmp_path: Path
+) -> None:
+    assert llm_client.PROJECT_ENV_PATH == Path(__file__).resolve().parents[4] / ".env"
+    project_env = tmp_path / ".env"
+    project_env.write_text(
+        "DEEPSEEK_API_KEY=file-key\nDEEPSEEK_MODEL=file-model\n",
+        encoding="utf-8",
+    )
+    monkeypatch.setattr(llm_client, "PROJECT_ENV_PATH", project_env)
+    monkeypatch.setenv("DEEPSEEK_API_KEY", "process-key")
+    monkeypatch.delenv("DEEPSEEK_FLASH_MODEL", raising=False)
+    monkeypatch.delenv("DEEPSEEK_MODEL", raising=False)
+
+    client = DeepSeekClient.from_env()
+
+    assert client.api_key == "process-key"
+    assert client.model == "file-model"
+    assert llm_client.PROJECT_ENV_PATH == project_env

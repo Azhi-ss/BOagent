@@ -5,6 +5,7 @@ import json
 import sys
 import time
 from pathlib import Path
+
 import requests
 
 BO_CORE_PATH = Path("/home/dministrator/project/BOagent/packages/bo-core")
@@ -14,13 +15,12 @@ if str(BO_CORE_PATH) not in sys.path:
 if str(AUTO_RESEARCH_PATH) not in sys.path:
     sys.path.insert(0, str(AUTO_RESEARCH_PATH))
 
-from components.cake import BASE_KERNELS, OPERATORS
-
 import os
 
 from bo_core.llm_client import load_env_file
+from components.cake import BASE_KERNELS, OPERATORS
 
-load_env_file(BO_CORE_PATH / "bo_core" / ".env")
+load_env_file()
 
 API_KEY = os.environ.get("DEEPSEEK_API_KEY", "")
 BASE_URL = os.environ.get("DEEPSEEK_BASE_URL", "https://newapi.ai-modeling.top/v1")
@@ -134,7 +134,7 @@ def call_api(model: str) -> dict:
             }
 
         msg = data["choices"][0]["message"]
-        if "tool_calls" in msg and msg["tool_calls"]:
+        if msg.get("tool_calls"):
             args = json.loads(msg["tool_calls"][0]["function"]["arguments"])
             return {
                 "status": status,
