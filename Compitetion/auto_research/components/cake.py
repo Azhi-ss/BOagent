@@ -4,16 +4,16 @@ Reference: "Adaptive Kernel Design for Bayesian Optimization Is a Piece of CAKE
 with LLMs" (NeurIPS 2025, arXiv:2509.17998).
 
 CAKE uses an LLM to evolve Gaussian Process kernel expressions via crossover
-and mutation, guided by a BIC-based fitness function. This is the "LLM
+and mutation, guided by a configurable information-criterion fitness score. This is the "LLM
 intervention at kernel structure" — distinct from the existing LGBO mean-shift,
 which intervenes at the posterior mean.
 
 The evolution loop:
   1. Initialize population with diverse base kernels (SE, PER, LIN, RQ, M3, M5)
-  2. Compute fitness (BIC) for each kernel on observed data
+  2. Compute a lower-is-better score for each kernel on observed data
   3. LLM proposes new kernels via crossover (combine two parents) and
      mutation (replace a base kernel in one expression)
-  4. Evaluate new kernels' BIC, keep top-N (selection)
+  4. Evaluate new kernels' scores, keep top-N (selection)
   5. Repeat every ``evolve_interval`` BO iterations
 
 Key difference from H1 (Kernel Manifold): CAKE uses the LLM to *generate*
@@ -26,6 +26,7 @@ the submission's fixed Matern-5/2 kernel.
 from __future__ import annotations
 
 import math
+import os
 import re
 import sys
 from collections.abc import Sequence
@@ -150,22 +151,18 @@ BASE_KERNELS = ["SE", "PER", "LIN", "RQ", "M1", "M3", "M5"]
 OPERATORS = ["+", "*"]
 
 
-def _bic_to_fitness(bic: float, all_bics: list[float]) -> float:
-    """Convert BIC (lower is better) to normalized fitness in [0, 1] (higher is better).
-
-    Uses softmax of (-BIC / scale) so lower BIC → higher fitness.
-    The scale is the std of the BIC values for numerical stability.
-    """
-    arr = np.array(all_bics, dtype=float)
+def _score_to_fitness(score: float, all_scores: list[float]) -> float:
+    """Convert lower-is-better scores to normalized selection fitness."""
+    arr = np.array(all_scores, dtype=float)
     if arr.std() > 1e-9:
         normalized = (arr - arr.mean()) / arr.std()
     else:
         normalized = np.zeros_like(arr)
-    # softmax of -normalized → lower BIC gets higher probability
     probs = np.exp(-normalized - np.max(-normalized))
     probs = probs / probs.sum()
-    idx = list(all_bics).index(bic)
+    idx = list(all_scores).index(score)
     return float(probs[idx])
+
 
 
 def _parse_llm_response(response: str) -> tuple[str, str | None]:
@@ -227,15 +224,29 @@ def _parse_llm_response(response: str) -> tuple[str, str | None]:
 
 
 # ---------------------------------------------------------------------------
-# BIC fitness computation
+def _fitness_score(log_likelihood: float, num_params: int, num_data: int) -> float:
+    """Return the configured lower-is-better CAKE fitness score."""
+    metric = os.environ.get("CAKE_FITNESS_METRIC", "BIC")
+    if metric == "BIC":
+        penalty = num_params * math.log(max(num_data, 1))
+    elif metric == "AIC":
+        penalty = 2 * num_params
+    elif metric == "MARGINAL_LIKELIHOOD":
+        penalty = 0.0
+    else:
+        raise ValueError(
+            "CAKE_FITNESS_METRIC must be BIC, AIC, or MARGINAL_LIKELIHOOD"
+        )
+    return -2.0 * log_likelihood + penalty
+
+
+# Fitness score computation
 # ---------------------------------------------------------------------------
 
-def _compute_bic(train_X, train_Y, kernel_expr: str, dimension: int, max_iter: int = 50) -> float:
-    """Compute BIC for a kernel expression on the training data.
-
-    BIC = -2 * log_likelihood + num_params * log(num_data)
-    Lower BIC is better. Returns +inf on failure.
-    """
+def _compute_fitness_score(
+    train_X, train_Y, kernel_expr: str, dimension: int, max_iter: int = 50
+) -> float:
+    """Compute the configured lower-is-better score for a kernel expression."""
     import gpytorch
     import torch
     from botorch.fit import fit_gpytorch_mll_scipy
@@ -260,10 +271,11 @@ def _compute_bic(train_X, train_Y, kernel_expr: str, dimension: int, max_iter: i
             log_likelihood = mll(output, train_Y.squeeze(-1)).item()
         num_params = sum(p.numel() for p in model.parameters())
         num_data = train_X.size(0)
-        bic = -2.0 * log_likelihood + num_params * math.log(max(num_data, 1))
-        return float(bic)
-    except Exception:  # noqa: BLE001 - BIC computation is best-effort
+        score = _fitness_score(log_likelihood, num_params, num_data)
+        return float(score)
+    except Exception:  # noqa: BLE001 - fitness computation is best-effort
         return float("inf")
+
 
 
 # ---------------------------------------------------------------------------
@@ -274,11 +286,11 @@ class CAKESurrogate(BoTorchSurrogate):
     """BoTorchSurrogate subclass that evolves kernels via LLM (CAKE).
 
     Every ``evolve_interval`` fits, the LLM is queried to propose new kernel
-    expressions via crossover and mutation. Each proposal is evaluated by BIC
-    on the current observed data; the population is pruned to the top-N
-    fittest kernels. The best kernel is used for the subsequent GP fit.
+    expressions via crossover and mutation. Each proposal receives the configured
+    lower-is-better score; the population is pruned to the top-N fittest kernels.
+    The best kernel is used for the subsequent GP fit.
 
-    On any failure (LLM API, parse, BIC), the surrogate falls back to
+    On any failure (LLM API, parse, score), the surrogate falls back to
     Matern-5/2 (matching the submission's fixed kernel behavior).
     """
 
@@ -292,7 +304,7 @@ class CAKESurrogate(BoTorchSurrogate):
         population_size: int = 6,
         evolve_interval: int = 5,
         selection_max_iter: int = 50,
-        chat_engine: str = "deepseek-v4-pro",
+        chat_engine: str | None = None,
         reasoning_effort: str = "low",
     ) -> None:
         super().__init__(
@@ -310,7 +322,7 @@ class CAKESurrogate(BoTorchSurrogate):
 
         self._fit_count = 0
         self._current_kernel = "M5"
-        # population: {kernel_expr: bic}; lower BIC is better
+        # population: {kernel_expr: score}; lower is better
         self._population: dict[str, float] = {k: float("inf") for k in BASE_KERNELS}
         self._kernel_history: list[tuple[int, str, float]] = []
         self._llm_calls: int = 0
@@ -340,18 +352,23 @@ class CAKESurrogate(BoTorchSurrogate):
         if self._client is None:
             from bo_core.llm_client import DeepSeekClient
             self._client = DeepSeekClient.from_env()
-            self._client.model = self.chat_engine
+            # Only override the env-resolved model when the caller explicitly
+            # chose one; the __init__ default is None so that DeepSeekClient
+            # .from_env() (which resolves DEEPSEEK_FLASH_MODEL / .env) wins.
+            # ponytail: hardcoding a model here previously caused 16/16 LLM
+            # calls to 503 with model_not_found, silently disabling all
+            # kernel evolution.
+            if self.chat_engine is not None:
+                self._client.model = self.chat_engine
             self._client.timeout_s = 60
         return self._client
 
     # ------------------------------------------------------------------ fit
 
     def fit(self, X: np.ndarray, y: np.ndarray):
-        """Fit ensemble of GPs (one per population kernel) and compute BIC weights.
+        """Fit one GP per population kernel and weight by configured score.
 
-        Unlike the single-kernel fit, this fits ALL kernels in the population
-        and stores them for ensemble predict(). BIC is used only to compute
-        softmax weights, NOT to select a single winner.
+        Lower scores produce higher ensemble weights.
         """
         self._fit_count += 1
         train_X = self._tensor(X)
@@ -373,13 +390,13 @@ class CAKESurrogate(BoTorchSurrogate):
 
         # Fit ALL population kernels → ensemble
         self._population_models = {}
-        bics: dict[str, float] = {}
+        scores: dict[str, float] = {}
         failed_kernels: list[dict[str, str]] = []
         for kexpr in self._population:
             try:
-                model, bic = self._fit_one_kernel(train_X, train_Y, kexpr, dimension)
+                model, score = self._fit_one_kernel(train_X, train_Y, kexpr, dimension)
                 self._population_models[kexpr] = model
-                bics[kexpr] = bic
+                scores[kexpr] = score
             except Exception as exc:  # noqa: BLE001 - per-kernel fit is best-effort
                 failed_kernels.append({
                     "kernel": kexpr,
@@ -391,17 +408,17 @@ class CAKESurrogate(BoTorchSurrogate):
             # Fallback: single Matern-5/2
             model, _ = self._fit_one_kernel(train_X, train_Y, "M5", dimension)
             self._population_models = {"M5": model}
-            bics = {"M5": 1.0}
+            scores = {"M5": 1.0}
 
-        # Compute softmax weights from BIC (lower BIC → higher weight)
-        bic_arr = np.array(list(bics.values()))
-        if bic_arr.std() > 1e-9:
-            bic_norm = (bic_arr - bic_arr.mean()) / bic_arr.std()
+        # Lower score → higher ensemble weight.
+        score_arr = np.array(list(scores.values()))
+        if score_arr.std() > 1e-9:
+            score_norm = (score_arr - score_arr.mean()) / score_arr.std()
         else:
-            bic_norm = np.zeros_like(bic_arr)
-        probs = np.exp(-bic_norm - np.max(-bic_norm))
+            score_norm = np.zeros_like(score_arr)
+        probs = np.exp(-score_norm - np.max(-score_norm))
         probs = probs / probs.sum()
-        self._population_weights = {k: float(p) for k, p in zip(bics.keys(), probs)}
+        self._population_weights = {k: float(p) for k, p in zip(scores.keys(), probs)}
 
         # Set self.model to the highest-weight kernel (for backward-compat
         # with posterior_covariance calls in mean-shift)
@@ -424,7 +441,7 @@ class CAKESurrogate(BoTorchSurrogate):
         return self
 
     def _fit_one_kernel(self, train_X, train_Y, kexpr: str, dimension: int):
-        """Fit a single GP with the given kernel expression; return (model, BIC)."""
+        """Fit one GP and return ``(model, lower-is-better score)``."""
         import gpytorch
         import torch
         from botorch.fit import fit_gpytorch_mll_scipy
@@ -466,91 +483,89 @@ class CAKESurrogate(BoTorchSurrogate):
             raise last_exc
 
         model.eval()
-        # Compute BIC
         with torch.no_grad():
             output = model(train_X)
             log_likelihood = mll(output, train_Y.squeeze(-1)).item()
         num_params = sum(p.numel() for p in model.parameters())
         num_data = train_X.size(0)
-        bic = -2.0 * log_likelihood + num_params * math.log(max(num_data, 1))
-        return model, float(bic)
+        score = _fitness_score(log_likelihood, num_params, num_data)
+        return model, float(score)
 
     # -------------------------------------------------------------- evolution
 
     def _evolve_kernel(self, train_X, train_Y, dimension: int) -> None:
         """Run one CAKE evolution step: compute fitness, LLM crossover+mutation, select."""
-        # Step 1: Compute BIC fitness for the current population
-        bic_values: dict[str, float] = {}
+        # Step 1: Score the current population.
+        score_values: dict[str, float] = {}
         for kexpr in list(self._population.keys()):
-            bic = _compute_bic(train_X, train_Y, kexpr, dimension, self.selection_max_iter)
-            if math.isfinite(bic):
-                bic_values[kexpr] = bic
-        if not bic_values:
+            score = _compute_fitness_score(
+                train_X, train_Y, kexpr, dimension, self.selection_max_iter
+            )
+            if math.isfinite(score):
+                score_values[kexpr] = score
+        if not score_values:
             self._current_kernel = "M5"
             return
 
-        # Standardize fitness for selection probabilities
-        bic_arr = np.array(list(bic_values.values()))
-        if bic_arr.std() > 1e-9:
-            bic_norm = (bic_arr - bic_arr.mean()) / bic_arr.std()
+        score_arr = np.array(list(score_values.values()))
+        if score_arr.std() > 1e-9:
+            score_norm = (score_arr - score_arr.mean()) / score_arr.std()
         else:
-            bic_norm = np.zeros_like(bic_arr)
-        # Lower BIC is better → higher prob. Use softmax of -bic_norm.
-        probs = np.exp(-bic_norm - np.max(-bic_norm))
+            score_norm = np.zeros_like(score_arr)
+        probs = np.exp(-score_norm - np.max(-score_norm))
         probs = probs / probs.sum()
-        bic_list = list(bic_values.keys())
+        score_list = list(score_values.keys())
 
         # Step 2: LLM crossover — propose new kernels by combining parents
         client = self._get_client()
         if client.is_configured():
-            new_kernels = self._llm_crossover(client, bic_list, probs, bic_values)
+            new_kernels = self._llm_crossover(client, score_list, probs, score_values)
             for kexpr in new_kernels:
-                if kexpr not in bic_values and len(kexpr) < 30:
-                    bic = _compute_bic(train_X, train_Y, kexpr, dimension, self.selection_max_iter)
-                    if math.isfinite(bic):
-                        bic_values[kexpr] = bic
+                if kexpr not in score_values and len(kexpr) < 30:
+                    score = _compute_fitness_score(
+                        train_X, train_Y, kexpr, dimension, self.selection_max_iter
+                    )
+                    if math.isfinite(score):
+                        score_values[kexpr] = score
 
             # Step 3: LLM mutation — replace a base kernel in the best expression
-            best_kernel = min(bic_values, key=bic_values.get)
-            mutated = self._llm_mutation(client, best_kernel, bic_values[best_kernel], list(bic_values.values()))
+            best_kernel = min(score_values, key=score_values.get)
+            mutated = self._llm_mutation(client, best_kernel, score_values[best_kernel], list(score_values.values()))
             for kexpr in mutated:
-                if kexpr not in bic_values and len(kexpr) < 30:
-                    bic = _compute_bic(train_X, train_Y, kexpr, dimension, self.selection_max_iter)
-                    if math.isfinite(bic):
-                        bic_values[kexpr] = bic
+                if kexpr not in score_values and len(kexpr) < 30:
+                    score = _compute_fitness_score(train_X, train_Y, kexpr, dimension, self.selection_max_iter)
+                    if math.isfinite(score):
+                        score_values[kexpr] = score
 
         # Step 4: Selection — keep top-N fittest kernels
-        sorted_kernels = sorted(bic_values.items(), key=lambda x: x[1])  # ascending BIC
+        sorted_kernels = sorted(score_values.items(), key=lambda item: item[1])
         self._population = dict(sorted_kernels[: self.population_size])
 
-        # Step 5: Pick the best kernel
-        best_kernel = min(bic_values, key=bic_values.get)
-        best_bic = bic_values[best_kernel]
+        best_kernel = min(score_values, key=score_values.get)
+        best_score = score_values[best_kernel]
         prev = self._current_kernel
         self._current_kernel = best_kernel
-        self._kernel_history.append((self._fit_count, best_kernel, best_bic))
+        self._kernel_history.append((self._fit_count, best_kernel, best_score))
         print(
             f"[CAKESurrogate] evolve@fit#{self._fit_count}: {prev} -> {best_kernel} "
-            f"(BIC={best_bic:.2f}; population={len(self._population)})"
+            f"(score={best_score:.2f}; population={len(self._population)})"
         )
 
     def _llm_crossover(
-        self, client, bic_list: list[str], probs: np.ndarray, bic_values: dict[str, float]
+        self, client, score_list: list[str], probs: np.ndarray, score_values: dict[str, float]
     ) -> list[str]:
         """Query the LLM to propose kernels by crossing over two parents.
 
-        Passes normalized fitness (higher=better) to the LLM, not raw BIC,
-        so the prompt semantics ("higher is better") match the values.
+        Passes normalized fitness (higher=better) to the LLM while all scoring
+        and population selection retain lower-is-better semantics.
         """
-        if len(bic_list) < 2:
+        if len(score_list) < 2:
             return []
-        # Pick two parents (weighted by fitness)
-        idx = self._rng.choice(len(bic_list), size=min(2, len(bic_list)), p=probs, replace=False)
-        p1, p2 = bic_list[idx[0]], bic_list[idx[1]]
-        # Convert BIC to normalized fitness so "higher is better" is true
-        all_bics = list(bic_values.values())
-        f1 = _bic_to_fitness(bic_values[p1], all_bics)
-        f2 = _bic_to_fitness(bic_values[p2], all_bics)
+        idx = self._rng.choice(len(score_list), size=min(2, len(score_list)), p=probs, replace=False)
+        p1, p2 = score_list[idx[0]], score_list[idx[1]]
+        all_scores = list(score_values.values())
+        f1 = _score_to_fitness(score_values[p1], all_scores)
+        f2 = _score_to_fitness(score_values[p2], all_scores)
         prompt = CROSSOVER_PROMPT_TEMPLATE.format(
             parent_kernel1=p1, fitness1=f"{f1:.4f}",
             parent_kernel2=p2, fitness2=f"{f2:.4f}",
@@ -577,14 +592,13 @@ class CAKESurrogate(BoTorchSurrogate):
             print(f"[CAKESurrogate] crossover LLM call failed: {exc}")
             return []
 
-    def _llm_mutation(self, client, kernel: str, bic: float, all_bics: list[float] | None = None) -> list[str]:
-        """Query the LLM to mutate the best kernel by replacing a base kernel.
-
-        Passes normalized fitness (higher=better) to the LLM, not raw BIC.
-        """
-        if all_bics is None:
-            all_bics = [bic]
-        fitness = _bic_to_fitness(bic, all_bics)
+    def _llm_mutation(
+        self, client, kernel: str, score: float, all_scores: list[float] | None = None
+    ) -> list[str]:
+        """Query the LLM to mutate the best kernel by replacing a base kernel."""
+        if all_scores is None:
+            all_scores = [score]
+        fitness = _score_to_fitness(score, all_scores)
         prompt = MUTATION_PROMPT_TEMPLATE.format(
             kernel=kernel, fitness=f"{fitness:.4f}", base_kernels=BASE_KERNELS
         )
@@ -636,7 +650,7 @@ class CAKESurrogate(BoTorchSurrogate):
         """Population-weighted ensemble prediction.
 
         For each kernel in the population, query its posterior mean and
-        variance. Blend means and variances by BIC-derived weights.
+        variance. Blend means and variances by score-derived weights.
         This mirrors the CAKE reference get_next_query() approach: all
         kernels contribute, weighted by fitness — no single winner.
         """
@@ -757,6 +771,6 @@ def create_cake_surrogate(
         population_size=kwargs.get("population_size", 6),
         evolve_interval=kwargs.get("evolve_interval", 5),
         selection_max_iter=kwargs.get("selection_max_iter", 50),
-        chat_engine=kwargs.get("chat_engine", "deepseek-v4-flash"),
+        chat_engine=kwargs.get("chat_engine"),
         reasoning_effort=kwargs.get("reasoning_effort", "low"),
     )

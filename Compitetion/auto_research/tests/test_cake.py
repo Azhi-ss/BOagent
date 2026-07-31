@@ -11,6 +11,7 @@ Run: cd Compitetion/auto_research && python -m pytest tests/test_cake.py -v
 """
 from __future__ import annotations
 
+import math
 import sys
 from pathlib import Path
 from unittest.mock import MagicMock
@@ -351,6 +352,20 @@ class TestPromptObservations:
         assert prompt1 != prompt2, "Prompt must change when observations change"
 
 
+class TestFitnessScore:
+    def test_formulas_and_bic_default(self, monkeypatch):
+        from components.cake import _fitness_score
+
+        monkeypatch.delenv("CAKE_FITNESS_METRIC", raising=False)
+        assert _fitness_score(-10.0, 4, 100) == pytest.approx(20.0 + 4 * math.log(100))
+
+        monkeypatch.setenv("CAKE_FITNESS_METRIC", "AIC")
+        assert _fitness_score(-10.0, 4, 100) == pytest.approx(28.0)
+
+        monkeypatch.setenv("CAKE_FITNESS_METRIC", "MARGINAL_LIKELIHOOD")
+        assert _fitness_score(-10.0, 4, 100) == pytest.approx(20.0)
+
+
 class TestFitnessSemantics:
     """Tests that fitness values passed to LLM are normalized so 'higher is better'."""
 
@@ -567,3 +582,43 @@ class TestEnsemblePredict:
                 assert not np.allclose(ensemble_mu, im, atol=1e-6), (
                     "Ensemble mean matches a single kernel — ensemble is not blending"
                 )
+
+class TestChatEngineDefault:
+    """Tests that _get_client does not override the env-resolved model with
+    an unavailable hardcoded default.
+
+    Root cause: CAKESurrogate.__init__ defaults chat_engine to
+    'deepseek-v4-pro', and _get_client() overwrites
+    DeepSeekClient.from_env().model with that value. When the composition
+    does not pass chat_engine, the LLM call 503s with model_not_found and
+    ALL crossover/mutation calls fail silently — no composite kernel ever
+    enters the population.
+    """
+
+    def test_get_client_uses_env_model_when_chat_engine_not_set(self):
+        """_get_client must not override the env-resolved model when
+        chat_engine is the __init__ default (i.e. caller did not
+        explicitly choose a model)."""
+        from components.cake import CAKESurrogate
+
+        surrogate = CAKESurrogate(seed=100)
+        # __init__ default chat_engine is a placeholder, not a real model.
+        # _get_client should fall back to DeepSeekClient.from_env().model
+        # instead of overriding it with the placeholder.
+        from bo_core.llm_client import DeepSeekClient
+
+        env_model = DeepSeekClient.from_env().model
+        client = surrogate._get_client()
+        assert client.model == env_model, (
+            f"_get_client overwrote env model {env_model!r} with "
+            f"hardcoded {client.model!r}; LLM calls will 503"
+        )
+
+    def test_get_client_respects_explicit_chat_engine(self):
+        """When chat_engine is explicitly set by the caller, _get_client
+        must honor it (allows model override for experiments)."""
+        from components.cake import CAKESurrogate
+
+        surrogate = CAKESurrogate(seed=100, chat_engine="my-custom-model")
+        client = surrogate._get_client()
+        assert client.model == "my-custom-model"
