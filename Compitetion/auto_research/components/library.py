@@ -96,7 +96,7 @@ def _surrogate_botorch_cake(backend: str, seed: int, **kw: Any) -> Any:
         alpha=kw.get("alpha", 1e-2),
         population_size=kw.get("population_size", 6),
         evolve_interval=kw.get("evolve_interval", 5),
-        chat_engine=kw.get("chat_engine", "deepseek-v4-flash"),
+        chat_engine=kw.get("chat_engine"),
         reasoning_effort=kw.get("reasoning_effort", "low"),
     )
 
