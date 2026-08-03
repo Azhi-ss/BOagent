@@ -268,6 +268,47 @@ def chat(
     *,
     temperature: float = 0.0,
 ) -> LlmCallResult: ...
+
+class LGBOEngine:
+    def __init__(
+        self,
+        dataset: str,
+        seed: int = 100,
+        use_llm: bool = False,
+        n_iters: int = 40,
+        K: int = 50,
+        n_restarts: int = 10,
+        alpha: float = 1e-2,
+        xi: float = 0.01,
+        chat_engine: str = "deepseek-v4-flash",
+        llm_max_tokens: int = 8192,
+        reasoning_effort: str = "low",
+        llm_temperature: float = 0.0,
+        failure_log: str | Path | None = "lgbo_llm_failures.log",
+        backend: BackendName = "botorch",
+    ) -> None: ...
+
+    def _call_llm(
+        self,
+        messages: list[dict[str, Any]],
+        *,
+        tools: list[dict[str, Any]] | None = None,
+        tool_choice: dict[str, Any] | None = None,
+    ) -> tuple[LlmCallResult | None, str]: ...
+
+class ChemLGBOEngine(LGBOEngine):
+    def __init__(
+        self,
+        dataset: str,
+        seed: int = 100,
+        use_llm: bool = True,
+        n_iters: int = 40,
+        *,
+        n_counterfactuals: int = 0,
+        outcome_feedback: bool = False,
+        llm_temperature: float = 0.2,
+        **legacy_kwargs: Any,
+    ) -> None: ...
 ```
 
 ### 3. Contracts

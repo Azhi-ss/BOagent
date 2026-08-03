@@ -7,6 +7,7 @@
 - [算法与物理约束规范](./algorithm-spec.md)
   - Acquisition score 尺度不变退化检测
   - 固定训练先验的可恢复 Hybrid 比较矩阵
+  - Chem-LGBO 强制 Tool Calling、单次 ReAct、telemetry 与 provenance 契约
 
 ## 核心自检清单 (Pre-Development Checklist)
 - [ ] 我是否确保了任何新增的数学/Parser模块都使用了 TDD（测试驱动开发）？
