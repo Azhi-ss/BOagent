@@ -1,0 +1,4 @@
+{"_example": "Fill with {\"file\": \"<path>\", \"reason\": \"<why>\"}. Put spec/research files only — no code paths. Run `python3 .trellis/scripts/get_context.py --mode packages` to list available specs. Delete this line once real entries are added."}
+{"file": ".trellis/spec/bo-core/index.md", "reason": "bo-core quality checklist for final review"}
+{"file": ".trellis/spec/bo-core/algorithm-spec.md", "reason": "verify guidance fallback, provenance, mirror parity, and behavioral tests"}
+{"file": ".trellis/spec/guides/index.md", "reason": "cross-layer and reuse review triggers"}
