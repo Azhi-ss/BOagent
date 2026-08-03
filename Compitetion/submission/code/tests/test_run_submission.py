@@ -8,7 +8,8 @@ CODE_ROOT = Path(__file__).resolve().parents[1]
 if str(CODE_ROOT) not in sys.path:
     sys.path.insert(0, str(CODE_ROOT))
 from bo_core import llm_client
-from bo_core.llm_client import DeepSeekClient
+from bo_core.llm_client import DeepSeekClient, LlmCallResult
+from bo_core.optimization.chem_lgbo import ChemLGBOEngine
 from main import run_submission
 
 
@@ -74,3 +75,83 @@ def test_project_env_is_the_only_file_source_and_process_env_wins(
     assert client.api_key == "process-key"
     assert client.model == "file-model"
     assert llm_client.PROJECT_ENV_PATH == project_env
+
+
+def test_submission_tests_import_vendored_bo_core() -> None:
+    assert Path(llm_client.__file__).resolve().is_relative_to(CODE_ROOT)
+
+
+def test_vendored_client_accepts_empty_content_tool_call(
+    monkeypatch,
+) -> None:
+    tool_calls = [
+        {
+            "id": "call_1",
+            "type": "function",
+            "function": {
+                "name": "propose_sparse_subspace",
+                "arguments": '{"subspace":{"Ligand":["L1"]}}',
+            },
+        }
+    ]
+
+    class Response:
+        ok = True
+
+        @staticmethod
+        def json():
+            return {"choices": [{"message": {"content": "", "tool_calls": tool_calls}}]}
+
+    monkeypatch.setattr(llm_client.requests, "post", lambda *_args, **_kwargs: Response())
+    client = DeepSeekClient("test-key")
+
+    result = client.chat([{"role": "user", "content": "propose"}], temperature=0.2)
+
+    assert result.status == "success"
+    assert result.content == ""
+    assert result.tool_calls == tool_calls
+
+
+def test_vendored_chem_accepts_scripted_tool_call() -> None:
+    engine = ChemLGBOEngine(
+        "suzuki",
+        seed=100,
+        use_llm=False,
+        n_iters=0,
+        n_restarts=0,
+        backend="sklearn",
+    )
+    ligand = str(engine.test_df["Ligand"].iloc[0])
+
+    class Client:
+        def is_configured(self):
+            return True
+        def chat(self, _messages, **_kwargs):
+            return LlmCallResult(
+                status="success",
+                provider="test",
+                model="test",
+                content="",
+                usage={},
+                tool_calls=[
+                    {
+                        "id": "call_1",
+                        "type": "function",
+                        "function": {
+                            "name": "propose_sparse_subspace",
+                            "arguments": (
+                                '{"subspace":{"Ligand":["' + ligand + '"]}}'
+                            ),
+                        },
+                    }
+                ],
+            )
+
+    engine.use_llm = True
+    engine._client = Client()
+    engine.step()
+
+    artifact = engine.guidance_artifacts[0]
+    assert artifact["parser_reason"] == "accepted"
+    assert artifact["tool_call_id"] == "call_1"
+    assert engine.llm_temperature == 0.2

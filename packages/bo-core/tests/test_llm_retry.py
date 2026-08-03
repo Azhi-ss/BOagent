@@ -3,8 +3,9 @@ from __future__ import annotations
 from pathlib import Path
 from unittest.mock import patch
 
+import pytest
 from bo_core import llm_client
-from bo_core.llm_client import DeepSeekClient
+from bo_core.llm_client import DeepSeekClient, LlmCallResult
 
 
 def _ok_response() -> dict:
@@ -16,7 +17,12 @@ def _ok_response() -> dict:
     }
 
 
-def _resp(status_code: int, retry_after: str | None = None, body: str = "{}"):
+def _resp(
+    status_code: int,
+    retry_after: str | None = None,
+    body: str = "{}",
+    payload: dict | None = None,
+):
     class _R:
         def __init__(self) -> None:
             self.ok = 200 <= status_code < 300
@@ -25,7 +31,7 @@ def _resp(status_code: int, retry_after: str | None = None, body: str = "{}"):
             self.headers = {"Retry-After": retry_after} if retry_after else {}
 
         def json(self) -> dict:
-            return _ok_response()
+            return payload if payload is not None else _ok_response()
 
     return _R()
 
@@ -78,6 +84,59 @@ def test_gives_up_after_max_retries():
     # initial attempt + MAX_RETRIES
     from bo_core.llm_client import MAX_RETRIES
     assert mock_post.call_count == MAX_RETRIES + 1
+
+def test_tool_call_succeeds_with_empty_content() -> None:
+    tool_calls = [
+        {
+            "id": "call-1",
+            "type": "function",
+            "function": {"name": "propose_sparse_subspace", "arguments": "{}"},
+        }
+    ]
+    response = _resp(
+        200,
+        payload={
+            "choices": [{"message": {"content": "", "tool_calls": tool_calls}}],
+            "usage": {},
+        },
+    )
+    with patch("bo_core.llm_client.requests.post", return_value=response):
+        result = _client().chat([{"role": "user", "content": "hi"}])
+
+    assert result.status == "success"
+    assert result.content == ""
+    assert result.tool_calls == tool_calls
+
+
+def test_chat_temperature_default_override_and_positional_extra_body() -> None:
+    with patch("bo_core.llm_client.requests.post", return_value=_resp(200)) as post:
+        _client().chat([{"role": "user", "content": "hi"}], 100, {"seed": 7})
+        default_payload = post.call_args.kwargs["json"]
+
+        _client().chat(
+            [{"role": "user", "content": "hi"}],
+            temperature=0.2,
+        )
+        override_payload = post.call_args.kwargs["json"]
+
+    assert default_payload["temperature"] == 0.0
+    assert default_payload["max_tokens"] == 100
+    assert default_payload["seed"] == 7
+    assert override_payload["temperature"] == 0.2
+
+
+def test_extra_body_cannot_override_temperature() -> None:
+    with pytest.raises(ValueError, match="temperature"):
+        _client().chat(
+            [{"role": "user", "content": "hi"}],
+            extra_body={"temperature": 0.9},
+        )
+
+
+def test_llm_call_result_tool_calls_default_to_none() -> None:
+    result = LlmCallResult("success", "deepseek", "m", "text", {})
+
+    assert result.tool_calls is None
 
 
 def test_project_env_is_the_only_file_source_and_process_env_wins(

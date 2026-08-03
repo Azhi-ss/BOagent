@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import os
+import time
 from dataclasses import dataclass
 from pathlib import Path
 from typing import Any
@@ -8,7 +9,22 @@ from typing import Any
 import requests
 
 PROJECT_ENV_PATH = Path(__file__).resolve().parents[4] / ".env"
-PROTECTED_CHAT_PAYLOAD_KEYS = {"model", "messages", "max_tokens", "stream"}
+PROTECTED_CHAT_PAYLOAD_KEYS = {
+    "model",
+    "messages",
+    "max_tokens",
+    "stream",
+    "temperature",
+}
+
+# Retry transient upstream rate-limiting / gateway errors so concurrent workers
+# stay under a provider's per-minute quota instead of failing the whole BO step.
+# Total backoff is bounded so a single chat() returns well within the ~30s
+# caller-side timeout used by the viability concurrent evaluator.
+RETRYABLE_STATUS = {429, 500, 502, 503, 504}
+MAX_RETRIES = 3
+RETRY_BASE_SLEEP = 1.0
+RETRY_MAX_TOTAL_SLEEP = 15.0
 
 
 @dataclass(frozen=True)
@@ -20,6 +36,7 @@ class LlmCallResult:
     usage: dict[str, Any]
     error: str | None = None
     logprobs: dict[str, Any] | None = None
+    tool_calls: list[dict[str, Any]] | None = None
 
 
 class DeepSeekClient:
@@ -52,9 +69,11 @@ class DeepSeekClient:
 
     def chat(
         self,
-        messages: list[dict[str, str]],
+        messages: list[dict[str, Any]],
         max_tokens: int = 2048,
         extra_body: dict[str, Any] | None = None,
+        *,
+        temperature: float = 0.0,
     ) -> LlmCallResult:
         protected_overrides = PROTECTED_CHAT_PAYLOAD_KEYS & set(extra_body or {})
         if protected_overrides:
@@ -71,49 +90,73 @@ class DeepSeekClient:
                 error="DEEPSEEK_API_KEY is missing or still uses the placeholder.",
             )
 
-        payload = {
+        payload: dict[str, Any] = {
             "model": self.model,
             "messages": messages,
             "max_tokens": max_tokens,
-            "temperature": 0.0,
+            "temperature": temperature,
             "stream": False,
         }
         if extra_body:
             payload.update(extra_body)
 
-        try:
-            response = requests.post(
-                f"{self.base_url}/chat/completions",
-                headers={
-                    "Authorization": f"Bearer {self.api_key}",
-                    "Content-Type": "application/json",
-                },
-                json=payload,
-                timeout=self.timeout_s,
-            )
-        except requests.RequestException as exc:
-            return LlmCallResult(
-                status="error",
-                provider="deepseek",
-                model=self.model,
-                content="",
-                usage={},
-                error=f"{type(exc).__name__}: {exc}",
-            )
+        url = f"{self.base_url}/chat/completions"
+        headers = {
+            "Authorization": f"Bearer {self.api_key}",
+            "Content-Type": "application/json",
+        }
+        response = None
+        last_error = ""
+        slept = 0.0
+        for attempt in range(MAX_RETRIES + 1):
+            try:
+                response = requests.post(
+                    url, headers=headers, json=payload, timeout=self.timeout_s
+                )
+            except requests.RequestException as exc:
+                response = None
+                last_error = f"{type(exc).__name__}: {exc}"
+                if attempt >= MAX_RETRIES or slept >= RETRY_MAX_TOTAL_SLEEP:
+                    break
+                delay = min(RETRY_BASE_SLEEP * (2 ** attempt), RETRY_MAX_TOTAL_SLEEP - slept)
+                time.sleep(delay)
+                slept += delay
+                continue
 
-        if not response.ok:
+            if response.ok:
+                break
+
+            last_error = f"HTTP {response.status_code}: {response.text[:300]}"
+            if response.status_code not in RETRYABLE_STATUS:
+                break
+            if attempt >= MAX_RETRIES or slept >= RETRY_MAX_TOTAL_SLEEP:
+                break
+            # Honor server Retry-After when present; else exponential backoff,
+            # capped so the whole call stays within caller timeouts.
+            retry_after = response.headers.get("Retry-After")
+            try:
+                delay = float(retry_after) if retry_after else RETRY_BASE_SLEEP * (2 ** attempt)
+            except (TypeError, ValueError):
+                delay = RETRY_BASE_SLEEP * (2 ** attempt)
+            delay = min(delay, RETRY_MAX_TOTAL_SLEEP - slept)
+            time.sleep(delay)
+            slept += delay
+
+        if response is None or not response.ok:
             return LlmCallResult(
                 status="error",
                 provider="deepseek",
                 model=self.model,
                 content="",
                 usage={},
-                error=f"HTTP {response.status_code}: {response.text[:300]}",
+                error=last_error or "request failed after retries",
             )
 
         payload = response.json()
         choice = payload.get("choices", [{}])[0]
-        content = choice.get("message", {}).get("content", "")
+        message = choice.get("message", {})
+        content = message.get("content") or ""
+        tool_calls = message.get("tool_calls") or None
         logprobs = choice.get("logprobs", None)
         return LlmCallResult(
             status="success",
@@ -122,6 +165,7 @@ class DeepSeekClient:
             content=content.strip(),
             usage=payload.get("usage", {}),
             logprobs=logprobs,
+            tool_calls=tool_calls,
         )
 
 

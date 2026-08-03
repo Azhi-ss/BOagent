@@ -3,9 +3,7 @@ from __future__ import annotations
 import json
 
 import pytest
-
 from bo_core.optimization.lgbo_parser import parse_llm_response
-
 
 FEATURES = ["Reactant2", "Ligand", "Additive", "Base"]
 OPTIONS = {

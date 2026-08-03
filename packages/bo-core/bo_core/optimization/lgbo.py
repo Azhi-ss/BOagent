@@ -62,6 +62,7 @@ class LGBOEngine:
         chat_engine: str = "deepseek-v4-flash",
         llm_max_tokens: int = 8192,
         reasoning_effort: str = "low",
+        llm_temperature: float = 0.0,
         failure_log: str | Path | None = "lgbo_llm_failures.log",
         backend: BackendName = "botorch",
     ) -> None:
@@ -78,6 +79,7 @@ class LGBOEngine:
         self.chat_engine = chat_engine
         self.llm_max_tokens = llm_max_tokens
         self.reasoning_effort = reasoning_effort
+        self.llm_temperature = float(llm_temperature)
         self.failure_log = Path(failure_log) if failure_log else None
         self.backend = backend
         self._surrogate = create_surrogate(
@@ -136,6 +138,13 @@ class LGBOEngine:
         self.trajectory: list[dict[str, Any]] = []
         self.prev_thinking: str | None = None
         self.iteration = 0
+        self.health: dict[str, int] = {
+            "gp_fit_fallbacks": 0,
+            "gp_predict_fallbacks": 0,
+            "acquisition_fallbacks": 0,
+            "nonfinite_acquisition_scores": 0,
+            "duplicate_queries": 0,
+        }
         # LLM client (lazy, only for LGBO). Reuses DeepSeekClient.from_env().
         self._client = None
         if self.use_llm:
@@ -152,6 +161,7 @@ class LGBOEngine:
         try:
             self._surrogate.fit(self.X_obs, self.y_obs)
         except Exception as exc:  # noqa: BLE001 - step has a mean fallback
+            self.health["gp_fit_fallbacks"] += 1
             print(f"[LGBO] GP fit failed ({exc}); using mean predictor.")
         return self._surrogate
 
@@ -160,7 +170,8 @@ class LGBOEngine:
     ) -> tuple[np.ndarray, np.ndarray]:
         try:
             return surrogate.predict(self.pool_X)
-        except Exception:
+        except Exception:  # noqa: BLE001 - step has a mean fallback
+            self.health["gp_predict_fallbacks"] += 1
             # Non-fitted GP fallback: constant mean = observed mean, unit std.
             return (
                 np.full(self.M, float(np.mean(self.y_obs))),
@@ -235,106 +246,211 @@ class LGBOEngine:
 
     # -------------------------------------------------------------------- loop
 
+    def _guidance_diagnostics(
+        self,
+        status: str,
+        reason: str,
+        *,
+        subspace: dict[str, list[str]] | None = None,
+        mask_size: int | None = None,
+        coverage: float | None = None,
+        counterfactual_seed: int | None = None,
+    ) -> dict[str, Any]:
+        return {
+            "guidance_status": status,
+            "guidance_reason": reason,
+            "subspace": subspace,
+            "mask_size": mask_size,
+            "remaining_pool_size": self.M - len(self.queried),
+            "coverage": coverage,
+            "counterfactual_seed": counterfactual_seed,
+        }
+
+    def _record_guidance_selection(self, selected_index: int) -> None:
+        """Allow guidance implementations to finish in-memory detail records."""
+        del selected_index
+
     def step(self) -> dict[str, Any]:
         surrogate = self._fit_gp()
         mu, sigma = self._predict_pool(surrogate)
         best_f = float(np.max(self.y_obs))
 
         thinking: str | None = None
+        guidance = self._guidance_diagnostics("disabled", "use_llm_false")
+        guidance_mask: np.ndarray | None = None
         if self.use_llm:
-            mu, thinking = self._llm_mean_shift(surrogate, mu)
+            mu, thinking, guidance, guidance_mask = self._llm_mean_shift(
+                surrogate, mu, sigma
+            )
 
         ei = self._expected_improvement(mu, sigma, best_f)
-        # Mask already-queried pool points.
+        nonfinite = int(np.count_nonzero(~np.isfinite(ei)))
+        self.health["nonfinite_acquisition_scores"] += nonfinite
+
         mask = np.ones(self.M, dtype=bool)
         for q in self.queried:
             if 0 <= q < self.M:
                 mask[q] = False
-        ei = np.where(mask, ei, -np.inf)
+        remaining = np.flatnonzero(mask)
+        if remaining.size == 0:
+            raise RuntimeError("candidate pool is exhausted")
 
-        idx = int(np.argmax(ei))
+        ei = np.where(mask & np.isfinite(ei), ei, -np.inf)
+        if np.any(np.isfinite(ei)):
+            idx = int(np.argmax(ei))
+        else:
+            self.health["acquisition_fallbacks"] += 1
+            idx = int(remaining[0])
+        if idx in self.queried:
+            self.health["duplicate_queries"] += 1
+            idx = int(remaining[0])
         observed_yield = float(self.pool_yield[idx])
-        condition = {col: str(self.test_df[col].iloc[idx]) for col in self.feature_cols}
+        condition = {
+            col: str(self.test_df[col].iloc[idx]) for col in self.feature_cols
+        }
+        selected_in_subspace = (
+            bool(guidance_mask[idx]) if guidance_mask is not None else None
+        )
 
-        self.trajectory.append({
-            "step": self.iteration + 1,
-            "query_index": idx,
-            "condition": condition,
-            "observed_yield": observed_yield,
-            "predicted_yield": float(mu[idx]),
-        })
+        self.trajectory.append(
+            {
+                "step": self.iteration + 1,
+                "query_index": idx,
+                "condition": condition,
+                "observed_yield": observed_yield,
+                "predicted_yield": float(mu[idx]),
+                **guidance,
+                "selected_in_subspace": selected_in_subspace,
+            }
+        )
+        self._record_guidance_selection(idx)
         if thinking:
             self.prev_thinking = thinking
 
         # Observe the selected pool point.
-        self.X_obs = np.vstack([self.X_obs, self.pool_X[idx:idx + 1]])
+        self.X_obs = np.vstack([self.X_obs, self.pool_X[idx : idx + 1]])
         self.y_obs = np.append(self.y_obs, observed_yield)
         self.queried.add(idx)
         self.iteration += 1
         return self.trajectory[-1]
 
     def _llm_mean_shift(
-        self, surrogate: SurrogateModel, mu: np.ndarray
-    ) -> tuple[np.ndarray, str | None]:
-        """Query the LLM, parse point+confidence, apply mean shift.
+        self,
+        surrogate: SurrogateModel,
+        mu: np.ndarray,
+        sigma: np.ndarray,
+    ) -> tuple[np.ndarray, str | None, dict[str, Any], np.ndarray | None]:
+        """Apply the Legacy point/confidence mean shift through the shared seam."""
+        del sigma  # Legacy Point/Hamming guidance is intentionally mean-only.
 
-        Returns (shifted_mu, thinking_text). On any LLM/parse failure, returns
-        (mu, None) so the iteration falls back to a pure-GP step (lambda=0).
-        """
-        if self._client is None or not self._client.is_configured():
-            return mu, None
-
-        # History = prior (train.csv) + queried trajectory, newest last.
         prior_hist = [
-            ({col: str(self.train_df[col].iloc[i]) for col in self.feature_cols},
-             float(self.train_df[self.target_col].iloc[i]))
+            (
+                {col: str(self.train_df[col].iloc[i]) for col in self.feature_cols},
+                float(self.train_df[self.target_col].iloc[i]),
+            )
             for i in range(len(self.train_df))
         ]
-        traj_hist = [(t["condition"], t["observed_yield"]) for t in self.trajectory]
-        history = prior_hist + traj_hist
-
-        system_prompt = build_system_prompt(self.meta)
-        user_prompt = build_user_prompt(self.meta, history, self.prev_thinking)
-        messages = [
-            {"role": "system", "content": system_prompt},
-            {"role": "user", "content": user_prompt},
+        traj_hist = [
+            (t["condition"], t["observed_yield"]) for t in self.trajectory
         ]
-        try:
-            result = self._client.chat(
-                messages,
-                max_tokens=self.llm_max_tokens,
-                extra_body={"reasoning_effort": self.reasoning_effort},
+        messages = [
+            {"role": "system", "content": build_system_prompt(self.meta)},
+            {
+                "role": "user",
+                "content": build_user_prompt(
+                    self.meta,
+                    prior_hist + traj_hist,
+                    self.prev_thinking,
+                ),
+            },
+        ]
+        result, call_reason = self._call_llm(messages)
+        if result is None:
+            return (
+                mu,
+                None,
+                self._guidance_diagnostics("fallback", call_reason),
+                None,
             )
-        except Exception as exc:  # noqa: BLE001 - LLM is best-effort
-            print(f"[LGBO] LLM call raised ({exc}); pure GP this iter.")
-            return mu, None
 
-        if getattr(result, "status", None) != "success" or not result.content:
-            reason = "EMPTY_CONTENT" if getattr(result, "status", None) == "success" else "STATUS_ERROR"
-            print(f"[LGBO] LLM {reason}: status={getattr(result,'status',None)} "
-                  f"error={getattr(result,'error',None)}; pure GP this iter.")
-            self._log_failure(reason, result)
-            return mu, None
-
-        parsed = parse_llm_response(result.content, self.feature_cols, self.options_json)
+        parsed = parse_llm_response(
+            result.content, self.feature_cols, self.options_json
+        )
         if parsed is None:
             print("[LGBO] LLM output unparseable or invalid; pure GP this iter.")
             self._log_failure("PARSE_FAIL", result)
-            return mu, None
+            return (
+                mu,
+                None,
+                self._guidance_diagnostics("fallback", "invalid_response"),
+                None,
+            )
 
-        _mode, values, confidence = parsed
+        mode, values, confidence = parsed
         proposed_cond = dict(zip(self.feature_cols, values))
         try:
             x_proposed = self.encoder.encode_rows([proposed_cond])[0]
         except Exception as exc:  # noqa: BLE001
             print(f"[LGBO] proposed point encode failed ({exc}); pure GP this iter.")
-            return mu, None
+            return (
+                mu,
+                None,
+                self._guidance_diagnostics("fallback", "encode_error"),
+                None,
+            )
 
         thinking = self._extract_thinking(result.content)
-        mu_shifted = self._mean_shift(
-            surrogate, mu, x_proposed, confidence
+        shifted = self._mean_shift(surrogate, mu, x_proposed, confidence)
+        return (
+            shifted,
+            thinking,
+            self._guidance_diagnostics("applied", mode),
+            None,
         )
-        return mu_shifted, thinking
+
+    def _call_llm(
+        self,
+        messages: list[dict[str, Any]],
+        *,
+        tools: list[dict[str, Any]] | None = None,
+        tool_choice: dict[str, Any] | None = None,
+    ) -> tuple[Any | None, str]:
+        """Perform one semantic call and normalize transport outcomes."""
+        if self._client is None or not self._client.is_configured():
+            return None, "llm_unavailable"
+
+        extra_body: dict[str, Any] = {"reasoning_effort": self.reasoning_effort}
+        if tools:
+            extra_body["tools"] = tools
+        if tool_choice:
+            extra_body["tool_choice"] = tool_choice
+
+        try:
+            result = self._client.chat(
+                messages,
+                max_tokens=self.llm_max_tokens,
+                extra_body=extra_body,
+                temperature=self.llm_temperature,
+            )
+        except Exception as exc:  # noqa: BLE001 - LLM is best-effort
+            print(f"[LGBO] LLM call raised ({exc}); pure GP this iter.")
+            return None, "llm_error"
+
+        status = getattr(result, "status", None)
+        if status != "success":
+            print(
+                f"[LGBO] LLM STATUS_ERROR: status={status} "
+                f"error={getattr(result, 'error', None)}; pure GP this iter."
+            )
+            self._log_failure("STATUS_ERROR", result)
+            return None, "llm_error"
+        if not getattr(result, "content", None) and not getattr(
+            result, "tool_calls", None
+        ):
+            print("[LGBO] LLM EMPTY_CONTENT; pure GP this iter.")
+            self._log_failure("EMPTY_CONTENT", result)
+            return None, "empty_response"
+        return result, "accepted"
 
     def _log_failure(self, reason: str, result: Any) -> None:
         """Append failed LLM responses to failure_log for post-hoc diagnosis."""

@@ -2,10 +2,12 @@ from __future__ import annotations
 
 import json
 
-import pytest
-
 from bo_core.benchmark.data_loader import UNIFIED_DATASET_ROOT
-from bo_core.optimization.lgbo_prompt import DatasetMeta, build_system_prompt, build_user_prompt
+from bo_core.optimization.lgbo_prompt import (
+    DatasetMeta,
+    build_system_prompt,
+    build_user_prompt,
+)
 
 
 def _load_options(dataset: str) -> dict:

@@ -18,7 +18,7 @@ back to a pure-GP step with lambda=0).
 from __future__ import annotations
 
 import json
-from collections.abc import Sequence
+from collections.abc import Mapping, Sequence
 
 ParsedProposal = tuple[str, list[str], float]
 
@@ -45,7 +45,7 @@ def _extract_last_json_object(text: str) -> dict | None:
 def parse_llm_response(
     text: str,
     feature_cols: Sequence[str],
-    options: dict[str, Sequence[str]],
+    options: Mapping[str, Sequence[str]],
 ) -> ParsedProposal | None:
     """Parse + validate the LLM Final Answer.
 
@@ -74,7 +74,7 @@ def parse_llm_response(
     confidence = max(0.0, min(1.0, float(c)))
 
     d = len(feature_cols)
-    option_sets = {col: set(str(v) for v in options.get(col, [])) for col in feature_cols}
+    option_sets = {col: {str(v) for v in options.get(col, [])} for col in feature_cols}
 
     if mode == "point":
         raw_values = obj.get("values")

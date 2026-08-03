@@ -1,15 +1,14 @@
-"""Benchmark runner for LGBO vs GPBO on the chemical-reaction datasets.
+"""Benchmark runner for LGBO variants and GPBO on reaction datasets.
 
-Drives N seeds x {buchwald_sub4, suzuki} x {lgbo, gpbo} using the LGBOEngine,
-computes the competition metrics (best_found, initial_round_found_best, t95,
-AUC_best_so_far), and writes per-run CSV + .pt trajectory files plus an
-aggregate summary.json. .pt output uses torch if available, else falls back to
-pickle (.pkl) with a warning.
+Drives N seeds x {buchwald_sub4, suzuki} x {lgbo, chem_lgbo, gpbo}, computes
+the competition metrics (best_found, initial_round_found_best, t95,
+AUC_best_so_far), and writes per-run CSV + .pt files plus aggregate summary.json.
+.pt output uses torch if available, else falls back to pickle (.pkl) with a warning.
 
 Usage:
     cd packages/bo-core
     python -m bo_core.benchmark.lgbo_runner \\
-        --datasets buchwald_sub4,suzuki --methods lgbo,gpbo \\
+        --datasets buchwald_sub4,suzuki --methods lgbo,chem_lgbo,gpbo \
         --seeds 100,200,300 --n_iters 40 --workers 4
 """
 
@@ -37,6 +36,7 @@ from typing import Any
 import numpy as np
 import pandas as pd
 
+from bo_core.optimization.chem_lgbo import ChemLGBOEngine
 from bo_core.optimization.lgbo import LGBOEngine
 from bo_core.optimization.surrogate import BackendName
 
@@ -115,17 +115,26 @@ def run_one(
     output_dir: Path,
     n_restarts: int = 10,
     backend: BackendName = "botorch",
+    chat_engine: str = "fxb-deepseek-v4-flash",
 ) -> dict[str, Any]:
     """Run one (dataset, method, seed) configuration; save CSV+.pt; return metrics."""
-    use_llm = method == "lgbo"
+    try:
+        engine_cls, use_llm = {
+            "gpbo": (LGBOEngine, False),
+            "lgbo": (LGBOEngine, True),
+            "chem_lgbo": (ChemLGBOEngine, True),
+        }[method]
+    except KeyError:
+        raise ValueError(f"Unknown method: {method}") from None
     save_dir = output_dir / backend / dataset / method
     save_dir.mkdir(parents=True, exist_ok=True)
-    engine = LGBOEngine(
+    engine = engine_cls(
         dataset=dataset,
         seed=seed,
         use_llm=use_llm,
         n_iters=n_iters,
         n_restarts=n_restarts,
+        chat_engine=chat_engine,
         failure_log=str(save_dir / f"seed_{seed}_llm_failures.log"),
         backend=backend,
     )
@@ -206,11 +215,13 @@ def _print_comparison(summary: dict[str, Any]) -> None:
 
 
 def main() -> None:
-    parser = argparse.ArgumentParser(description="LGBO vs GPBO benchmark on chemical datasets")
+    parser = argparse.ArgumentParser(
+        description="LGBO variants vs GPBO benchmark on chemical datasets"
+    )
     parser.add_argument("--datasets", default="buchwald_sub4,suzuki",
                         help="comma-separated dataset names (default: both)")
     parser.add_argument("--methods", default="lgbo,gpbo",
-                        help="comma-separated: lgbo,gpbo (default: both)")
+                        help="comma-separated: lgbo,chem_lgbo,gpbo (default: lgbo,gpbo)")
     parser.add_argument("--seeds", default="100,200,300",
                         help="comma-separated seeds (default: 100,200,300)")
     parser.add_argument("--n_iters", type=int, default=40)

@@ -16,7 +16,8 @@ dependencies = [
     "openpyxl",
     "torch",
     "gpytorch",
-    "botorch>=0.18,<0.19"
+    "botorch>=0.18,<0.19",
+    "olympus>=0.4",
 ]
 
 [project.optional-dependencies]

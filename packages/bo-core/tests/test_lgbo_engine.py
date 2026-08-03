@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import warnings
+from types import SimpleNamespace
 
 import numpy as np
 import pytest
@@ -240,3 +241,256 @@ def test_mean_shift_scales_linearly_with_confidence():
     shift_half = e._mean_shift(surrogate, mu, x_p, 0.5) - mu
     shift_full = e._mean_shift(surrogate, mu, x_p, 1.0) - mu
     assert np.allclose(shift_full, 2.0 * shift_half, rtol=1e-6, atol=1e-8)
+
+
+class _DeterministicSurrogate:
+    def __init__(self, mean: np.ndarray, std: np.ndarray) -> None:
+        self.mean = mean
+        self.std = std
+
+    @property
+    def is_fit(self) -> bool:
+        return True
+
+    def fit(self, _x: np.ndarray, _y: np.ndarray) -> _DeterministicSurrogate:
+        return self
+
+    def predict(self, x: np.ndarray) -> tuple[np.ndarray, np.ndarray]:
+        assert len(x) == len(self.mean)
+        return self.mean.copy(), self.std.copy()
+
+    def prior_cross_covariance(
+        self, xa: np.ndarray, xb: np.ndarray
+    ) -> np.ndarray:
+        return np.ones((len(xa), len(xb)))
+
+    def posterior_covariance(self, x: np.ndarray) -> np.ndarray:
+        return np.eye(len(x))
+
+    def posterior_cross_covariance(
+        self, xa: np.ndarray, xb: np.ndarray
+    ) -> np.ndarray:
+        return 1.0 + xa @ xb.T
+
+
+class _FixedClient:
+    def __init__(self, content: str, tool_calls: list[dict[str, object]] | None = None) -> None:
+        self.content = content
+        self.tool_calls = tool_calls
+        self.calls = 0
+        self.call_kwargs: dict[str, object] = {}
+
+    def is_configured(self) -> bool:
+        return True
+
+    def chat(
+        self,
+        messages: list[dict[str, object]],
+        max_tokens: int = 2048,
+        extra_body: dict[str, object] | None = None,
+        *,
+        temperature: float = 0.0,
+    ) -> SimpleNamespace:
+        self.calls += 1
+        self.call_kwargs = {
+            "messages": messages,
+            "max_tokens": max_tokens,
+            "extra_body": extra_body,
+            "temperature": temperature,
+        }
+        return SimpleNamespace(
+            status="success",
+            content=self.content,
+            tool_calls=self.tool_calls,
+            error=None,
+            usage={},
+        )
+
+
+def _deterministic_posterior(
+    engine: LGBOEngine,
+) -> tuple[_DeterministicSurrogate, np.ndarray, np.ndarray]:
+    best_f = float(np.max(engine.y_obs))
+    mean = np.linspace(best_f - 2.0, best_f + 2.0, engine.M)
+    std = np.linspace(0.4, 0.8, engine.M)
+    return _DeterministicSurrogate(mean, std), mean, std
+
+def test_call_llm_forwards_tools_and_configured_temperature() -> None:
+    engine = LGBOEngine(
+        "buchwald_sub4",
+        seed=100,
+        use_llm=False,
+        n_iters=0,
+        llm_temperature=0.3,
+    )
+    tool_calls = [
+        {
+            "id": "call-1",
+            "type": "function",
+            "function": {"name": "propose_sparse_subspace", "arguments": "{}"},
+        }
+    ]
+    client = _FixedClient("", tool_calls)
+    engine._client = client
+    tools = [{"type": "function", "function": {"name": "propose_sparse_subspace"}}]
+    tool_choice = {
+        "type": "function",
+        "function": {"name": "propose_sparse_subspace"},
+    }
+
+    result, reason = engine._call_llm(
+        [{"role": "user", "content": [{"type": "text", "text": "hi"}]}],
+        tools=tools,
+        tool_choice=tool_choice,
+    )
+
+    assert reason == "accepted"
+    assert result is not None
+    assert client.call_kwargs["temperature"] == 0.3
+    assert client.call_kwargs["extra_body"] == {
+        "reasoning_effort": "low",
+        "tools": tools,
+        "tool_choice": tool_choice,
+    }
+
+
+def test_call_llm_defaults_temperature_to_zero() -> None:
+    engine = LGBOEngine("buchwald_sub4", use_llm=False, n_iters=0)
+    client = _FixedClient("text")
+    engine._client = client
+
+    result, reason = engine._call_llm([{"role": "user", "content": "hi"}])
+
+    assert reason == "accepted"
+    assert result is not None
+    assert engine.llm_temperature == 0.0
+    assert client.call_kwargs["temperature"] == 0.0
+
+
+class _FailingSurrogate:
+    @property
+    def is_fit(self) -> bool:
+        return False
+
+    def fit(self, _x: np.ndarray, _y: np.ndarray) -> _FailingSurrogate:
+        raise RuntimeError("fit failed")
+
+    def predict(self, _x: np.ndarray) -> tuple[np.ndarray, np.ndarray]:
+        raise RuntimeError("predict failed")
+
+
+def test_legacy_step_preserves_point_hamming_shift_and_single_llm_call() -> None:
+    engine = LGBOEngine(
+        "buchwald_sub4",
+        seed=100,
+        use_llm=False,
+        n_iters=0,
+        K=3,
+    )
+    surrogate, mean, std = _deterministic_posterior(engine)
+    engine._surrogate = surrogate
+    values = [str(engine.test_df[field].iloc[0]) for field in engine.feature_cols]
+    confidence = 0.4
+    client = _FixedClient(
+        "Thinking: fixed legacy proposal\n"
+        + '{"mode":"point","values":'
+        + repr(values).replace("'", '"')
+        + f',"confidence":{confidence}}}'
+    )
+    engine.use_llm = True
+    engine._client = client
+
+    proposed = engine.encoder.encode_rows(
+        [dict(zip(engine.feature_cols, values))]
+    )[0]
+    hamming = len(engine.feature_cols) - engine.pool_X @ proposed
+    grid_indices = np.argpartition(hamming, engine.K - 1)[: engine.K]
+    grid = engine.pool_X[grid_indices]
+    weights = np.full(engine.K, 1.0 / engine.K)
+    denominator = float(weights @ np.eye(engine.K) @ weights)
+    strength = confidence / np.sqrt(denominator)
+    shifted = mean + strength * ((1.0 + engine.pool_X @ grid.T) @ weights)
+    expected_index = int(
+        np.argmax(engine._expected_improvement(shifted, std, float(np.max(engine.y_obs))))
+    )
+
+    row = engine.step()
+
+    assert client.calls == 1
+    assert row["query_index"] == expected_index
+    assert row["predicted_yield"] == pytest.approx(shifted[expected_index])
+    assert {
+        "step",
+        "query_index",
+        "condition",
+        "observed_yield",
+        "predicted_yield",
+    } <= row.keys()
+
+
+def test_gpbo_step_matches_direct_ei_and_records_disabled_guidance() -> None:
+    engine = LGBOEngine(
+        "buchwald_sub4",
+        seed=100,
+        use_llm=False,
+        n_iters=0,
+    )
+    surrogate, mean, std = _deterministic_posterior(engine)
+    engine._surrogate = surrogate
+    expected_index = int(
+        np.argmax(engine._expected_improvement(mean, std, float(np.max(engine.y_obs))))
+    )
+
+    row = engine.step()
+
+    assert row["query_index"] == expected_index
+    assert row["predicted_yield"] == pytest.approx(mean[expected_index])
+    assert row["guidance_status"] == "disabled"
+    assert row["guidance_reason"] == "use_llm_false"
+    assert row["selected_in_subspace"] is None
+
+
+def test_engine_health_tracks_success_and_surrogate_fallbacks() -> None:
+    successful = LGBOEngine(
+        "buchwald_sub4", seed=100, use_llm=False, n_iters=0
+    )
+    surrogate, _, _ = _deterministic_posterior(successful)
+    successful._surrogate = surrogate
+
+    successful.step()
+
+    assert successful.health == {
+        "gp_fit_fallbacks": 0,
+        "gp_predict_fallbacks": 0,
+        "acquisition_fallbacks": 0,
+        "nonfinite_acquisition_scores": 0,
+        "duplicate_queries": 0,
+    }
+
+    failing = LGBOEngine(
+        "buchwald_sub4", seed=100, use_llm=False, n_iters=0
+    )
+    failing._surrogate = _FailingSurrogate()
+
+    row = failing.step()
+
+    assert np.isfinite(row["predicted_yield"])
+    assert failing.health["gp_fit_fallbacks"] == 1
+    assert failing.health["gp_predict_fallbacks"] == 1
+
+
+def test_engine_health_tracks_nonfinite_acquisition_fallback() -> None:
+    engine = LGBOEngine(
+        "buchwald_sub4", seed=100, use_llm=False, n_iters=0
+    )
+    surrogate, _, _ = _deterministic_posterior(engine)
+    engine._surrogate = surrogate
+    engine._expected_improvement = lambda *_: np.full(engine.M, np.nan)
+
+    row = engine.step()
+
+    assert row["query_index"] == 0
+    assert engine.health["nonfinite_acquisition_scores"] == engine.M
+    assert engine.health["acquisition_fallbacks"] == 1
+    assert engine.health["duplicate_queries"] == 0
+

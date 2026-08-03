@@ -9,7 +9,13 @@ from typing import Any
 import requests
 
 PROJECT_ENV_PATH = Path(__file__).resolve().parents[3] / ".env"
-PROTECTED_CHAT_PAYLOAD_KEYS = {"model", "messages", "max_tokens", "stream"}
+PROTECTED_CHAT_PAYLOAD_KEYS = {
+    "model",
+    "messages",
+    "max_tokens",
+    "stream",
+    "temperature",
+}
 
 # Retry transient upstream rate-limiting / gateway errors so concurrent workers
 # stay under a provider's per-minute quota instead of failing the whole BO step.
@@ -30,6 +36,7 @@ class LlmCallResult:
     usage: dict[str, Any]
     error: str | None = None
     logprobs: dict[str, Any] | None = None
+    tool_calls: list[dict[str, Any]] | None = None
 
 
 class DeepSeekClient:
@@ -62,9 +69,11 @@ class DeepSeekClient:
 
     def chat(
         self,
-        messages: list[dict[str, str]],
+        messages: list[dict[str, Any]],
         max_tokens: int = 2048,
         extra_body: dict[str, Any] | None = None,
+        *,
+        temperature: float = 0.0,
     ) -> LlmCallResult:
         protected_overrides = PROTECTED_CHAT_PAYLOAD_KEYS & set(extra_body or {})
         if protected_overrides:
@@ -81,11 +90,11 @@ class DeepSeekClient:
                 error="DEEPSEEK_API_KEY is missing or still uses the placeholder.",
             )
 
-        payload = {
+        payload: dict[str, Any] = {
             "model": self.model,
             "messages": messages,
             "max_tokens": max_tokens,
-            "temperature": 0.0,
+            "temperature": temperature,
             "stream": False,
         }
         if extra_body:
@@ -145,7 +154,9 @@ class DeepSeekClient:
 
         payload = response.json()
         choice = payload.get("choices", [{}])[0]
-        content = choice.get("message", {}).get("content", "")
+        message = choice.get("message", {})
+        content = message.get("content") or ""
+        tool_calls = message.get("tool_calls") or None
         logprobs = choice.get("logprobs", None)
         return LlmCallResult(
             status="success",
@@ -154,6 +165,7 @@ class DeepSeekClient:
             content=content.strip(),
             usage=payload.get("usage", {}),
             logprobs=logprobs,
+            tool_calls=tool_calls,
         )
 
 
