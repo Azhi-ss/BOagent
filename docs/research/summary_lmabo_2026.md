@@ -67,5 +67,5 @@ LMABO 将连续/高维的数值状态压缩为简洁的文本表示：
 
 ## 结论与行动建议
 
-1. **将 LMABO 代码库引入 `references/lmabo`**（或者作为 `references/` 中的核心参考实现）。
+1. **将 LMABO 代码库引入 `references/03-llm-bo/lmabo`**（或者作为 `references/` 中的核心参考实现）。
 2. **在 `bo-core` 中探索可调 Acquisition 机制**：除了目前标准的 Expected Improvement (EI)，可在 `optimizer.py` 中拓展支持 UCB / LogEI 族，并利用 KnowledgeEngine 注入当前轮数与 Lengthscale 状态。
