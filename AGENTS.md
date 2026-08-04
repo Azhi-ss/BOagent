@@ -1,206 +1,136 @@
-# BOagent AI Developer Guide (AGENTS.md)
+# BOagent AI 开发者指南
 
-Welcome to the **BOagent** codebase! This guide serves as your primary context document to help you understand the architecture, domain concepts, local workflows, and development guidelines. Always consult this document before starting any implementation, refactoring, or testing task.
-
----
-
-## 1. Project Overview & Tech Stack
-
-BOagent is an LLM-driven Bayesian Optimization (BO) workflow orchestrator and scientific dashboard designed for perovskite solar cell material formulation optimization. It leverages high-context domain reasoning to augment traditional Gaussian Process (GP) statistical modeling.
-
-### Core Tech Stack
-*   **Backend**: FastAPI, Python 3.11+, Uvicorn, BoTorch/GPyTorch (primary GP backend), scikit-learn (optional compatibility backend), NumPy, Pandas, SciPy, pytest.
-*   **Frontend**: React 19, Vite 6, TypeScript 6, Recharts 3.8, Tailwind CSS 4.x.
-*   **AI/LLM**: DeepSeek API (`deepseek-v4-flash` / `deepseek-v4-pro`), Doubao Embedding API (Volcengine/Ark) utilizing the default `doubao-embedding-vision-250615` model (configured via `DOUBAO_EMBEDDING_MODEL`) for semantic memory retrieval.
-*   **Dataset Integration**: Uses unified dataset schema located in the local `datasets/` directory (e.g., `datasets/perovskite`, `datasets/battery`). No `.env` configuration is required.
+本文档是 BOagent 项目的主要上下文指引。在开始任何实现、重构或测试任务前，请先阅读本文档。
 
 ---
 
-## 2. Codebase Structure & Responsibilities
+## 1. 项目概述与技术栈
+
+BOagent 是一个由 LLM 驱动的贝叶斯优化（Bayesian Optimization, BO）工作流协调器，面向通用科学材料配方优化（如电池正极、化学反应产率等）。系统通过高上下文的领域推理来增强传统的高斯过程（Gaussian Process, GP）统计建模能力。
+
+### 核心技术栈
+
+| 层次 | 组件 |
+|---|---|
+| **算法核心** | Python 3.11+, BoTorch/GPyTorch（主GP后端）, scikit-learn（兼容后端）, NumPy, Pandas, SciPy, pytest |
+| **AI/LLM** | DeepSeek API（`deepseek-v4-flash` / `deepseek-v4-pro`），豆包 Embedding API（火山引擎/Ark），默认模型 `doubao-embedding-vision-250615`（通过 `DOUBAO_EMBEDDING_MODEL` 配置） |
+| **数据集** | 本地 `datasets/` 目录下的统一 schema（如 `datasets/battery`），无需 `.env` 额外配置 |
+
+---
+
+## 2. 代码结构与职责
 
 ```
 BOagent/
-├── apps/
-│   ├── api/                       # FastAPI Backend Service
-│   │   ├── api.py                 # FastAPI server, SSE stream controller, rest endpoints
-│   │   ├── conftest.py            # pytest path configuration
-│   │   ├── pyproject.toml         # Python dependencies (incl. bo-core workspace link)
-│   │   └── tests/                 # API automated tests
-│   └── web/                       # React Frontend Application
-│       ├── src/
-│       │   ├── App.tsx            # Root view container & mode manager
-│       │   ├── BenchMode.tsx      # Benchmark execution & dual-curve visualization panel
-│       │   ├── OperationalMode.tsx # Human-in-the-loop experimental suggestion interface
-│       │   ├── types.ts           # Global TypeScript declarations
-│       │   ├── components/        # UI elements (ConvergenceChart, LandscapeCanvas, etc.)
-│       │   └── lib/api.ts         # Typed fetch/SSE client configurations
-│       ├── tests/                 # Playwright E2E functional test cases
-│       ├── package.json           # Frontend npm dependencies
-│       └── vite.config.ts         # Vite compile settings (with Tailwind 4.x integration)
 ├── packages/
-│   └── bo-core/                   # Algorithm core package (pip install -e)
+│   └── bo-core/                   # 算法核心包（pip install -e 安装）
 │       ├── bo_core/
-│       │   ├── optimization/      # Core Bayesian Optimization Engine
-│       │   │   ├── optimizer.py   # BayesianOptimizer orchestrator, GP training, acquisition scoring
-│       │   │   ├── knowledge.py   # KnowledgeEngine, semiconductor physics rules & prompting
-│       │   │   ├── memory.py      # VectorMemory, Doubao Ark embedding and numpy retrieval
-│       │   │   └── space.py       # SearchSpace definitions (Continuous & Discrete)
-│       │   ├── benchmark/         # Performance Evaluation Engine
-│       │   │   ├── data_loader.py # Dataset loading & deterministic seed-based splitting
-│       │   │   ├── runner.py      # Single seed benchmark coordinator
-│       │   │   ├── comparison.py  # Multi-seed parallel benchmark comparison
-│       │   │   └── bo_step.py     # Step-by-step benchmark runner bridging BO components
-│       │   ├── llm_client.py      # Unified DeepSeek API client wrapper
-│       │   └── pvk_llm_compat.py  # Legacy patches bridging pandas, langchain, OpenAI
-│       ├── tests/                 # Core algorithm automated tests
-│       ├── benchmark_agent_team.py # Multi-agent benchmark coordinator
-│       ├── run_prompt_ablation.py # A/B/C prompt variant benchmark experiment
-│       └── pyproject.toml         # bo-core package definition & dependencies
-├── scripts/                       # Orchestration & Evaluation Scripts
-│   ├── smart_gemini.sh           # Gemini CLI Smart Routing runner with fallback
-│   ├── run_parallel_subagents.sh # Multi-agent concurrent analysis coordinator
-│   └── grade_skills.py           # Custom AI skill card grading evaluation runner
-├── evals/                         # AI Skill Evaluation Suites
-│   ├── evals.json                # JSON-configured test cases and assertions
-│   └── grading.json              # Output evaluation execution results
-└── AGENTS.md                      # This guide
+│       │   ├── optimization/      # 贝叶斯优化引擎
+│       │   │   ├── optimizer.py   # BayesianOptimizer 主协调器，GP 训练与采集函数评分
+│       │   │   ├── knowledge.py   # KnowledgeEngine，领域规则动态提示构建
+│       │   │   ├── memory.py      # VectorMemory，豆包 Embedding 与 numpy 向量检索
+│       │   │   └── space.py       # SearchSpace 定义（连续型与离散型）
+│       │   ├── benchmark/         # 性能评估引擎
+│       │   │   ├── data_loader.py # 数据集加载与确定性种子分割
+│       │   │   ├── runner.py      # 单种子基准测试协调器
+│       │   │   ├── comparison.py  # 多种子并行基准对比
+│       │   │   └── bo_step.py     # 分步基准测试，桥接各 BO 组件
+│       │   ├── llm_client.py      # 统一的 DeepSeek API 客户端封装
+│       │   └── pvk_llm_compat.py  # 历史遗留兼容补丁（勿重构，见第5节约束）
+│       ├── tests/                 # 核心算法自动化测试
+│       ├── benchmark_agent_team.py # 多智能体基准协调器
+│       ├── run_prompt_ablation.py # A/B/C 提示词变体消融实验
+│       └── pyproject.toml         # bo-core 包定义与依赖
+├── scripts/                       # 编排与评估脚本
+└── AGENTS.md                      # 本文档
 ```
 
 ---
 
-## 3. Core Physics-Informed Domain Rules
+## 3. 核心领域知识规则
 
-The optimizer is not a purely statistical black-box model. It incorporates explicit device physics heuristics during the suggestion phase.
+优化器并非纯粹的统计黑箱，在候选点推荐阶段会注入显式的物理/化学领域启发式规则。
 
-### Semiconductor Physics Formulas
-*   **Conduction Band Offset (CBO)**: $CBO = \chi_{PVK} - \chi_{ETL}$. Ideal range: $[-0.1, 0.3]$ eV.
-    *   *Constraint*: A negative CBO (cliff) results in high $V_{oc}$ loss due to interface recombination. A large positive CBO (spike) blocks electron extraction, hurting $J_{sc}$.
-*   **Valence Band Offset (VBO)**: $VBO = (\chi_{HTL} + E_{g,HTL}) - \chi_{PVK}$. Ideal range: $[1.7, 2.0]$ eV.
-    *   *Constraint*: VBO below $1.7$ eV causes $V_{oc}$ loss; above $2.0$ eV blocks hole extraction.
-*   **Electron Blocking**: HTL LUMO ($\chi_{HTL}$) must be higher than PVK LUMO ($\chi_{PVK}$) by at least $0.5$ eV to effectively suppress electron flow to the anode.
-*   **Recombination Trap Density ($Nt$)**: Trap density at interfaces ($N_{t,\text{PVK/ETL}}$ or $N_{t,\text{HTL/PVK}}$) must be minimized. Logarithmic reduction in $Nt$ yields linear gains in open-circuit voltage ($V_{oc}$).
-*   **Doping Concentration ($Na, Nd$) & Built-in Potential ($V_{bi}$)**: Active acceptor doping in HTL ($Na_{HTL}$) and donor doping in ETL ($Nd_{ETL}$) improves charge separation built-in potential ($V_{bi}$).
-    *   *Constraint*: Active doping must be strictly capped below $10^{19} \text{ cm}^{-3}$ to prevent tunneling-assisted recombination and interface leakages.
-*   **Shunt Resistance (Rsh)**: Minimize counter-doping concentration in layer interfaces (e.g., $Nd_{HTL}$, $Na_{ETL}$) to avoid parasitic shunt paths that reduce Fill Factor (FF).
+### 领域知识动态集成
 
-### Hybrid LLM-GP Selection Pipeline
-The optimizer combines GP surrogate scores with LLM viability judgments via a hybrid scoring formula:
-1.  GP produces a Top-K candidate pool (default K=20) ranked by acquisition score.
-2.  Each candidate is queried via a "Yes/No" viability prompt; the log-probability of "Yes" is extracted.
-3.  **Hybrid Score**: `GP_Score + (γ × std(GP_Scores)) × log_prob(Yes)`, where `γ` (default 0.1) controls LLM influence.
-4.  The LLM can alternatively generate a Python `score_candidate(c: dict) -> float` heuristic function, executed in a sandboxed `exec()` to rank large pools (10k+ points) before GP scoring.
+系统根据当前任务的数据集（如电池正极、化学反应产率），将任务特征列映射到对应的领域约束规则，并动态注入 LLM 上下文。
+- `knowledge.py` 中的 `build_prompt` 负责此映射，**新增参数时修改此处，不要另起炉灶**。
+
+### 混合 LLM-GP 候选筛选流程
+
+1. GP 代理模型从搜索空间中按采集函数分值产出 Top-K 候选池（默认 K=20）。
+2. 对每个候选点发出「Yes/No」可行性提示词，提取「Yes」的对数概率。
+3. **混合评分**: `GP_Score + (γ × std(GP_Scores)) × log_prob(Yes)`，其中 γ（默认 0.1）控制 LLM 影响权重。
+4. LLM 也可生成 Python `score_candidate(c: dict) -> float` 启发式函数，在沙箱 `exec()` 中运行，用于对超大候选池（10k+）进行 GP 评分前的预筛选。
 
 ---
 
-## 4. Key Developer Workflows & Commands
+## 4. 开发工作流与常用命令
 
-### 4.1 Local Development Commands
+### 算法核心测试（bo-core）
 
-#### Backend Service (FastAPI on Port 8000)
-> [!NOTE]
-> The backend server must be started inside the `apps/api/` directory to resolve relative imports correctly.
-```bash
-cd apps/api
-uv run uvicorn api:app --reload --port 8000
-```
+> 我们对算法逻辑强制执行 TDD。新增逻辑**必须**使用 `--cov` 覆盖率检查。
+> 覆盖率要求：整体 ≥ 80%，`bo_core/optimization/` 模块 ≥ 90%。
 
-#### Frontend Web Application (Vite on Port 5173)
-```bash
-cd apps/web
-npm install
-npm run dev
-```
-
-### 4.2 Automated Testing Commands
-
-#### API Backend Unit/Integration Tests
-```bash
-cd apps/api
-uv run pytest
-```
-
-#### Algorithm Core Unit Tests (`bo-core`)
-*Note: We enforce TDD for algorithm logic. You MUST use `--cov` to ensure your new logic is covered. Minimum coverage requirement is 80% overall, and ≥90% for `bo_core/optimization/`.*
 ```bash
 cd packages/bo-core
 uv run pytest --cov=bo_core --cov-report=term-missing
 ```
 
-#### ML Data & Algorithm Inspection Tools
-*   **Linting & Static Type Checks**: `uv run ruff check .` and `uv run mypy packages/bo-core/bo_core`
-*   **Data Validation (`pandera`)**: Schema verification for search spaces & dataset DataFrames.
-*   **Property-Based Testing (`hypothesis`)**: Boundary and matrix stability verification for GP operations.
-*   **ML Health & Data Drift (`evidently`)**: Model drift detection and automated data quality checks for surrogate models.
+### 代码质量检查
 
-#### Frontend Playwright E2E Tests
-*Note: Make sure the backend server is running on port 8000 before executing E2E tests.*
 ```bash
-cd apps/web
-npm run test:e2e             # Headless E2E (Playwright)
-npm run test:e2e:chromium    # Run E2E tests exclusively on Chromium
-npx playwright test --ui     # Interactive UI Mode
+uv run ruff check .                       # Lint
+uv run mypy packages/bo-core/bo_core      # 静态类型检查
 ```
 
+### 其他检验工具
+
+- **数据验证（pandera）**：搜索空间与数据集 DataFrame 的 schema 校验。
+- **属性测试（hypothesis）**：GP 操作的边界与矩阵稳定性验证。
+- **ML 漂移检测（evidently）**：代理模型数据漂移与质量自动检查。
 
 ---
 
-## 5. Architectural Red Lines & Constraints
+## 5. 架构红线与约束
 
 > [!WARNING]
-> **No Direct LLM Scoring**: Never let the LLM score or select candidate formulations from the raw search space. The search space must always be pre-filtered using the Gaussian Process surrogate model to produce a Top-K pool (typically top 20). The LLM's role is strictly to refine these top candidates using physical reasoning.
-> Failure to follow this rule will blow the token budget and ruin convergence guarantees.
+> **禁止直接用 LLM 评分**：严禁让 LLM 对原始搜索空间中的候选点直接打分或筛选。搜索空间必须先经 GP 代理模型过滤为 Top-K 候选池（通常 top 20），LLM 的职责仅是在此基础上结合领域物理推理做进一步精化。违反此规则将导致 token 预算爆炸，并破坏收敛保证。
 
 > [!IMPORTANT]
-> **Do Not Refactor `pvk_llm_compat.py`**: This file contains critical monkey-patches bridging legacy pandas, langchain, and OpenAI schemas used by the original `PVK-LLM` package. It fixes:
-> - **Pandas**: Restores legacy integer-positional indexing (`Series.__getitem__` falling back to `iloc` if KeyErrors occur).
-> - **Langchain**: Exposes `FewShotPromptTemplate` and `PromptTemplate` at the top level namespace if they were moved to `langchain_core`.
-> - **OpenAI/DeepSeek**: Intercepts `AsyncCompletions.create` for models starting with `deepseek`, forcing `n=1`, `max_tokens >= 512`, and setting thinking disabled to prevent warnings.
-> Removing or modifying these patches without exhaustive testing will break the core `PVKBO` integration.
+> **禁止重构 `pvk_llm_compat.py`**：该文件包含关键的历史兼容补丁，修复了 pandas、langchain、OpenAI schema 的接口变化。未经充分测试，擅自修改会导致核心集成崩溃。
 
 > [!CAUTION]
-> **Local RNG State**: Always use locally seeded instances of `np.random.RandomState` in data loaders and optimization loops. Avoid using the global `np.random` to prevent random state leakage across parallel benchmark threads.
+> **本地 RNG 隔离**：在数据加载器和优化循环中，始终使用本地种子化的 `np.random.RandomState` 实例。禁止使用全局 `np.random`，以防止并行基准测试线程间的随机状态污染。
 
 > [!CAUTION]
-> **Sensitive Files Protection**: Do not arbitrarily modify `**/.env*` files or `**/*_results.json` files without explicit user confirmation.
+> **敏感文件保护**：未经用户明确确认，不得随意修改 `**/.env*` 或 `**/*_results.json` 文件。
 
 ---
 
-## 6. Existing Capabilities & Reuse Guide
+## 6. 现有能力与复用指引
 
-Before writing new utility helpers or components, check if they already exist:
-*   **API SSE client**: `apps/web/src/lib/api.ts` contains `streamComparison` which implements POST-based SSE stream chunk decoding. SSE event types: `meta`, `seed_start`, `step_start`, `aggregate`, `done`. Use this for any long-running API streaming.
-*   **Tailwind 4.x Theme & Fonts**: All custom colors are defined in `apps/web/src/index.css` via the `@theme` block. Key palettes: `--color-graphite-*` (slate/dark), `--color-signal-*` (emerald/LLMBO), `--color-amber-*` (Traditional BO). Typography: `Space Grotesk` (display), `Plus Jakarta Sans` (body), `JetBrains Mono` (code). Custom animations: `pulse-ring` (live status), `value-flash` (data updates). **Avoid hardcoded hex values** — use CSS variables.
-*   **Physics Formulas Prompt Builder**: `packages/bo-core/bo_core/optimization/knowledge.py` maps task feature columns to formulas and hints. If you add new parameters, add them to `build_prompt` mapping instead of copying the builder logic.
-*   **Insight Persistence & RAG**: `packages/bo-core/bo_core/optimization/memory.py` handles writing insights to `insights.jsonl` and calculating embeddings using Doubao API. If the embedding client is missing keys or unreachable, it falls back to recency-based retrieval (returning the last `top_k` insights) instead of raising an error.
-*   **Flat API Response Helpers**: Use `success(data)` and `error_response(msg, code)` in `api.py` for consistent response shapes. Avoid deeply nested response structures.
-*   **Declarative Color Maps**: Frontend components use lookup maps (e.g., `typeColorMap` in `LandscapeCanvas.tsx`) instead of nested ternaries for conditional styling.
+动手写新工具函数前，先确认这些是否已经存在：
+
+- **领域知识提示构建器**：`packages/bo-core/bo_core/optimization/knowledge.py` — `build_prompt` 已将任务特征列映射到领域公式与提示。新增参数时，在此处添加映射，勿复制构建逻辑。
+- **洞察持久化与 RAG**：`packages/bo-core/bo_core/optimization/memory.py` — 负责将实验洞察写入 `insights.jsonl` 并通过豆包 API 计算向量。embedding 客户端不可用时，自动退回到按时间倒序的 `top_k` 条目，不抛出异常。
 
 ---
 
-## 7. Change Verification Checklist
+## 7. 完成任务前的验证清单
 
-Before marking a task as complete, execute this checklist:
-- [ ] **Backend Test Verification**: Run `python -m pytest` inside `apps/api/` to verify all unit/integration tests pass.
-- [ ] **Frontend E2E Verification**: Run `npm run test:e2e:chromium` inside `apps/web/` to confirm React renders. Ensure Playwright locators use `:visible` filters (e.g., `page.locator("button:has-text('Run'):visible")`) to avoid ambiguous locator failures due to co-rendering of modes via display toggles.
-- [ ] **E2E Timeout Settings**: Ensure testing specs override defaults using `test.setTimeout(180000)` or `240000` for benchmark specs to prevent timeouts during long-running LLM analysis.
-- [ ] **Typescript Compiler Build**: Ensure `npm run build` runs clean without type compiler warnings.
-- [ ] **Security Boundaries**: Validate that `output_dir` prevents path traversal (`..` and absolute paths validation). No API secrets should be hardcoded (always load via environment variables).
-- [ ] **Scientific Memory Fallback**: Confirm that VectorMemory retrieves insights via recency-based fallback safely without throwing exceptions when `ARK_API_KEY` is missing or unreachable.
-- [ ] **UI Animation Restraints**: Ensure Recharts Line elements in `ConvergenceChart.tsx` set `isAnimationActive={false}` to avoid bouncing glitches during SSE streaming.
-- [ ] **Local RNG Isolation**: Verify no global `np.random` usage in optimization or benchmark paths; all randomness via locally seeded `RandomState`.
+- [ ] **算法测试**：在 `packages/bo-core` 目录下运行 `uv run pytest`，确认所有核心测试通过。
+- [ ] **安全边界**：确认 `output_dir` 防止路径穿越（`..` 和绝对路径校验）。API 密钥不得硬编码，始终从环境变量加载。
+- [ ] **记忆回退验证**：确认 VectorMemory 在 `ARK_API_KEY` 缺失或不可达时，能安全退回到基于时间序的检索，不抛出异常。
+- [ ] **RNG 隔离**：验证优化与基准测试路径中无全局 `np.random` 调用，所有随机性均通过本地种子化的 `RandomState` 产生。
 
 ---
 
-## 8. Authoritative Specifications & Reference Knowledge (`docs/`)
+## 8. 参考文档（`docs/`）
 
-The `docs/` directory serves as the repository's single source of truth for external API contracts, hardware adaptation guidelines, real-time framework specifications, and defensive programming rules.
+`docs/` 目录是外部 API 合约、库使用规范与防御性编程规则的唯一权威来源。
 
-Before implementing features or modifying core modules, agents **MUST** consult the corresponding specification documents under `docs/`:
-
-*   **API & Framework Specifications (`docs/hardware/`, `docs/api_specs/`, etc.)**: Real-time Context7-retrieved API contracts, constructor signatures, parameter tables, and version-locked library usage rules.
-*   **Hardware Adaptation & Performance Guides**: Workload mapping across compute units (CPU, GPU, NPU), thread allocation, vectorization flags, and hardware-specific runtime configurations.
-*   **Defensive Rules & Failure Modes**: Documented edge cases, numerical stability guards, precision requirements, and thread-safety invariants.
+实现功能或修改核心模块前，**必须**查阅 `docs/` 下对应的规范文档。
 
 > [!NOTE]
-> **Extensibility Protocol**: When fetching or adding new API specs, hardware benchmarks, or domain research, save the normalized Markdown files under `docs/<category>/` and register them in the category index (`docs/<category>/README.md`). Reference these documents in task planning artifacts before writing code.
-
+> **扩展协议**：获取或添加新的 API 规范、领域研究结果时，将标准化的 Markdown 文件保存在 `docs/<category>/` 下，并在类目索引（`docs/<category>/README.md`）中注册。在编写代码前，在任务规划文档中引用这些参考。
