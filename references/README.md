@@ -41,20 +41,23 @@
 | [`dragonfly`](01-bo-frameworks/dragonfly/) | 连续、离散及多保真黑箱优化框架 | general | GP, multi-fidelity | P2 | external |
 | [`SMAC3`](01-bo-frameworks/SMAC3/) | 以随机森林为主的 SMBO/HPO 框架 | general | random-forest, Hyperband, HPO | P2 | external |
 
-## 二、BO 算法与代理模型（5）
+## 二、BO 算法与代理模型（6）
 
 | 仓库路径 | 核心定位 | domain | mechanism | priority | relation |
 |---|---|---|---|---|---|
+| [`gauche`](02-bo-algorithms/gauche/) | 面向分子、反应和蛋白质的专用 GP 核与偏好 BO 库 | chemistry, molecules | GP, molecular-kernel, preference-learning | **P0** | external |
 | [`ALAS`](02-bo-algorithms/ALAS/) | 可学习 α-stable 谱核，适配平滑与尖锐目标景观 | general | GP, kernel-learning | P2 | external |
 | [`deep_kernel_learning`](02-bo-algorithms/deep_kernel_learning/) | 神经网络特征映射与 GP 核结合的经典 DKL | general | deep-kernel, GP | P3 | external |
 | [`kernel_manifold`](02-bo-algorithms/kernel_manifold/) | 将组合核映射到连续流形，并在核架构空间中执行 BO | general | kernel-search, manifold, GP | P2 | external |
 | [`gryffin`](02-bo-algorithms/gryffin/) | 面向类别变量的连续松弛与核密度优化方法 | chemistry | categorical, KDE | **P1** | external |
 | [`phoenics`](02-bo-algorithms/phoenics/) | 面向连续空间的核回归式快速优化器 | chemistry | kernel-regression, continuous | P3 | external |
 
-## 三、LLM + BO（10）
+## 三、LLM + BO（12）
 
 | 仓库路径 | 核心定位 | domain | mechanism | priority | relation |
 |---|---|---|---|---|---|
+| [`lapeft-bayesopt`](03-llm-bo/lapeft-bayesopt/) | 将 LLM embedding 或 LoRA+Laplace surrogate 接入离散 BO，并保留预测不确定性 | molecules, photovoltaics | LLM-feature, LoRA, Laplace, uncertainty | **P0** | external |
+| [`llm-bayesopt-exps`](03-llm-bo/llm-bayesopt-exps/) | ICML 2024 Sober Look 的完整实验、数据与 GP/BO-LIFT/LLM surrogate 基线 | molecules, photovoltaics | benchmark, LLM-surrogate, GP, multi-objective | **P1** | external |
 | [`CALIPER`](03-llm-bo/CALIPER/) | 证据门控的目标级 LLM 残差先验层，用于离散多目标 BO | molecules | LLM-prior, evidence-gating, MOBO | **P1** | external |
 | [`LABO`](03-llm-bo/LABO/) | 将 LLM 作为低保真 oracle，以残差 GP 决定真实实验投入 | scientific | LLM-oracle, multi-fidelity, residual-GP | **P1** | external |
 | [`LLAMBO`](03-llm-bo/LLAMBO/) | LLM 执行 warm start、候选采样和生成式代理建模 | general | LLM-surrogate, warm-start, proposal | **P1** | external |
@@ -66,13 +69,17 @@
 | [`multi_agent_acquisition_2603.28959`](03-llm-bo/multi_agent_acquisition_2603.28959/) | 分离策略 Agent 与候选生成 Agent，显式控制探索/利用 | general | multi-agent, acquisition-policy, candidate-generation | P2 | external |
 | [`Unleashing LLMs in Bayesian Optimization`](03-llm-bo/Unleashing%20LLMs%20in%20Bayesian%20Optimization/) | LGBO 通过区域偏好和 GP 均值移位注入 LLM 指导 | scientific | LLM-prior, region-preference, mean-shift | **P0** | external |
 
-## 四、化学/材料与 SDL（6）
+## 四、化学/材料与 SDL（10）
 
 | 仓库路径 | 核心定位 | domain | mechanism | priority | relation |
 |---|---|---|---|---|---|
+| [`SL-PerovskiteOpt`](04-chemistry-materials-sdl/SL-PerovskiteOpt/) | 钙钛矿制造过程的知识约束 batch BO 与真实实验基线 | perovskite, materials | knowledge-constraint, batch-BO, experimental-data | **P0** | external |
 | [`ChemBOMAS`](04-chemistry-materials-sdl/ChemBOMAS/) | 基于 Google ADK 与 BayBE 的化学实验多 Agent 闭环系统 | chemistry | multi-agent, BayBE, constraints, closed-loop | **P0** | external |
 | [`currybo`](04-chemistry-materials-sdl/currybo/) | 跨底物反应条件优化，包含化学数据集与 Benchmark | chemistry | BoTorch, transfer, benchmark | **P0** | external |
+| [`Perovskite-R1`](04-chemistry-materials-sdl/Perovskite-R1/) | 钙钛矿领域推理模型、数据处理、污染检测与专家评测记录 | perovskite, materials | domain-LLM, scientific-CoT, evaluation | **P0** | external |
 | [`atlas`](04-chemistry-materials-sdl/atlas/) | 面向自驱动实验室的混合变量、多目标、约束优化“大脑” | chemistry, SDL | mixed-space, constraints, MOBO | **P1** | external |
+| [`summit`](04-chemistry-materials-sdl/summit/) | 化学反应优化策略、机理/数据驱动模拟器与闭环 Runner | chemistry, SDL | reaction-optimization, benchmark, closed-loop | **P1** | external |
+| [`materials-bo-benchmarking`](04-chemistry-materials-sdl/materials-bo-benchmarking/) | 跨五类实验材料体系比较 GP/RF 与采集函数，含钙钛矿数据 | materials, perovskite | benchmark, GP, random-forest, active-learning | **P1** | external |
 | [`olympus`](04-chemistry-materials-sdl/olympus/) | 化学优化策略与标准化数据集 Benchmark 平台 | chemistry | benchmark, datasets | P2 | external |
 | [`PVK-LLM`](04-chemistry-materials-sdl/PVK-LLM/) | 面向钙钛矿能带、缺陷和掺杂设计的 LLM/BO 应用 | perovskite, materials | LLM, BO, domain-model | P4 | external |
 | [`Text-to-BatteryRecipe`](04-chemistry-materials-sdl/Text-to-BatteryRecipe/) | 从文本与材料知识生成并优化电池配方 | battery, materials | LLM, recipe-generation, BO | P4 | external |
@@ -98,13 +105,15 @@
 |---|---|
 | 理解 BOagent 当前数值优化底座 | [`botorch`](01-bo-frameworks/botorch/) → [`Ax`](01-bo-frameworks/Ax/) → [`BayesianOptimization`](01-bo-frameworks/BayesianOptimization/) |
 | 研究 LLM 如何安全注入 BO | [`LGBO`](03-llm-bo/Unleashing%20LLMs%20in%20Bayesian%20Optimization/) → [`CALIPER`](03-llm-bo/CALIPER/) → [`LABO`](03-llm-bo/LABO/) |
+| 研究 LLM surrogate 与分子表征 | [`lapeft-bayesopt`](03-llm-bo/lapeft-bayesopt/) → [`llm-bayesopt-exps`](03-llm-bo/llm-bayesopt-exps/) → [`gauche`](02-bo-algorithms/gauche/) |
 | 研究 LLM 如何调整 BO 策略 | [`lmabo`](03-llm-bo/lmabo/) → [`Reasoning-BO`](03-llm-bo/Reasoning-BO/) → [`multi-agent acquisition`](03-llm-bo/multi_agent_acquisition_2603.28959/) |
-| 研究化学实验优化工作流 | [`currybo`](04-chemistry-materials-sdl/currybo/) → [`atlas`](04-chemistry-materials-sdl/atlas/) → [`ChemBOMAS`](04-chemistry-materials-sdl/ChemBOMAS/) → [`olympus`](04-chemistry-materials-sdl/olympus/) |
+| 研究钙钛矿知识与传统约束基线 | [`SL-PerovskiteOpt`](04-chemistry-materials-sdl/SL-PerovskiteOpt/) → [`materials-bo-benchmarking`](04-chemistry-materials-sdl/materials-bo-benchmarking/) → [`Perovskite-R1`](04-chemistry-materials-sdl/Perovskite-R1/) → [`PVK-LLM`](04-chemistry-materials-sdl/PVK-LLM/) |
+| 研究化学实验优化工作流 | [`currybo`](04-chemistry-materials-sdl/currybo/) → [`atlas`](04-chemistry-materials-sdl/atlas/) → [`ChemBOMAS`](04-chemistry-materials-sdl/ChemBOMAS/) → [`summit`](04-chemistry-materials-sdl/summit/) → [`olympus`](04-chemistry-materials-sdl/olympus/) |
 | 研究可演化的自主科研闭环 | [`PiEvo`](05-autonomous-science/PiEvo/) → [`closed-loop experiments`](05-autonomous-science/llm-closed-loop-experiments/) → [`AI-Scientist`](05-autonomous-science/AI-Scientist/) |
 
 ## 完整性
 
-- 已物理迁移仓库：**30**
+- 已物理迁移仓库：**38**
 - 一级分类目录：**6**（其中 `06-boagent-history/` 当前为空）
 - 每个仓库只存在于一个主分类目录，并保留跨领域标签
-- 其中 **24** 个仓库保留各自的嵌套 `.git` 元数据，移动目录不会改变其独立仓库身份
+- 其中 **32** 个仓库保留各自的嵌套 `.git` 元数据，移动目录不会改变其独立仓库身份

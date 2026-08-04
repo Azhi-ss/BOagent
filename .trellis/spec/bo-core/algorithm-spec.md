@@ -321,11 +321,11 @@ class ChemLGBOEngine(LGBOEngine):
 - `guidance_artifacts` 必须记录 `react_retried`, `react_first_reason`, `llm_attempts`, `tool_call_id`；`raw_response` 保存实际解析的 tool arguments。实验 provenance/model config 必须记录 Chem 实际 `temperature=0.2`, `response_mode="tool_call_react"`, `max_react_retries=1`；普通 LGBO 和其他 client 调用默认温度仍为 `0.0`。
 - 继续旧 artifact 时，只有 records 为空才可补齐缺失的 Tool Call 协议字段；已有 records 的 plain-JSON/`temperature=0.0` provenance 必须按不匹配拒绝，避免混合协议 resume。
 - `build_subspace_mask` 对每个指定字段做候选行 membership 的逻辑 AND；省略字段不限制候选。联合非法组合、空交集、仅命中已查询点和覆盖全部剩余池都必须走可观测 fallback，不得硬过滤或伪造候选。
-- `masked_mean_shift` 精确实现
+- `masked_mean_shift` 是 Chem-LGBO v1 当前实验变体的固定奖励实现，不等同于论文基于 posterior covariance 的 LGBO Proposition 1：
   \[
   \mu'_i = \begin{cases}\mu_i + \sigma_i,& mask_i\\\mu_i,&\text{otherwise}\end{cases}
   \]
-  并保持输入 `sigma` 不变；向量必须是一维、finite、等长，mask 必须是一维布尔数组。
+  并保持输入 `sigma` 不变；向量必须是一维、finite、等长，mask 必须是一维布尔数组。任何结论必须归因于“categorical subspace + fixed one-sigma bonus”组合，不得外推为整个 LGBO 无效。
 - Chem guidance 只改变 mean。最终 EI 在完整候选池上计算，并排除 `queried`；有效 guidance 不能保证最终 query 落在 mask 内。
 - `generate_counterfactual_indices` 只接收 feature、posterior、mask 和 EI 所需数值，不得读取 `pool_yield` 或任何 oracle。使用局部 `RandomState(seed * 1000 + iteration)`，最多生成 100 个索引，索引来自未查询池且同一 seed 可重现。
 - 每个 Chem iteration 必须保留紧凑 trajectory diagnostics；原始响应、parser reason 和反事实索引只进入 experiment-side `guidance_artifacts`，不得进入 competition `.pt` payload。
@@ -428,3 +428,91 @@ subspace = parse_subspace_response(raw, feature_cols, options)
 若首轮失败，只有存在唯一目标调用及其 ID 时才追加匹配的 assistant/tool 消息；否则追加局部 user feedback。最多纠错一次。
 
 LLM 只产生可验证字段约束；oracle 只在真实 query 后记录 observed yield；最终选点仍由 full-pool GP/EI 完成。
+
+## 9. 场景：Chem-LGBO 离线奖励强度重放
+
+### 1. Scope / Trigger
+
+- 触发条件：已有 Chem-LGBO prompt-ablation artifact，需要在不重新调用 LLM、不改变 posterior 和已保存 subspace 的前提下比较奖励强度。
+- 目标：把 guidance 方向与奖励尺度拆开，回答固定 `+1σ` 是否过强；这不是新的在线算法或论文 covariance mean-shift 实现。
+
+### 2. Signatures
+
+```python
+def replay_beta_sweep(
+    state_source_path: Path,
+    guidance_source_path: Path,
+    output_path: Path,
+    *,
+    betas: Sequence[float] = (0.0, 0.1, 0.25, 0.5, 1.0),
+) -> dict[str, Any]: ...
+```
+
+### 3. Contracts
+
+- 输入固定为已完成 Chem-LGBO v1 state artifact 与 prompt-ablation guidance artifact：前者提供 `(dataset, seed)` 对应的历史 trajectory，后者提供每个 state 的 `dataset`, `seed`, `step`, `variant`, `subspace`, `posterior_hash`。重放不得创建 client、调用 LLM、修改任一源 artifact 或读取未记录的 response。
+- 对每个 state 只重建一次相同固定训练先验、相同历史 trajectory 和相同 posterior；必须验证重建后的 `posterior_hash` 与 record 完全一致。
+- `fallback=True` 或 `subspace` 为空的 record 在所有 $\beta$ 下都使用纯 GP；否则以剩余候选上的联合 mask 计算：
+  \[
+  \mu_\beta(x)=\mu(x)+\beta\sigma(x)\mathbf 1[x\in S],\qquad
+  \beta\in\{0,0.1,0.25,0.5,1.0\}.
+  \]
+- 每个 $\beta$ 的 EI 必须在完整候选池计算、排除已查询点并拒绝非 finite acquisition；`beta=0` 必须逐 state 精确复现保存的 `gp_index` 和 `gp_yield`。
+- 输出按原 `state_key` 与 `variant` 保留逐 state 的 `selected_index`, `selected_yield`, `selected_in_subspace`, `improved_incumbent`，并汇总 dataset/variant/beta 的样本数、相对 GP 的 yield delta、胜/平/负计数、命中 subspace 比例和新 incumbent 比例。
+- artifact 必须记录两个 source 的 SHA-256、固定 beta 列表、逐 state records、aggregate 与生成时间；同一路径已有 artifact 的任一 source hash 或 beta 列表不匹配时必须拒绝覆盖。
+- 解释边界：若所有 $\beta>0$ 均不优于 $\beta=0$，可否定当前已保存 categorical subspace 的离线奖励信号；不得据此否定论文 covariance LGBO 或未测试的 prompt/guidance 表示。
+
+### 4. Validation & Error Matrix
+| 条件 | 必须结果 |
+|---|---|
+| source 缺 records 或必要 state 字段 | 显式失败，不生成部分报告 |
+| duplicate `(state_key, variant)` | 显式失败 |
+| posterior hash 不一致 | 显式失败，不继续该 artifact |
+| beta 非 finite 或小于 0 | 显式失败 |
+| `beta=0` 未复现保存 GP 选择 | 显式失败 |
+| fallback/空 subspace | 所有 beta 与纯 GP 相同 |
+| 非 fallback guidance 的重建 mask 为空或覆盖全部剩余池 | 显式失败，说明 source/state 语义漂移 |
+| 任一 source hash / beta 列表与已有输出不匹配 | 拒绝 resume/覆盖 |
+
+### 5. Tests Required
+
+- 小型合成 state 断言 $\beta=0$ 等于 GP、正 $\beta$ 只改变 mask 内 mean，并可改变最终 EI 选择。
+- 断言 fallback/空 subspace 对所有 beta 保持 GP 选择。
+- 断言 duplicate state、posterior hash 漂移、非法 beta 和输出 provenance 不匹配均失败。
+- CLI/入口测试必须在 monkeypatch client 构造为异常时仍成功，证明重放不会调用 LLM。
+
+
+## 10. 场景：Chem-LGBO 证据门控 shortlist 重排
+
+### 1. Scope / Trigger
+
+- GP/EI 先在完整未查询候选池中确定稳定 top-5 shortlist；LLM 只能重排这 5 个完整候选，不能生成条件、扩大候选池或读取 oracle yield。
+- 该路径是可回滚的附加实验；证据 gate 未通过时保持纯 GP 行为。
+
+### 2. Contracts
+
+- `ChemGPShortlistAdapter.shortlist()` 必须按 acquisition 降序、pool index 升序打破并列，排除已查询点，并返回恰好 5 个带公开特征的 `RankedCandidate`。
+- `DeepSeekCandidateReranker.rerank()` 必须使用强制 `rank_shortlist` tool call；输入只包含 shortlist ID、GP rank/acquisition 和公开条件字段，不含 observed/selected yield。
+- `SelectCandidateUseCase.execute()` 只接受 shortlist ID 的完整排列。gate 禁用/失败、解析失败、LLM 调用失败、重复/缺失/额外 ID 时，必须返回原 shortlist 首项，即完全相同的 GP winner。
+- evidence artifact 的 provenance 必须精确匹配 `source_sha256`, `model`, `prompt_version`, `shortlist_size`, `state_manifest`，且 artifact 自身 `passed=true`；否则 gate 关闭。
+- 离线 evaluator 必须从保存状态只计算一次 GP shortlist，并让 prompt、GP winner、matched-random 和全部指标共用该不可变 tuple；matched-random 使用完整 `(dataset, seed, step)` state key 的 SHA-256 派生。
+- evaluator 只可在 Buchwald/Suzuki 均覆盖完全相同的 `{100,200,300,400,500}` seed/step manifest、所有 gate 指标均 finite、GP/random 配对 bootstrap 95% lower bound 均为正、failure rate 为 0、每个成功 state 都提供 confidence、mean ranking/pairwise accuracy 均至少 `0.6`、mean Brier score 不高于 `0.25` 时设置 `passed=true`；CLI 不接受人工 `--gate-passed` 覆盖。
+- `run --model` 必须与实际 client model 完全一致；tool-call payload 只允许 `ordered_ids` 与可选 `confidence`，malformed/额外字段必须作为 `invalid_response`；`preflight` 与 `report` 不得构造 LLM client。
+
+### 3. Validation Matrix
+
+| 条件 | 必须结果 |
+|---|---|
+| gate 未批准或 provenance 漂移 | 不调用 LLM，返回精确 GP winner |
+| tool call 缺失、名称错误或 arguments 非法 | 标记 `invalid_response`，返回精确 GP winner |
+| ordered IDs 不是 shortlist 的完整排列 | 标记 `invalid_permutation`，返回精确 GP winner |
+| LLM 传输/服务异常 | 标记 `llm_error`，返回精确 GP winner |
+| prompt 含 outcome/yield 字段 | 测试失败 |
+| duplicate state 或已有 artifact provenance 不匹配 | evaluator 显式失败 |
+| 证据覆盖或性能门槛不足 | artifact `passed=false` 并记录 reasons |
+
+### 4. Tests Required
+
+- 用例测试覆盖 gate 关闭、解析失败、LLM 异常及重复/缺失/额外 ID，均断言 exact GP fallback。
+- 适配器测试覆盖 top-5、queried exclusion、并列稳定排序、forced tool call 和无 oracle 字段。
+- evaluator 测试覆盖 matched-random、逐 seed 指标、自动失败 gate、duplicate/provenance 拒绝，以及 preflight/report 无 LLM 构造。
