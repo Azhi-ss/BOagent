@@ -243,54 +243,6 @@ class BayesianOptimizer:
             prompt=prompt
         )
 
-    def get_candidate_points(
-        self,
-        observed_configs: pd.DataFrame,
-        observed_fvals: pd.DataFrame,
-        alpha: float | None = None,
-    ) -> tuple[pd.DataFrame, float, float]:
-        """Legacy compatibility method for PVKBO.
-
-        Maps alpha to kappa and calls suggest().
-        """
-        import time
-        start_time = time.time()
-        
-        # Sync internal state if needed (though typically observe() is used)
-        if not observed_configs.empty:
-            # We assume current BayesianOptimizer state might need sync or just use provided data
-            # For pure compatibility with PVKBO which passes state every call:
-            self.observed_configs = observed_configs[self.space.feature_cols].copy()
-            self.observed_scores = observed_fvals["score"].tolist()
-            
-            # Update best score and notes if needed
-            max_score = max(self.observed_scores)
-            if max_score > self.best_score_so_far:
-                self.best_score_so_far = max_score
-                try:
-                    self.scientific_notes = self.knowledge_engine.summarize_lessons(
-                        self.observed_configs, self.observed_scores, self.space.feature_cols, self.target_name,
-                        best_score=max_score
-                    )
-                except Exception:
-                    pass
-
-        # Use kappa = alpha if provided, matching legacy behavior
-        kappa = alpha if alpha is not None else getattr(self, "kappa", getattr(self, "alpha", 0.1))
-        n_candidates = getattr(self, "n_candidates", 5)
-        acquisition = getattr(self, "acquisition", "ucb")
-        xi = getattr(self, "xi", 0.01)
-        
-        res = self.suggest(
-            kappa=kappa,
-            use_llm=True,
-            n_candidates=n_candidates,
-            acquisition=acquisition,
-            xi=xi
-        )
-        
-        candidate_df = pd.DataFrame(res.suggestions)
-        return candidate_df, 0.0, time.time() - start_time
 
     def _score_candidates(self, pool_df: pd.DataFrame, acquisition: str, kappa: float, xi: float) -> pd.DataFrame:
         """Train GP and compute acquisition scores for the pool."""
