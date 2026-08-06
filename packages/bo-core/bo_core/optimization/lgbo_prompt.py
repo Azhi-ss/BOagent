@@ -13,37 +13,65 @@ Objective direction is flipped from the paper's "Minimize f(x)" to
 
 from __future__ import annotations
 
+import re
 from collections.abc import Sequence
 from dataclasses import dataclass
+from functools import cache
 
-# Reaction-specific context injected into the system + user prompt background.
-# Values follow the dataset READMEs (reaction type, fixed components, mechanism).
-_REACTION_CONTEXT: dict[str, dict[str, str]] = {
-    "buchwald_sub4": {
-        "name": "Buchwald-Hartwig C-N coupling",
-        "mechanism": (
-            "Pd-catalyzed coupling of an aryl halide (Reactant2) with an amine "
-            "(Reactant1 = 4-methylaniline, fixed) to form a C-N bond. Product "
-            "fixed: N-(4-ethylphenyl)-4-methylaniline. Catalyst fixed: "
-            "palladium(2+) diacetate; Solvent fixed: methylsulfinylmethane (DMSO). "
-            "Ligand and Base tune turnover/oxidative addition; Additive modulates "
-            "selectivity. Aryl halide leaving group (Cl/Br/I) trades reactivity "
-            "vs side reactions."
-        ),
-    },
-    "suzuki": {
-        "name": "Suzuki-Miyaura C-C coupling",
-        "mechanism": (
-            "Pd-catalyzed coupling of an aryl electrophile (Electrophile) with an "
-            "aryl boron nucleophile (Nucleophile) to form a C-C bond. Product "
-            "fixed: 6-(5-methyl-1-(tetrahydro-2H-pyran-2-yl)-1H-indazol-4-yl)"
-            "quinoline. Catalyst fixed: palladium(2+) diacetate. Ligand, Base, "
-            "and Solvent govern transmetalation rate and protodeboronation "
-            "side paths; Electrophile leaving group (Cl/Br/I/OTf) and Nucleophile "
-            "form (boronic acid/ester/BF3K) trade reactivity and stability."
-        ),
-    },
-}
+from bo_core.benchmark.datasets import get_dataset
+
+
+@dataclass(frozen=True)
+class _Background:
+    """Reaction name and mechanism parsed from a dataset README."""
+
+    name: str
+    mechanism: str
+
+
+def _extract_reaction_name(text: str) -> str:
+    """Pull the reaction name from the dataset README's ``反应类型`` table row.
+
+    The READMEs name the reaction in Chinese (``偶联反应``); the surrounding
+    prompt template is English, so the coupling term is translated to keep the
+    filled prompt coherent and aligned with the README's English heading.
+    """
+    match = re.search(r"\|\s*反应类型\s*\|\s*([^|]+?)\s*\|", text)
+    if match is None:
+        raise KeyError("reaction type")
+    return (
+        match.group(1)
+        .replace("偶联反应", "coupling")
+        .replace("偶联", "coupling")
+        .strip()
+    )
+
+
+def _extract_mechanism(text: str) -> str:
+    """Pull the first prose paragraph under the README's ``反应任务描述``."""
+    section = re.search(
+        r"^##\s*反应任务描述\s*$\n+(.*?)(?=^##\s|\Z)",
+        text,
+        re.MULTILINE | re.DOTALL,
+    )
+    if section is None:
+        raise KeyError("mechanism")
+    for block in section.group(1).split("\n\n"):
+        paragraph = block.strip()
+        if paragraph and not paragraph.startswith(("```", "|")):
+            return paragraph
+    raise KeyError("mechanism")
+
+
+@cache
+def _load_background(dataset: str) -> _Background:
+    """Read and parse a dataset's README; cached to avoid repeated disk reads."""
+    readme = get_dataset(dataset).directory / "README.md"
+    text = readme.read_text(encoding="utf-8")
+    return _Background(
+        name=_extract_reaction_name(text),
+        mechanism=_extract_mechanism(text),
+    )
 
 
 @dataclass(frozen=True)
@@ -58,11 +86,11 @@ class DatasetMeta:
 
     @property
     def reaction_name(self) -> str:
-        return _REACTION_CONTEXT[self.dataset]["name"]
+        return _load_background(self.dataset).name
 
     @property
     def mechanism(self) -> str:
-        return _REACTION_CONTEXT[self.dataset]["mechanism"]
+        return _load_background(self.dataset).mechanism
 
 
 _SYSTEM_PROMPT_TEMPLATE = """You are a senior chemist specializing in experimental optimization of {reaction}.

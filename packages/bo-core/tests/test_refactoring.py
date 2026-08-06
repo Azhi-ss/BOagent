@@ -70,13 +70,13 @@ def test_vector_memory_query_with_partial_embeddings():
 def test_optimizer_viability_timeout():
     # Setup mock knowledge engine where evaluate_candidate_viability hangs
     knowledge = MagicMock()
-    knowledge._client.is_configured.return_value = True
+    knowledge.is_configured.return_value = True
     knowledge.build_system_prompt_for_viability.return_value = "System prompt"
     knowledge.enrich_suggestions.side_effect = lambda x: x
     
     # Let evaluate_candidate_viability sleep for 0.5s to trigger timeout
     # We will pass a low timeout in the test to verify timeout handling
-    def slow_eval(cand, prompt, cols):
+    def slow_eval(cand, prompt, cols, gp_mean=None, gp_std=None):
         time.sleep(0.2)
         return -0.01
 
@@ -104,5 +104,4 @@ def test_optimizer_viability_timeout():
                 n_candidates=1,
                 use_llm=True,
                 gamma=0.5,
-                use_logprobs=True
             )

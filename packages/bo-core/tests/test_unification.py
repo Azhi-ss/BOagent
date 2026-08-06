@@ -2,6 +2,7 @@ from __future__ import annotations
 
 import numpy as np
 import pandas as pd
+import pytest
 from bo_core.optimization.optimizer import BayesianOptimizer
 from bo_core.optimization.space import DiscreteSearchSpace
 
@@ -15,19 +16,17 @@ def mock_pvk_data():
     return df, feature_cols
 
 class TestAcquisitionUnification:
-    """Tests ensuring BayesianOptimizer handles PVK-LLM requirements."""
+    """Tests for the domain-neutral Bayesian optimizer."""
 
     def test_high_fidelity_gp_config(self):
-        """
-        Verify that BayesianOptimizer can be configured with PVK-LLM parameters.
-        """
+        """BayesianOptimizer supports configurable GP fidelity without domain rules."""
         df, features = mock_pvk_data()
         space = DiscreteSearchSpace(df, features)
         
         optimizer = BayesianOptimizer(
             space=space,
             target_name="eta",
-            n_restarts_optimizer=10 # PVK-LLM requirement
+            n_restarts_optimizer=10,
         )
         
         # Add some history
@@ -41,18 +40,21 @@ class TestAcquisitionUnification:
             top_k=20,
             n_candidates=5,
             kappa=0.1,
-            use_llm=False
         )
         
         assert len(result.suggestions) == 5
-        # Suggestions are enriched with physics parameters (CBO, VBO)
-        for sug in result.suggestions:
-            for feat in features:
-                assert feat in sug
-            assert "CBO" in sug
-            assert "CBO_Status" in sug
-            assert "VBO" in sug
-            assert "VBO_Status" in sug
+        for suggestion in result.suggestions:
+            assert set(suggestion) == set(features)
+        assert optimizer.knowledge_engine is None
+        assert "perovskite" not in result.prompt.lower()
+        assert "CBO" not in result.analysis
+
+    def test_llm_requires_explicit_domain_knowledge(self):
+        df, features = mock_pvk_data()
+        optimizer = BayesianOptimizer(DiscreteSearchSpace(df, features))
+
+        with pytest.raises(ValueError, match="explicit knowledge_engine"):
+            optimizer.suggest(use_llm=True)
 
     def test_vectorized_performance_preserved(self):
         """

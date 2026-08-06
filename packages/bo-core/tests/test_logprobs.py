@@ -3,9 +3,13 @@ from __future__ import annotations
 from unittest.mock import MagicMock, patch
 
 import pandas as pd
+import pytest
 from bo_core.llm_client import DeepSeekClient
-from bo_core.optimization.knowledge import KnowledgeEngine, extract_yes_logprob
 from bo_core.optimization.optimizer import BayesianOptimizer
+from bo_core.optimization.perovskite import (
+    PerovskiteKnowledgeEngine,
+    extract_yes_logprob,
+)
 from bo_core.optimization.space import DiscreteSearchSpace
 
 # ---------------------------------------------------------------------------
@@ -83,7 +87,7 @@ def test_extract_yes_logprob_handles_empty_or_none():
 # ---------------------------------------------------------------------------
 
 def test_build_system_prompt_for_viability():
-    engine = KnowledgeEngine(chat_engine=None)
+    engine = PerovskiteKnowledgeEngine(chat_engine=None)
     
     # 1. Band alignment context
     feature_cols = ["CHI_PVK", "Eg_HTL", "CHI_HTL", "Eg_ETL", "CHI_ETL"]
@@ -104,6 +108,21 @@ def test_build_system_prompt_for_viability():
     assert "Physical Guidelines for Defect/Doping Optimization" in prompt2
 
 
+def test_enrich_suggestions_adds_perovskite_metrics():
+    engine = PerovskiteKnowledgeEngine(chat_engine=None)
+    suggestions = [
+        {"CHI_PVK": 4.0, "CHI_ETL": 3.9, "CHI_HTL": 0.1, "Eg_HTL": 5.7}
+    ]
+
+    enriched = engine.enrich_suggestions(suggestions)
+
+    assert enriched[0]["CBO"] == pytest.approx(0.1)
+    assert enriched[0]["CBO_Status"] == "Ideal"
+    assert enriched[0]["VBO"] == pytest.approx(1.8)
+    assert enriched[0]["VBO_Status"] == "Ideal"
+    assert "CBO" not in suggestions[0]
+
+
 # ---------------------------------------------------------------------------
 # 3. Test pointwise candidate evaluation
 # ---------------------------------------------------------------------------
@@ -112,7 +131,7 @@ def test_build_system_prompt_for_viability():
 def test_evaluate_candidate_viability(mock_post):
     # Mock client config
     client = DeepSeekClient(api_key="sk-test")
-    engine = KnowledgeEngine(chat_engine="deepseek-v4-flash")
+    engine = PerovskiteKnowledgeEngine(chat_engine="deepseek-v4-flash")
     engine._client = client
     
     # Mock successful response
@@ -157,7 +176,7 @@ def test_evaluate_candidate_viability(mock_post):
 def test_evaluate_candidate_viability_with_gp_context(mock_post):
     # Mock client config
     client = DeepSeekClient(api_key="sk-test")
-    engine = KnowledgeEngine(chat_engine="deepseek-v4-flash")
+    engine = PerovskiteKnowledgeEngine(chat_engine="deepseek-v4-flash")
     engine._client = client
     
     # Mock successful response
@@ -208,8 +227,7 @@ def test_evaluate_candidate_viability_with_gp_context(mock_post):
 def test_suggest_hybrid_scoring_calculates_correct_ranking():
     # Setup mock knowledge engine
     knowledge = MagicMock()
-    # Assume client is configured
-    knowledge._client.is_configured.return_value = True
+    knowledge.is_configured.return_value = True
     knowledge.build_system_prompt_for_viability.return_value = "Mock System Prompt"
     knowledge.enrich_suggestions.side_effect = lambda x: x
     
@@ -258,7 +276,6 @@ def test_suggest_hybrid_scoring_calculates_correct_ranking():
         n_candidates=3,
         use_llm=True,
         gamma=0.5,
-        use_logprobs=True
     )
     
     # UCB scores: [21.0, 22.0, 20.5]. std(UCB) = std([21.0, 22.0, 20.5]) = 0.6236.
