@@ -1,0 +1,116 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>为什么描述符之后 ALAS 才可能有意义</title>
+  <style>
+    :root { --ink:#14212b; --muted:#586572; --paper:#f7f4ee; --panel:#fff; --blue:#246d92; --teal:#26705f; --red:#a34840; --line:#d7ddd9; }
+    * { box-sizing:border-box; }
+    body { margin:0; color:var(--ink); background:linear-gradient(135deg,#f7f4ee,#edf3f1); font:17px/1.65 system-ui,"Microsoft YaHei",sans-serif; }
+    main { max-width:1000px; margin:36px auto; padding:0 26px 70px; }
+    header { padding:38px 42px; background:#14212b; color:white; border-radius:18px; }
+    h1 { margin:0 0 10px; font:700 38px/1.18 Georgia,"Noto Serif SC",serif; }
+    header p { margin:0; color:#d5e2e5; max-width:760px; }
+    h2 { margin-top:42px; font:700 27px/1.25 Georgia,"Noto Serif SC",serif; }
+    .thesis { margin:24px 0; padding:20px 24px; border-left:5px solid var(--teal); background:var(--panel); font-size:20px; }
+    .flow { display:grid; grid-template-columns:1fr auto 1fr auto 1fr; align-items:stretch; gap:10px; margin:28px 0; }
+    .box { background:var(--panel); border:1px solid var(--line); border-radius:12px; padding:18px; }
+    .arrow { align-self:center; color:var(--blue); font-size:28px; }
+    .example { display:grid; grid-template-columns:1fr 1fr; gap:18px; }
+    .bad { border-top:5px solid var(--red); }
+    .good { border-top:5px solid var(--teal); }
+    pre { overflow:auto; background:#17232d; color:#e9f0f1; padding:16px; border-radius:9px; font-size:14px; }
+    table { width:100%; border-collapse:collapse; background:var(--panel); }
+    th,td { text-align:left; vertical-align:top; padding:12px 14px; border-bottom:1px solid var(--line); }
+    th { color:var(--blue); }
+    .quiz { margin-top:36px; padding:24px; background:#fff8e8; border-radius:12px; }
+    a { color:var(--blue); }
+    @media(max-width:760px){ .flow{grid-template-columns:1fr;} .arrow{transform:rotate(90deg);text-align:center;} .example{grid-template-columns:1fr;} header{padding:28px;} }
+  </style>
+</head>
+<body><main>
+  <header>
+    <h1>为什么描述符之后，ALAS 才可能有意义</h1>
+    <p>一个 8 分钟短课：不推导 GP，只建立足够准确的直觉，用来判断 BOagent 两个化学数据集的下一步。</p>
+  </header>
+
+  <p class="thesis"><strong>核心：</strong>表示把化学对象画成一张地图；核规定观测产率如何沿地图传播。地图没有化学结构时，再灵活的核也不知道该往哪里传播。</p>
+
+  <div class="flow">
+    <div class="box"><strong>反应条件 x</strong><br>配体、碱、溶剂……</div><div class="arrow">→</div>
+    <div class="box"><strong>表示 φ(x)</strong><br>One-Hot / 指纹 / 描述符</div><div class="arrow">→</div>
+    <div class="box"><strong>核 k</strong><br>把表示间关系变成 GP 协方差</div>
+  </div>
+
+  <h2>1. One-Hot 把类别放成“等距岛屿”</h2>
+  <div class="example">
+    <section class="box bad">
+      <strong>Suzuki 溶剂 One-Hot</strong>
+      <pre>DMF   = [1, 0, 0, 0]
+MeCN  = [0, 1, 0, 0]
+MeOH  = [0, 0, 1, 0]
+THF   = [0, 0, 0, 1]</pre>
+      <p>任意两个不同溶剂的欧氏距离都是 √2。表示只说“不同”，没说“怎样不同”。</p>
+    </section>
+    <section class="box good">
+      <strong>连续描述符（示意，不是真实数值）</strong>
+      <pre>DMF   = [极性, 供氢性, 受氢性, ...]
+MeCN  = [极性, 供氢性, 受氢性, ...]
+MeOH  = [极性, 供氢性, 受氢性, ...]
+THF   = [极性, 供氢性, 受氢性, ...]</pre>
+      <p>距离可以是 0.3、0.8、1.5……于是模型得到一张有层次的化学地图。</p>
+    </section>
+  </div>
+
+  <h2>2. ALAS 学的是“距离—相关性曲线”的形状</h2>
+  <p>忽略频率调制后，它的核心包络是：</p>
+  <pre>相关性 k(d) = exp( - (d / ℓ)^α )</pre>
+  <p>如果训练数据提供很多不同距离，模型才能比较：距离从 0.2 变到 0.6、再变到 1.4 时，产率相关性下降得平缓还是突然。这个下降形状就是 alpha 的信息来源。</p>
+  <p>但 One-Hot 每一位的差主要只有 0 或 1：<code>0^α=0</code>，<code>1^α=1</code>。在已有 ARD 长度尺度时，alpha 与长度尺度还会高度混淆。因此它很难被解释成“化学景观粗糙度”。</p>
+
+  <h2>3. 指纹也是二进制，为什么仍然比 One-Hot 多信息？</h2>
+  <table>
+    <thead><tr><th></th><th>类别 One-Hot</th><th>Morgan 指纹</th></tr></thead>
+    <tbody>
+      <tr><td>一个 bit 表示</td><td>“就是这个完整类别”</td><td>某类局部原子环境/结构片段</td></tr>
+      <tr><td>两个分子比较</td><td>只要名称不同就翻转类别位</td><td>可能共享许多结构位，只差少量片段</td></tr>
+      <tr><td>常用相似度</td><td>Hamming / equality</td><td>Tanimoto：共享结构位占并集的比例</td></tr>
+    </tbody>
+  </table>
+  <p>因此指纹能产生 0.15、0.62、0.91 等分级相似度。不过这不等于应该直接把每个 fingerprint bit 塞进 ALAS；更自然的第一基线是 Tanimoto 核。连续描述符或连续 embedding 才是 ALAS 最直观的输入。</p>
+
+  <h2>4. 对 BOagent 更合理的组合</h2>
+  <pre>候选反应 x
+  ├─ Electrophile → 结构表示 z_e → 分子核 k_e
+  ├─ Nucleophile  → 结构表示 z_n → 分子核 k_n
+  ├─ Ligand       → 结构表示 z_l → 分子核 k_l
+  ├─ Base         → 描述符/类别核 k_b
+  └─ Solvent      → 物化描述符核 k_s
+
+总核 = 主效应
+     + k_e × k_n        # 底物配对
+     + k_l × k_b        # 配体-碱交互
+     + k_b × k_s        # 碱-溶剂交互</pre>
+  <p>其中某个连续分量可以用 Matérn、RBF 或 ALAS。采集仍然直接给有限候选池全部打分，所以不会生成不存在的“半个配体”或无效反应组合。</p>
+
+  <h2>5. 不能忽略的风险</h2>
+  <ul>
+    <li>结构相似不等于反应表现相似；反应机理可能造成 activity cliff。</li>
+    <li>通用分子 embedding 未必编码配体电子/立体效应或溶剂作用。</li>
+    <li>IUPAC 名称、盐、金属配合物和 <code>Nothing</code> 必须可靠映射；<code>Nothing</code> 应有存在指示，不宜悄悄当全零普通分子。</li>
+    <li>所有表示与超参数决策只能用公开结构、训练数据和逐轮已观测结果，不能查看未查询测试产率。</li>
+  </ul>
+
+  <section class="quiz">
+    <strong>一分钟自测</strong>
+    <ol>
+      <li>如果两个不同配体的 One-Hot 距离永远相同，核能否凭空知道哪两个配体结构更近？</li>
+      <li>Morgan 指纹为什么虽然是二进制，却能得到分级分子相似度？</li>
+      <li>在连续描述符上，ALAS 的 alpha 到底从哪类观测模式中获得信息？</li>
+    </ol>
+    <p>把你的答案直接发给我，我会逐条反馈。</p>
+  </section>
+
+  <p><strong>一手参考：</strong><a href="https://gaussianprocess.org/gpml/chapters/RW4.pdf">GPML 第 4 章：核定义相似性</a>；<a href="https://arxiv.org/abs/2607.18282">ALAS 原论文</a>；<a href="https://rdkit.org/docs/RDKit_Book.html#morgan-and-feature-morgan-fingerprints">RDKit Morgan 指纹说明</a>。</p>
+</main></body></html>

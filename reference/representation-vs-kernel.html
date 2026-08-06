@@ -1,0 +1,50 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>表示与核：速查表</title>
+  <style>
+    :root { --ink:#17212b; --muted:#56616d; --line:#d9e0e6; --paper:#fbfaf7; --blue:#286f9b; --green:#30735b; --amber:#a35b18; }
+    * { box-sizing:border-box; }
+    body { margin:0; background:var(--paper); color:var(--ink); font:16px/1.55 system-ui,"Microsoft YaHei",sans-serif; }
+    main { max-width:980px; margin:42px auto; padding:0 28px 60px; }
+    h1 { font:700 34px/1.15 Georgia,"Noto Serif SC",serif; margin-bottom:8px; }
+    .lead { color:var(--muted); max-width:780px; }
+    table { width:100%; border-collapse:collapse; margin:28px 0; background:white; }
+    th,td { text-align:left; vertical-align:top; padding:13px 14px; border-bottom:1px solid var(--line); }
+    th { color:var(--blue); font-size:14px; }
+    code { background:#edf1f3; padding:2px 5px; border-radius:4px; }
+    .rule { display:grid; grid-template-columns:1fr 1fr 1fr; gap:14px; margin:26px 0; }
+    .card { border-top:4px solid var(--blue); background:white; padding:18px; box-shadow:0 2px 14px #17212b10; }
+    .card:nth-child(2) { border-color:var(--green); }
+    .card:nth-child(3) { border-color:var(--amber); }
+    .yes { color:var(--green); font-weight:700; }
+    .no { color:#9b3b33; font-weight:700; }
+    @media(max-width:760px){ .rule{grid-template-columns:1fr;} }
+    @media print { body{background:white;} main{margin:0;} .card{box-shadow:none;border:1px solid var(--line);border-top-width:4px;} }
+  </style>
+</head>
+<body><main>
+  <h1>表示决定地图，核决定传播</h1>
+  <p class="lead">用于 BOagent 的 Buchwald / Suzuki 小样本类别空间。先问“输入之间的化学距离是否有意义”，再问“用哪种核”。</p>
+
+  <div class="rule">
+    <section class="card"><strong>表示 φ(x)</strong><p>把试剂条件放到坐标或相似度空间。决定谁离谁近。</p></section>
+    <section class="card"><strong>核 k(φ(x),φ(x′))</strong><p>把距离或相似度变成协方差。决定一个观测影响多远。</p></section>
+    <section class="card"><strong>GP 后验</strong><p>用观测产率修正均值与不确定性，再驱动 EI。</p></section>
+  </div>
+
+  <table>
+    <thead><tr><th>表示</th><th>它保留什么</th><th>推荐核</th><th>ALAS 适配度</th></tr></thead>
+    <tbody>
+      <tr><td>类别 One-Hot</td><td>相同 / 不同；几乎没有类别间结构</td><td>分组 Hamming、类别核、ANOVA</td><td class="no">低</td></tr>
+      <tr><td>Morgan 指纹</td><td>局部结构片段；Tanimoto 给分级相似度</td><td>Tanimoto 核或组合核</td><td>有限；不要默认对 bit 位套连续核</td></tr>
+      <tr><td>连续物化描述符</td><td>大小、极性、电子/立体等已选性质</td><td>Matérn、RBF、ALAS</td><td class="yes">可验证</td></tr>
+      <tr><td>学习型 embedding</td><td>预训练任务吸收的结构语义</td><td>Matérn、RBF、ALAS、深核</td><td class="yes">可验证，但需防任务错配</td></tr>
+    </tbody>
+  </table>
+
+  <h2>一句判据</h2>
+  <p>如果输入空间里存在大量有意义的中间距离，例如 <code>0.2, 0.7, 1.4</code>，ALAS 才能从数据中识别“相关性曲线应该多尖”。如果距离主要只有 <code>0</code> 和 <code>1</code>，alpha 几乎没有独立信息可学。</p>
+</main></body></html>

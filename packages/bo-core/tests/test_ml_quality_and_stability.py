@@ -2,12 +2,11 @@ from __future__ import annotations
 
 import numpy as np
 import pandas as pd
-from hypothesis import HealthCheck, given, settings
-from hypothesis import strategies as st
-
 from bo_core.optimization.optimizer import BayesianOptimizer
 from bo_core.optimization.space import ContinuousSearchSpace, DiscreteSearchSpace
 from bo_core.optimization.surrogate import BoTorchSurrogate
+from hypothesis import HealthCheck, given, settings
+from hypothesis import strategies as st
 
 
 @settings(suppress_health_check=[HealthCheck.too_slow], max_examples=10)

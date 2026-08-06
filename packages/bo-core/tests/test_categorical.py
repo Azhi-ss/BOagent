@@ -1,36 +1,24 @@
 from __future__ import annotations
 
-import json
-
 import numpy as np
 import pytest
-from bo_core.benchmark.data_loader import (
-    UNIFIED_DATASET_ROOT,
-    load_buchwald_sub4_data,
-    load_suzuki_data,
-)
+from bo_core.benchmark.data_loader import load_dataset
 from bo_core.optimization.categorical import OneHotEncoder, union_options
 
 
 def _buchwald_frames():
-    data = load_buchwald_sub4_data()
-    return data, data["feature_cols"], data["train_df"], data["test_df"]
+    data = load_dataset("buchwald_sub4")
+    return data, list(data.spec.features), data.train, data.test
 
 
 def _suzuki_frames():
-    data = load_suzuki_data()
-    return data, data["feature_cols"], data["train_df"], data["test_df"]
+    data = load_dataset("suzuki")
+    return data, list(data.spec.features), data.train, data.test
 
 
 def _dataset_options(dataset: str, feature_cols: list[str]) -> dict[str, list[str]]:
-    opts_path = (
-        UNIFIED_DATASET_ROOT
-        / "chemical_reactions"
-        / dataset
-        / "options.json"
-    )
-    options_json = json.loads(opts_path.read_text())
-    return {col: options_json[col] for col in feature_cols}
+    options = load_dataset(dataset).options
+    return {col: options[col] for col in feature_cols}
 
 
 def test_buchwald_target_options_are_32_dimensional_without_dead_pool_columns():
@@ -114,13 +102,7 @@ def test_encode_unknown_category_raises():
 def test_options_json_is_superset_merged_into_union():
     """The sub4 options.json categories must all survive into the union."""
     _, feature_cols, train_df, test_df = _buchwald_frames()
-    opts_path = (
-        UNIFIED_DATASET_ROOT
-        / "chemical_reactions"
-        / "buchwald_sub4"
-        / "options.json"
-    )
-    options_json = json.loads(opts_path.read_text())
+    options_json = load_dataset("buchwald_sub4").options
     opts = union_options(
         feature_cols,
         train_df,

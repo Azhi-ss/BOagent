@@ -5,7 +5,8 @@ from types import SimpleNamespace
 
 import numpy as np
 import pytest
-from bo_core.optimization.lgbo import LGBOEngine
+from bo_core.benchmark import DATASETS
+from bo_core.optimization.lgbo import SUPPORTED_LGBO_DATASETS, LGBOEngine
 from bo_core.optimization.surrogate import BoTorchSurrogate
 from botorch.exceptions.warnings import OptimizationWarning
 
@@ -76,6 +77,12 @@ def test_gpbo_observed_yields_match_oracle():
 def test_unknown_dataset_rejected():
     with pytest.raises(ValueError, match="Unknown dataset"):
         LGBOEngine("not_a_dataset", seed=100, use_llm=False, n_iters=1)
+
+
+@pytest.mark.parametrize("dataset", sorted(DATASETS.keys() - SUPPORTED_LGBO_DATASETS))
+def test_registered_but_unsupported_dataset_rejected(dataset: str):
+    with pytest.raises(ValueError, match="not supported by LGBO"):
+        LGBOEngine(dataset, seed=100, use_llm=False, n_iters=1)
 
 
 def test_buchwald_uses_fixed_35_row_prior_in_32_dimensions():

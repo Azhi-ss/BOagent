@@ -42,6 +42,10 @@ apps/web/coverage/
 *.xlsx
 *.csv
 !datasets/chemical_reactions/**/*.csv
+!datasets/perovskite/*/searchspace.csv
+!datasets/perovskite/*/train.csv
+!datasets/perovskite/*/test.csv
+!datasets/perovskite/*/test_features.csv
 *.parquet
 *.feather
 *.pptx
@@ -95,17 +99,13 @@ references/
 .gemini/
 .trellis/
 
-# Competition files filtering: exclude documentation & results, keep algorithm code & history logs
-Compitetion/**/*.md
-Compitetion/*.md
-# Keep the 2026-07-28 auto_research results archive docs trackable
-!Compitetion/auto_research/results_2026-07-28/
-!Compitetion/auto_research/results_2026-07-28/**/*.md
-Compitetion/submission/doc/
-Compitetion/submission/results/
-Compitetion/submission/code/logs/
-Compitetion/auto_research/reports/
-
+# Competition outputs are reproducible and stay out of source control.
+competition/auto_research/artifacts/
+competition/auto_research/experiments/
+competition/auto_research/summaries/
+competition/auto_research/reports/
+competition/submission/results/
+competition/submission/code/logs/
 # Scratch scripts & temporary check files
 scratch_*.py
 
@@ -117,5 +117,5 @@ skills-lock.json
 # Local editor settings
 .claude/settings.json
 
-
-
+# Exclude AI instructions
+GEMINI.md

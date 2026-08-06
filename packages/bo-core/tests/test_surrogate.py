@@ -6,7 +6,6 @@ from types import SimpleNamespace
 import numpy as np
 import pytest
 import torch
-
 from bo_core.optimization.surrogate import (
     BoTorchSurrogate,
     SklearnSurrogate,

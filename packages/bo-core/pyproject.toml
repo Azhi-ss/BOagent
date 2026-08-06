@@ -5,7 +5,7 @@ build-backend = "setuptools.build_meta"
 [project]
 name = "bo-core"
 version = "0.1.0"
-description = "BOagent core: LLM-driven Bayesian optimization for perovskite solar cells."
+description = "BOagent core: dataset-registered Bayesian optimization for scientific experiments."
 requires-python = ">=3.11"
 dependencies = [
     "numpy",
@@ -13,6 +13,7 @@ dependencies = [
     "threadpoolctl",
     "pandas",
     "requests",
+    "pandera>=0.20.0",
     "openpyxl",
     "torch",
     "gpytorch",

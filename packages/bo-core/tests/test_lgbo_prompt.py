@@ -1,8 +1,6 @@
 from __future__ import annotations
 
-import json
-
-from bo_core.benchmark.data_loader import UNIFIED_DATASET_ROOT
+from bo_core.benchmark.data_loader import load_dataset
 from bo_core.optimization.lgbo_prompt import (
     DatasetMeta,
     build_system_prompt,
@@ -11,8 +9,7 @@ from bo_core.optimization.lgbo_prompt import (
 
 
 def _load_options(dataset: str) -> dict:
-    opts_path = UNIFIED_DATASET_ROOT / "chemical_reactions" / dataset / "options.json"
-    return json.loads(opts_path.read_text())
+    return load_dataset(dataset).options
 
 
 def _buchwald_meta() -> DatasetMeta:
@@ -21,6 +18,7 @@ def _buchwald_meta() -> DatasetMeta:
         dataset="buchwald_sub4",
         feature_cols=["Reactant2", "Ligand", "Additive", "Base"],
         options=opts,
+        target_name="Yield",
     )
 
 
@@ -30,6 +28,7 @@ def _suzuki_meta() -> DatasetMeta:
         dataset="suzuki",
         feature_cols=["Electrophile", "Nucleophile", "Ligand", "Base", "Solvent"],
         options=opts,
+        target_name="Yield",
     )
 
 

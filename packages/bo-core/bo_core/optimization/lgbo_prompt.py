@@ -46,15 +46,15 @@ _REACTION_CONTEXT: dict[str, dict[str, str]] = {
 }
 
 
-@dataclass
+@dataclass(frozen=True)
 class DatasetMeta:
-    """Static, dataset-level prompt context."""
+    """Algorithm-facing prompt input assembled from the dataset registry."""
 
-    dataset: str  # "buchwald_sub4" | "suzuki"
+    dataset: str
     feature_cols: list[str]
-    options: dict[str, list[str]]  # sub4 options.json: the valid pool space
-    target_name: str = "Yield"
-    objective: str = "Maximize"  # chemical reactions maximize Yield (%)
+    options: dict[str, list[str]]
+    target_name: str
+    objective: str = "Maximize"
 
     @property
     def reaction_name(self) -> str:

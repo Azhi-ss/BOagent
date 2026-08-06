@@ -1,15 +1,7 @@
-"""Benchmark runner for LGBO variants and GPBO on reaction datasets.
+"""Competition benchmark runner for LGBO and GPBO.
 
-Drives N seeds x {buchwald_sub4, suzuki} x {lgbo, chem_lgbo, gpbo}, computes
-the competition metrics (best_found, initial_round_found_best, t95,
-AUC_best_so_far), and writes per-run CSV + .pt files plus aggregate summary.json.
-.pt output uses torch if available, else falls back to pickle (.pkl) with a warning.
-
-Usage:
-    cd packages/bo-core
-    python -m bo_core.benchmark.lgbo_runner \\
-        --datasets buchwald_sub4,suzuki --methods lgbo,chem_lgbo,gpbo \
-        --seeds 100,200,300 --n_iters 40 --workers 4
+Runs dataset × method × seed configurations, writes competition trajectories,
+and aggregates the four official metrics.
 """
 
 from __future__ import annotations
@@ -36,12 +28,10 @@ from typing import Any
 import numpy as np
 import pandas as pd
 
-from bo_core.optimization.chem_lgbo import ChemLGBOEngine
-from bo_core.optimization.lgbo import LGBOEngine
+from bo_core.benchmark.data_loader import load_dataset
+from bo_core.optimization.lgbo import SUPPORTED_LGBO_DATASETS, LGBOEngine
 from bo_core.optimization.surrogate import BackendName
 
-# Per-dataset global best (max Yield in test.csv), from the dataset READMEs.
-GLOBAL_BEST = {"buchwald_sub4": 86.60, "suzuki": 99.90}
 THREAD_ENV_VARS = (
     "OMP_NUM_THREADS",
     "OPENBLAS_NUM_THREADS",
@@ -119,13 +109,15 @@ def run_one(
 ) -> dict[str, Any]:
     """Run one (dataset, method, seed) configuration; save CSV+.pt; return metrics."""
     try:
-        engine_cls, use_llm = {
-            "gpbo": (LGBOEngine, False),
-            "lgbo": (LGBOEngine, True),
-            "chem_lgbo": (ChemLGBOEngine, True),
-        }[method]
+        use_llm = {"gpbo": False, "lgbo": True}[method]
     except KeyError:
         raise ValueError(f"Unknown method: {method}") from None
+    if dataset not in SUPPORTED_LGBO_DATASETS:
+        supported = ", ".join(sorted(SUPPORTED_LGBO_DATASETS))
+        raise ValueError(
+            f"Dataset {dataset!r} is not supported by LGBO. Supported: {supported}"
+        )
+    engine_cls = LGBOEngine
     save_dir = output_dir / backend / dataset / method
     save_dir.mkdir(parents=True, exist_ok=True)
     engine = engine_cls(
@@ -141,7 +133,7 @@ def run_one(
     t0 = time.time()
     engine.run()
     elapsed = time.time() - t0
-    metrics = compute_metrics(engine, GLOBAL_BEST[dataset])
+    metrics = compute_metrics(engine, load_dataset(dataset).global_best)
 
     run_metadata = {
         "prior_protocol": "fixed_train_prior",
@@ -202,7 +194,9 @@ def _aggregate(results: list[dict[str, Any]]) -> dict[str, Any]:
 
 def _print_comparison(summary: dict[str, Any]) -> None:
     for dataset, methods in summary.items():
-        print(f"\n=== {dataset} (global best {GLOBAL_BEST[dataset]}) ===")
+        print(
+            f"\n=== {dataset} (global best {load_dataset(dataset).global_best}) ==="
+        )
         print(f"{'method':<8} {'best_mean':>10} {'best_std':>9} {'t95_mean':>9} {'AUC_mean':>9}")
         for method, e in methods.items():
             print(f"{method:<8} {e['best_found']['mean']:>10.2f} "
@@ -216,12 +210,12 @@ def _print_comparison(summary: dict[str, Any]) -> None:
 
 def main() -> None:
     parser = argparse.ArgumentParser(
-        description="LGBO variants vs GPBO benchmark on chemical datasets"
+        description="LGBO vs GPBO benchmark on registered datasets"
     )
     parser.add_argument("--datasets", default="buchwald_sub4,suzuki",
-                        help="comma-separated dataset names (default: both)")
+                        help="comma-separated registered dataset IDs")
     parser.add_argument("--methods", default="lgbo,gpbo",
-                        help="comma-separated: lgbo,chem_lgbo,gpbo (default: lgbo,gpbo)")
+                        help="comma-separated: lgbo,gpbo")
     parser.add_argument("--seeds", default="100,200,300",
                         help="comma-separated seeds (default: 100,200,300)")
     parser.add_argument("--n_iters", type=int, default=40)
@@ -234,6 +228,12 @@ def main() -> None:
     datasets = [d.strip() for d in args.datasets.split(",") if d.strip()]
     methods = [m.strip() for m in args.methods.split(",") if m.strip()]
     seeds = [int(s.strip()) for s in args.seeds.split(",") if s.strip()]
+    unsupported = sorted(set(datasets) - SUPPORTED_LGBO_DATASETS)
+    if unsupported:
+        supported = ", ".join(sorted(SUPPORTED_LGBO_DATASETS))
+        raise ValueError(
+            f"Unsupported LGBO datasets: {', '.join(unsupported)}. Supported: {supported}"
+        )
     output_dir = Path(args.output_dir)
 
     configs = [(d, m, s) for d in datasets for m in methods for s in seeds]

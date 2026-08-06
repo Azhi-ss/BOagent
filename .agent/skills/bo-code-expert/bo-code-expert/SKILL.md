@@ -1,40 +1,34 @@
 ---
 name: bo-code-expert
-description: Specialized expert for BOagent codebase. Analyzes Bayesian Optimization logic, materials science physical constraints (Band Alignment/Defects), and verifies PVK-LLM alignment. Use when auditing backend optimization logic, benchmark consistency, or frontend-backend API contracts.
+description: Specialized expert for BOagent's promoted Bayesian optimization package, registered datasets, auto-research experiments, and competition submission flow.
 ---
 
 # BOagent Code Expert
 
-You are a specialized expert in the BOagent project. Your primary goal is to ensure the system remains physically accurate, algorithmically aligned with PVK-LLM, and architecturally sound.
+Use the current repository boundaries when auditing algorithm logic, dataset consistency, benchmark behavior, or competition reproducibility.
 
-## Core Expertise Areas
+## Architecture contract
 
-### 1. Bayesian Optimization Logic
-- **Surrogate Model**: Gaussian Process Regressor (sklearn). 
-- **Configuration**: Must use `n_restarts_optimizer=10`, `normalize_y=True`.
-- **Acquisition**: GP-UCB by default. In LLMBO mode, it acts as a pre-filter (Top-K=20) before LLM refinement.
-- **UCB Coefficient**: PVK-LLM alignment uses `alpha=0.1` (exploitation-heavy) to let the LLM drive the search.
+- `packages/bo-core/bo_core/` is the only promoted algorithm implementation.
+- `competition/auto_research/` contains candidates and evaluation, not permanent copies of core algorithms.
+- `competition/submission/` exports and runs the reproducible competition snapshot through installed `bo-core` APIs.
+- `datasets/` is the canonical data registry content.
+- The deleted frontend and API applications are not part of the current architecture.
 
-### 2. Materials Science Alignment
-- **Band Alignment**: Focused on `CHI_PVK`, `Eg_HTL`, `CHI_HTL`, `Eg_ETL`, `CHI_ETL`. 
-- **Defects & Doping**: Focused on trap densities (`Nt_PVK/ETL`) and doping concentrations (`Na_PVK`, `Nd_PVK`, `Na_HTL`, `Nd_HTL`, `Na_ETL`, `Nd_ETL`).
-- **Validation**: Ensure that `KnowledgeEngine` prompts include correct physical hints for these features.
+## Verification workflow
 
-### 3. System Architecture
-- **Backend**: FastAPI (`backend/api.py`).
-- **Frontend**: React + TypeScript (`frontend/src`).
-- **Contract**: Check `LLMBOConfig` in `types.ts` vs the Pydantic models in `api.py`.
+1. Trace the behavior through `LGBOEngine` and `bo_core.benchmark.lgbo_runner`.
+2. Verify dataset IDs and schemas in `bo_core.benchmark.datasets.DATASETS`.
+3. Verify data access goes through `bo_core.benchmark.load_dataset` rather than hand-built paths.
+4. Compare experimental candidates against promoted `gpbo` and `lgbo` under the same dataset, seed, and iteration protocol.
+5. Confirm submission code imports the installed package and writes only submission outputs.
 
-## Verification Workflow
+## Reference files
 
-When asked to audit or debug:
-1. **Identify the Task**: Is it a physical logic issue or an algorithmic drift?
-2. **Algorithmic Check**: Compare parameters against `GPLLM_ACQ` (the reference implementation).
-3. **Data Check**: Verify that `DATA_LOADERS` provide all necessary features for the task.
-4. **Performance Check**: Ensure `_find_unobserved` uses vectorized Numpy operations to prevent O(N*M) slowdowns.
-
-## Reference Files
-- `backend/optimization/optimizer.py`: Core BO loop.
-- `backend/optimization/knowledge.py`: LLM prompt and domain knowledge.
-- `backend/gp_llm_acq.py`: Reference aligned implementation.
-- `backend/benchmark/bo_step.py`: Step execution engine.
+- `packages/bo-core/bo_core/optimization/lgbo.py` — promoted LGBO/GPBO engine.
+- `packages/bo-core/bo_core/benchmark/datasets.py` — canonical dataset registry.
+- `packages/bo-core/bo_core/benchmark/data_loader.py` — validated dataset loading.
+- `packages/bo-core/bo_core/benchmark/lgbo_runner.py` — benchmark matrix and metrics.
+- `competition/auto_research/README.md` — experiment and promotion boundary.
+- `competition/submission/export_snapshot.py` — standalone snapshot export.
+- `competition/submission/code/main/run_submission.py` — competition entry point.

@@ -2,17 +2,13 @@
 name = "boagent-workspace"
 version = "0.1.0"
 requires-python = ">=3.11"
-dependencies = [
-    "bo-core",
-    "api"
-]
+dependencies = ["bo-core"]
 
 [tool.uv.sources]
 torch = { index = "pytorch-cpu" }
 torchvision = { index = "pytorch-cpu" }
 torchaudio = { index = "pytorch-cpu" }
 bo-core = { workspace = true }
-api = { workspace = true }
 
 [[tool.uv.index]]
 name = "pytorch-cpu"
@@ -20,7 +16,7 @@ url = "https://download.pytorch.org/whl/cpu"
 explicit = true
 
 [tool.uv.workspace]
-members = ["packages/bo-core", "apps/api"]
+members = ["packages/bo-core"]
 
 [dependency-groups]
 dev = [

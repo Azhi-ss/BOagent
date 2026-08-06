@@ -1,11 +1,13 @@
 import time
-import pytest
+from unittest.mock import MagicMock, patch
+
 import numpy as np
 import pandas as pd
-from unittest.mock import MagicMock, patch
-from bo_core.optimization.memory import VectorMemory, Insight, EmbeddingClient
+import pytest
+from bo_core.optimization.memory import EmbeddingClient, Insight, VectorMemory
 from bo_core.optimization.optimizer import BayesianOptimizer
 from bo_core.optimization.space import DiscreteSearchSpace
+
 
 def test_vector_memory_background_embedding():
     # Mock embedding client to return a dummy vector after a short sleep

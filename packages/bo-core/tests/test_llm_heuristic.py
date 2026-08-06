@@ -1,15 +1,16 @@
 import sys
-import os
-import pandas as pd
-import numpy as np
 from pathlib import Path
+
+import numpy as np
+import pandas as pd
 
 # Add package root to path
 sys.path.append(str(Path(__file__).parent.parent))
 
+from bo_core.optimization.knowledge import KnowledgeEngine
 from bo_core.optimization.optimizer import BayesianOptimizer
 from bo_core.optimization.space import DiscreteSearchSpace
-from bo_core.optimization.knowledge import KnowledgeEngine
+
 
 def test_llm_heuristic_flow():
     # 1. Setup a dummy search space of 1000 points

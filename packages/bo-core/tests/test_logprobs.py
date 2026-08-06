@@ -1,15 +1,12 @@
 from __future__ import annotations
 
-import numpy as np
-import pandas as pd
-import pytest
 from unittest.mock import MagicMock, patch
 
-from bo_core.llm_client import LlmCallResult, DeepSeekClient
-from bo_core.optimization.knowledge import extract_yes_logprob, KnowledgeEngine
+import pandas as pd
+from bo_core.llm_client import DeepSeekClient
+from bo_core.optimization.knowledge import KnowledgeEngine, extract_yes_logprob
 from bo_core.optimization.optimizer import BayesianOptimizer
 from bo_core.optimization.space import DiscreteSearchSpace
-
 
 # ---------------------------------------------------------------------------
 # 1. Test extract_yes_logprob

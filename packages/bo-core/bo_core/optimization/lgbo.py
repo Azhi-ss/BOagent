@@ -20,14 +20,14 @@ identical prior/encoding/GP/acquisition with LGBO, isolating the LLM's effect.
 
 from __future__ import annotations
 
-import json
 from pathlib import Path
 from typing import Any
 
 import numpy as np
 from scipy.stats import norm
 
-from bo_core.benchmark.data_loader import DATA_LOADERS, UNIFIED_DATASET_ROOT
+from bo_core.benchmark.data_loader import load_dataset
+from bo_core.benchmark.datasets import get_dataset
 from bo_core.optimization.categorical import OneHotEncoder
 from bo_core.optimization.lgbo_parser import parse_llm_response
 from bo_core.optimization.lgbo_prompt import (
@@ -44,6 +44,7 @@ from bo_core.optimization.surrogate import (
 # Seeds fixed by the competition README.
 COMPETITION_SEEDS = [100, 200, 300, 400, 500, 600, 700, 800, 900, 1000,
                      1100, 1200, 1300, 1400, 1500, 1600, 1700, 1800, 1900, 2000]
+SUPPORTED_LGBO_DATASETS = frozenset({"buchwald_sub4", "suzuki"})
 
 
 class LGBOEngine:
@@ -66,8 +67,12 @@ class LGBOEngine:
         failure_log: str | Path | None = "lgbo_llm_failures.log",
         backend: BackendName = "botorch",
     ) -> None:
-        if dataset not in DATA_LOADERS:
-            raise ValueError(f"Unknown dataset: {dataset}. Available: {list(DATA_LOADERS)}")
+        get_dataset(dataset)
+        if dataset not in SUPPORTED_LGBO_DATASETS:
+            supported = ", ".join(sorted(SUPPORTED_LGBO_DATASETS))
+            raise ValueError(
+                f"Dataset {dataset!r} is not supported by LGBO. Supported: {supported}"
+            )
         self.dataset = dataset
         self.seed = seed
         self.use_llm = use_llm
@@ -96,26 +101,18 @@ class LGBOEngine:
     # ------------------------------------------------------------------ setup
 
     def _load_data(self) -> None:
-        data = DATA_LOADERS[self.dataset]()
-        self.feature_cols: list[str] = list(data["feature_cols"])
-        self.target_col: str = str(data["target_col"])
-        self.train_df = data["train_df"]            # prior (full train.csv)
-        self.test_df = data["test_df"]              # pool + oracle (row-aligned)
+        bundle = load_dataset(self.dataset)
+        self.feature_cols = list(bundle.spec.features)
+        self.target_col = bundle.spec.target
+        self.train_df = bundle.train
+        self.test_df = bundle.test
+        self.options_json = bundle.options
 
-        # options.json = the dataset's own valid option space (for the LLM prompt).
-        opts_path = UNIFIED_DATASET_ROOT / "chemical_reactions" / self.dataset / "options.json"
-        self.options_json: dict[str, list[str]] = json.loads(opts_path.read_text())
+        # The BO input schema is the task decision variables only. Training-only
+        # categories may encode as zero blocks, but the candidate pool stays strict.
+        self.encoder = OneHotEncoder(self.feature_cols, self.options_json)
 
-        # The BO input schema is the task's four decision variables only. The
-        # merged prior may contain cross-product reactants, but those must not
-        # create dimensions that are permanently zero in the candidate pool.
-        self.encoder = OneHotEncoder(
-            self.feature_cols,
-            {col: self.options_json[col] for col in self.feature_cols},
-        )
-
-        # Candidate pool (== test_features) and its yield oracle (test.csv).
-        self.pool_X = self.encoder.encode_df(self.test_df)             # (M, D)
+        self.pool_X = self.encoder.encode_df(bundle.test_features)
         self.pool_yield = self.test_df[self.target_col].to_numpy(dtype=float)
         self.M = len(self.test_df)
 

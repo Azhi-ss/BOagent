@@ -41,24 +41,26 @@
 | [`dragonfly`](01-bo-frameworks/dragonfly/) | 连续、离散及多保真黑箱优化框架 | general | GP, multi-fidelity | P2 | external |
 | [`SMAC3`](01-bo-frameworks/SMAC3/) | 以随机森林为主的 SMBO/HPO 框架 | general | random-forest, Hyperband, HPO | P2 | external |
 
-## 二、BO 算法与代理模型（6）
+## 二、BO 算法与代理模型（7）
 
 | 仓库路径 | 核心定位 | domain | mechanism | priority | relation |
 |---|---|---|---|---|---|
 | [`gauche`](02-bo-algorithms/gauche/) | 面向分子、反应和蛋白质的专用 GP 核与偏好 BO 库 | chemistry, molecules | GP, molecular-kernel, preference-learning | **P0** | external |
+| [`online-calibrated-bo`](02-bo-algorithms/online-calibrated-bo/) | 用在线校准与 conformal prediction 修正 BO 的预测不确定性 | general | calibration, conformal, uncertainty | **P1** | external |
 | [`ALAS`](02-bo-algorithms/ALAS/) | 可学习 α-stable 谱核，适配平滑与尖锐目标景观 | general | GP, kernel-learning | P2 | external |
 | [`deep_kernel_learning`](02-bo-algorithms/deep_kernel_learning/) | 神经网络特征映射与 GP 核结合的经典 DKL | general | deep-kernel, GP | P3 | external |
 | [`kernel_manifold`](02-bo-algorithms/kernel_manifold/) | 将组合核映射到连续流形，并在核架构空间中执行 BO | general | kernel-search, manifold, GP | P2 | external |
 | [`gryffin`](02-bo-algorithms/gryffin/) | 面向类别变量的连续松弛与核密度优化方法 | chemistry | categorical, KDE | **P1** | external |
 | [`phoenics`](02-bo-algorithms/phoenics/) | 面向连续空间的核回归式快速优化器 | chemistry | kernel-regression, continuous | P3 | external |
 
-## 三、LLM + BO（12）
+## 三、LLM + BO（13）
 
 | 仓库路径 | 核心定位 | domain | mechanism | priority | relation |
 |---|---|---|---|---|---|
 | [`lapeft-bayesopt`](03-llm-bo/lapeft-bayesopt/) | 将 LLM embedding 或 LoRA+Laplace surrogate 接入离散 BO，并保留预测不确定性 | molecules, photovoltaics | LLM-feature, LoRA, Laplace, uncertainty | **P0** | external |
 | [`llm-bayesopt-exps`](03-llm-bo/llm-bayesopt-exps/) | ICML 2024 Sober Look 的完整实验、数据与 GP/BO-LIFT/LLM surrogate 基线 | molecules, photovoltaics | benchmark, LLM-surrogate, GP, multi-objective | **P1** | external |
 | [`CALIPER`](03-llm-bo/CALIPER/) | 证据门控的目标级 LLM 残差先验层，用于离散多目标 BO | molecules | LLM-prior, evidence-gating, MOBO | **P1** | external |
+| [`bora-the-explorer`](03-llm-bo/bora-the-explorer/) | 基于 GP 不确定性、plateau 与历史信任在 BO、LLM 和混合动作间切换 | scientific | adaptive-policy, LLM-BO, trust | **P1** | external |
 | [`LABO`](03-llm-bo/LABO/) | 将 LLM 作为低保真 oracle，以残差 GP 决定真实实验投入 | scientific | LLM-oracle, multi-fidelity, residual-GP | **P1** | external |
 | [`LLAMBO`](03-llm-bo/LLAMBO/) | LLM 执行 warm start、候选采样和生成式代理建模 | general | LLM-surrogate, warm-start, proposal | **P1** | external |
 | [`LLM-in-the-Loop-BO`](03-llm-bo/LLM-in-the-Loop-BO/) | LLM 参与黑箱优化、超参调优和 3D 打印实验建议 | general | LLM-proposal, warm-start | P2 | external |
@@ -113,7 +115,7 @@
 
 ## 完整性
 
-- 已物理迁移仓库：**38**
+- 已物理迁移仓库：**40**
 - 一级分类目录：**6**（其中 `06-boagent-history/` 当前为空）
 - 每个仓库只存在于一个主分类目录，并保留跨领域标签
 - 其中 **32** 个仓库保留各自的嵌套 `.git` 元数据，移动目录不会改变其独立仓库身份

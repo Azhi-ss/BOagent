@@ -1,8 +1,8 @@
-"""BOagent core: LLM-driven Bayesian optimization for perovskite solar cells.
+"""BOagent core for dataset-registered scientific Bayesian optimization.
 
 Subpackages:
-    optimization -- GP surrogate, acquisition, knowledge engine, vector memory, search space.
-    benchmark    -- GP+LLM BO evaluation pipeline (runner, bo_step, comparison, data_loader).
+    optimization -- GP surrogate, acquisition, LLM guidance, memory, search space.
+    benchmark    -- dataset registry, loaders, runners, and evaluation.
 """
 
 __version__ = "0.1.0"
